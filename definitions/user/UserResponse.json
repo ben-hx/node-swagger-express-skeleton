@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "required": [
+    "success",
+    "message",
+    "error"
+  ],
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string"
+    },
+    "error": {
+      "$ref": "User.json"
+    }
+  }
+}

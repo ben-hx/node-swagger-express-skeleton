@@ -1,0 +1,144 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "",
+        "version": "1.0.0",
+        "title": "Swagger Test API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "ben-hx@web.de"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "localhost:8080",
+    "basePath": "/v1",
+    "tags": [
+        {
+            "name": "post",
+            "description": "Everything about your Posts",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": ""
+            }
+        },
+        {
+            "name": "user",
+            "description": "Operations about user",
+            "externalDocs": {
+                "description": "Find out more about our Users",
+                "url": ""
+            }
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Register a new user",
+                "description": "",
+                "operationId": "registerUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Created user object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "./definitions/user/NewUser.json"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User response",
+                        "schema": {
+                            "$ref": "./definitions/user/UserResponse.json"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "./definitions/error/ErrorResponse.json"
+                        }
+                    }
+                },
+                "x-swagger-router-controller": "user-controller"
+            }
+        },
+        "/user/login": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Logs user into the system",
+                "description": "",
+                "operationId": "loginUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "query",
+                        "description": "The user name for login",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "The password for login in clear text",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User response",
+                        "schema": {
+                            "$ref": "./definitions/user/UserResponse.json"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "./definitions/error/ErrorResponse.json"
+                        }
+                    }
+                },
+                "x-swagger-router-controller": "user-controller"
+            }
+        }
+    },
+
+    "securityDefinitions": {
+        "user_auth": {
+            "type": "basic",
+            "description": "HTTP Basic Authentication."
+        },
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "$ref": "./definitions/definitions.json"
+    },
+
+    "externalDocs": {
+        "description": "Find out more about it!",
+        "url": ""
+    }
+}

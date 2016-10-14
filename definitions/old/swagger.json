@@ -1,0 +1,819 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "",
+        "version": "1.0.0",
+        "title": "Swagger Test API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "ben-hx@web.de"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "localhost:8080",
+    "basePath": "/v1",
+    "tags": [
+        {
+            "name": "post",
+            "description": "Everything about your Posts",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": ""
+            }
+        },
+        {
+            "name": "user",
+            "description": "Operations about user",
+            "externalDocs": {
+                "description": "Find out more about our Users",
+                "url": ""
+            }
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/post": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Add a new post",
+                "description": "",
+                "operationId": "addPost",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Post object that needs to be added",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Post"
+                        }
+                    }
+                ],
+                "responses": {
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "x-swagger-router-controller": "User"
+            },
+            "put": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Update an existing post",
+                "description": "",
+                "operationId": "updatePost",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Post object that needs to be added",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Post"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "x-swagger-router-controller": "Post"
+            }
+        },
+        "/post/findByRelease": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Finds Posts by release",
+                "description": "Multiple date-time values can be provided with comma separated strings",
+                "operationId": "findPostByRelease",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "release",
+                        "in": "query",
+                        "description": "Date values that need to be considered for filter",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "collectionFormat": "multi"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Post"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "x-swagger-router-controller": "Post"
+            }
+        },
+        "/post/findByTags": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Finds Posts by tags",
+                "description": "Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
+                "operationId": "findPostByTags",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "Tags to filter by",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Post"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid tag value"
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "deprecated": true,
+                "x-swagger-router-controller": "Post"
+            }
+        },
+        "/post/{postID}": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Find post by ID",
+                "description": "Returns a single post",
+                "operationId": "getPostByID",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "postID",
+                        "in": "path",
+                        "description": "ID of post to return",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/Post"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ],
+                "x-swagger-router-controller": "Post"
+            },
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Updates a post in the db with form data",
+                "description": "",
+                "operationId": "updatePostWithForm",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "postID",
+                        "in": "path",
+                        "description": "ID of post that needs to be updated",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Updated name of the post",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "formData",
+                        "description": "Updated status of the post",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "x-swagger-router-controller": "Post"
+            },
+            "delete": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "Removes a post",
+                "description": "",
+                "operationId": "removePost",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "api_key",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "postID",
+                        "in": "path",
+                        "description": "Post id to remove",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "x-swagger-router-controller": "Post"
+            }
+        },
+        "/post/{postID}/uploadImage": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "summary": "uploads an image",
+                "description": "",
+                "operationId": "uploadPostImage",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "postID",
+                        "in": "path",
+                        "description": "ID of post to add an image",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "name": "additionalMetadata",
+                        "in": "formData",
+                        "description": "Additional data to pass to server",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "file to upload",
+                        "required": false,
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/ApiResponse"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "x-swagger-router-controller": "Post"
+            }
+        },
+        "/user": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create user",
+                "description": "This can only be done by the logged in user.",
+                "operationId": "createUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Created user object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            }
+        },
+        "/user/createWithArray": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Creates list of users with given input array",
+                "description": "",
+                "operationId": "createUserWithArray",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "List of user object",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            }
+        },
+        "/user/createWithList": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Creates list of users with given input array",
+                "description": "",
+                "operationId": "createUserWithList",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "List of user object",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            }
+        },
+        "/user/login": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Logs user into the system",
+                "description": "",
+                "operationId": "loginUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "query",
+                        "description": "The user name for login",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "The password for login in clear text",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "calls per hour allowed by the user"
+                            },
+                            "X-Expires-After": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "date in UTC when token expires"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid username/password supplied"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            }
+        },
+        "/user/logout": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Logs out current logged in user session",
+                "description": "",
+                "operationId": "logoutUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            }
+        },
+        "/user/{username}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user by user name",
+                "description": "",
+                "operationId": "getUserByName",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "The name that needs to be fetched",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid username supplied"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            },
+            "put": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Updated user",
+                "description": "This can only be done by the logged in user.",
+                "operationId": "updateUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "name that need to be updated",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated user object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid user supplied"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            },
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Remove user",
+                "description": "This can only be done by the logged in user.",
+                "operationId": "removeUser",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "The name that needs to be removed",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid username supplied"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "x-swagger-router-controller": "User"
+            }
+        }
+    },
+    "securityDefinitions": {
+        "user_auth": {
+            "type": "basic",
+            "description": "HTTP Basic Authentication."
+        },
+        "api_key": {
+            "type": "apiKey",
+            "name": "api_key",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "Category": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "Category"
+            }
+        },
+        "User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "userStatus": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "User Status"
+                }
+            },
+            "xml": {
+                "name": "User"
+            }
+        },
+        "Tag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "xml": {
+                "name": "Tag"
+            }
+        },
+        "Post": {
+            "type": "object",
+            "required": [
+                "name",
+                "photoUrls"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "category": {
+                    "$ref": "#/definitions/Category"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "doggie"
+                },
+                "photoUrls": {
+                    "type": "array",
+                    "xml": {
+                        "name": "photoUrl",
+                        "wrapped": true
+                    },
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "xml": {
+                        "name": "tag",
+                        "wrapped": true
+                    },
+                    "items": {
+                        "$ref": "#/definitions/Tag"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            },
+            "xml": {
+                "name": "Pet"
+            }
+        },
+        "ApiResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about it!",
+        "url": ""
+    }
+}

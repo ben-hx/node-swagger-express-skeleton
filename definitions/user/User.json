@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "required": [
+    "username",
+    "password"
+  ],
+  "properties": {
+    "_id": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string",
+      "x-swagger-mongoose": {
+        "index": {
+          "unique": "true"
+        }
+      }
+    },
+    "password": {
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "userStatus": {
+      "type": "integer",
+      "format": "int32",
+      "description": "User Status"
+    }
+  }
+}
