@@ -1,8 +1,7 @@
 // Middleware for all resource-errors
 module.exports.resourceErrorHandler = function (err, req, res, next) {
     if (!err) {
-        next();
-        return;
+        return next();
     }
     var statusCode = err.status || 500;
     var message = "Unexpeced Error";

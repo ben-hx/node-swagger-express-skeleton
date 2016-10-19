@@ -9,12 +9,7 @@
       "type": "string"
     },
     "username": {
-      "type": "string",
-      "x-swagger-mongoose": {
-        "index": {
-          "unique": "true"
-        }
-      }
+      "type": "string"
     },
     "password": {
       "type": "string"

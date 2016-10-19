@@ -1,1 +1,51 @@
-module.exports = require('./models').User;
+var bcrypt = require('bcrypt-nodejs');
+
+var userModel = require('./models').User;
+
+/*
+ Error Hook for Duplication
+ */
+userModel.schema.path('username').validate(function (value, done) {
+    var id = this._id;
+    this.model('User').count({ username: value, _id: { $ne: id } }, function (error, count) {
+        // Return false if an error is thrown or count > 0
+        done(!(error || count));
+    });
+}, 'User with same username is already existing!');
+
+
+userModel.schema.pre('save', function(callback) {
+    var user = this;
+
+    if (!user.isModified('password')) {
+        return callback();
+    }
+
+    bcrypt.genSalt(5, function(err, salt) {
+        if (err) {
+            return callback(err)
+        }
+        bcrypt.hash(user.password, salt, null, function(err, hash) {
+            if (err) {
+                return callback(err);
+            }
+            user.password = hash;
+            callback();
+        });
+    });
+});
+
+/*
+ Added to the Prototype, because userModel.schema.methods
+ is not working after schema has been constructed
+*/
+userModel.prototype['verifyPassword'] = function(password, callback) {
+    bcrypt.compare(password, this.password, function(err, isMatch) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, isMatch);
+    });
+};
+
+module.exports = userModel;

@@ -2,6 +2,7 @@
 
 var app = require('express')();
 var http = require('http');
+var passport = require('passport');
 var q = require('q');
 var config = require('./config');
 var errorMiddleware = require('./middlewares/error-middleware');
@@ -23,6 +24,7 @@ swaggerToolsConfig.initialize(app, config, swaggerDoc.document)
 
 function addMiddleware() {
     app.use(errorMiddleware.resourceErrorHandler);
+    app.use(passport.initialize());
 }
 
 function startServer() {

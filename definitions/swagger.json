@@ -76,31 +76,30 @@
                 "x-swagger-router-controller": "user-controller"
             }
         },
-        "/user/login": {
-            "get": {
+        "/changepassword": {
+            "post": {
                 "tags": [
-                    "user"
+                    "change password"
                 ],
-                "summary": "Logs user into the system",
-                "description": "",
-                "operationId": "loginUser",
+                "description": "User can change his password",
+                "operationId": "changePassword",
                 "produces": [
                     "application/json"
                 ],
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
                 "parameters": [
                     {
-                        "name": "username",
-                        "in": "query",
-                        "description": "The user name for login",
+                        "in": "body",
+                        "name": "body",
+                        "description": "Old and new Password",
                         "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "The password for login in clear text",
-                        "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "./definitions/user/ChangePassword.json"
+                        }
                     }
                 ],
                 "responses": {

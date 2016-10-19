@@ -1,13 +1,12 @@
 'use strict';
 var chai = require('chai');
-var ZSchema = require('z-schema');
-var validator = new ZSchema({});
 var supertest = require('supertest');
 var expect = chai.expect;
 var should = chai.should();
 var testConfig = require('../test-config');
 var api = supertest.agent(testConfig.apiURI);
 var User = require("../../../../models/user");
+var testUtil = require("../helpers/test-util");
 
 
 describe('User-Endpoint Tests', function () {
@@ -39,7 +38,7 @@ describe('User-Endpoint Tests', function () {
         password: 'haha'
     }
 
-    function postExampleUser(user, done) {
+    function registerExampleUser(user, done) {
         var result = api.post('/register');
         result.set('Content-Type', 'application/json')
         result.send({
@@ -51,7 +50,7 @@ describe('User-Endpoint Tests', function () {
         });
     }
 
-    function postExampleUserWithCredentials(credentials, done) {
+    function registerExampleUserWithCredentials(credentials, done) {
         var result = api.post('/register');
         result.send(credentials);
         result.end(function (err, res) {
@@ -59,85 +58,106 @@ describe('User-Endpoint Tests', function () {
         });
     }
 
-    describe('register', function () {
+    function changePassword(user, oldPassword, newPassword, done) {
+        var result = api.post("/changepassword");
+        result.set('Content-Type', 'application/json')
+        result.send({
+            'old_password': oldPassword,
+            'new_password': newPassword
+        });
+        result.auth(user.username, user.password)
+        result.end(function(err, res){
+            done(err, res);
+        });
+    }
 
-        it('should post a valid user', function (done) {
-            postExampleUser(bob, function (err, res) {
-                validator.validate(res.body, testConfig.responseOkSchema).should.to.be.true;
+
+    describe('POST /register', function () {
+
+        it('should return a user when posting valid user-data', function (done) {
+            registerExampleUser(bob, function (err, res) {
                 res.status.should.equal(201);
                 res.body.success.should.equal(true);
-                res.body.data.username.should.equal(bob.username);
+                testUtil.evaluateUserResponse(res.body.data, bob);
                 done();
             });
         });
 
-        it("should not post a user with no credentials", function (done) {
-            postExampleUserWithCredentials({}, function (err, res) {
-                validator.validate(res.body, testConfig.responseErrorSchema).should.to.be.true;
-                res.status.should.equal(400);
-                res.body.success.should.equal(false);
+        it("should return a bad-request when posting a user with no credentials", function (done) {
+            registerExampleUserWithCredentials({}, function (err, res) {
+                testUtil.evaluateErrorResponse(res, 400);
                 done();
             });
         });
 
-        it("should not post a user with no username", function (done) {
-            postExampleUserWithCredentials({password: 'bob'}, function (err, res) {
-                validator.validate(res.body, testConfig.responseErrorSchema).should.to.be.true;
-                res.status.should.equal(400);
-                res.body.success.should.equal(false);
+        it("should return a bad-request when posting a user with no username", function (done) {
+            registerExampleUserWithCredentials({password: 'bob'}, function (err, res) {
+                testUtil.evaluateErrorResponse(res, 400);
                 done();
             });
         });
 
-        it("should not post a user with no password",function(done){
-            postExampleUserWithCredentials({username: 'bob'}, function(err, res){
-                validator.validate(res.body, testConfig.responseErrorSchema).should.to.be.true;
-                res.status.should.equal(400);
-                res.body.success.should.equal(false);
+        it("should return a bad-request when posting a user with no password",function(done){
+            registerExampleUserWithCredentials({username: 'bob'}, function(err, res){
+                testUtil.evaluateErrorResponse(res, 400);
                 done();
             });
         });
 
-        it("should not add two equal users (with the same name)",function(done){
-            postExampleUser(bob, function(err, res){
+        it("should return a bad-request when posting two users with the same username",function(done){
+            registerExampleUser(bob, function(err, res){
                 res.status.should.equal(201);
                 res.body.success.should.equal(true);
 
-                postExampleUser(bob, function(err, res){
-                    res.status.should.equal(400);
-                    res.body.success.should.equal(false);
+                registerExampleUser(bob, function(err, res){
+                    testUtil.evaluateErrorResponse(res, 400);
                     done();
                 });
 
             });
         });
-
 
     });
 
 
-    describe('create', function () {
+    describe('POST /changepassword', function() {
 
-        it('should respond with 200 successful operation', function (done) {
+        describe('logged in', function() {
 
-            /*eslint-disable*/
-            var schema = {
-                "success": "string",
-                "message": "string"
-            };
-
-            /*eslint-enable*/
-            api.get('/user/login')
-                .query({
-                    username: 'testusername', password: 'testpassword'
-                })
-                .set('Accept', 'application/json')
-                .expect(200)
-                .end(function (err, res) {
-                    if (err) return done(err);
-                    expect(validator.validate(res.body, testConfig.responseOkSchema)).to.be.true;
-                    done();
+            it("should change the password of the user",function(done){
+                registerExampleUser(bob, function(err, res){
+                    changePassword(bob, bob.password, "1234", function(err, res) {
+                        res.status.should.equal(200);
+                        res.body.success.should.equal(true);
+                        testUtil.evaluateUserResponse(res.body.data, bob);
+                        done();
+                    });
                 });
+            });
+
+            it("should not change the password if wrong old password is set",function(done){
+                registerExampleUser(bob, function(err, res){
+                    changePassword(bob, bob.password+44, "1234", function(err, res) {
+                        testUtil.evaluateErrorResponse(res, 400);
+                        done();
+                    });
+                });
+            });
+
+        });
+
+        describe('not logged in', function() {
+
+            it("should not change the password",function(done){
+                registerExampleUser(bob, function(err, res){
+                    changePassword(unpostedUser, unpostedUser.password, "1234", function(err, res) {
+                        testUtil.evaluateErrorResponse(res, 401);
+                        done();
+                    });
+                });
+            });
+
+
         });
 
     });
