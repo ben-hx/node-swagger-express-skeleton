@@ -1,6 +1,10 @@
 var bcrypt = require('bcrypt-nodejs');
-
 var userModel = require('./models').User;
+var modelUtil = require('./model-util');
+
+modelUtil.addToObjectToSchemaOptions(userModel.schema, function (doc, user, options) {
+    delete user.password;
+});
 
 /*
  Error Hook for Duplication

@@ -1,5 +1,8 @@
 {
   "User": {
     "$ref": "./definitions/user/User.json"
+  },
+  "Movie": {
+    "$ref": "./definitions/movie/Movie.json"
   }
 }

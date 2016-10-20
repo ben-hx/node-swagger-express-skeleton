@@ -1,176 +1,396 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "",
-        "version": "1.0.0",
-        "title": "Swagger Test API",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "email": "ben-hx@web.de"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        }
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "version": "1.0.0",
+    "title": "Swagger Test API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "ben-hx@web.de"
     },
-    "host": "localhost:8080",
-    "basePath": "/v1",
-    "tags": [
-        {
-            "name": "post",
-            "description": "Everything about your Posts",
-            "externalDocs": {
-                "description": "Find out more",
-                "url": ""
-            }
-        },
-        {
-            "name": "user",
-            "description": "Operations about user",
-            "externalDocs": {
-                "description": "Find out more about our Users",
-                "url": ""
-            }
-        }
-    ],
-    "schemes": [
-        "http"
-    ],
-    "paths": {
-        "/register": {
-            "post": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Register a new user",
-                "description": "",
-                "operationId": "registerUser",
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Created user object",
-                        "required": true,
-                        "schema": {
-                            "$ref": "./definitions/user/NewUser.json"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User response",
-                        "schema": {
-                            "$ref": "./definitions/user/UserResponse.json"
-                        }
-                    },
-                    "default": {
-                        "description": "unexpected error",
-                        "schema": {
-                            "$ref": "./definitions/error/ErrorResponse.json"
-                        }
-                    }
-                },
-                "x-swagger-router-controller": "user-controller"
-            }
-        },
-        "/changepassword": {
-            "post": {
-                "tags": [
-                    "change password"
-                ],
-                "description": "User can change his password",
-                "operationId": "changePassword",
-                "produces": [
-                    "application/json"
-                ],
-                "security": [
-                    {
-                        "user_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Old and new Password",
-                        "required": true,
-                        "schema": {
-                            "$ref": "./definitions/user/ChangePassword.json"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User response",
-                        "schema": {
-                            "$ref": "./definitions/user/UserResponse.json"
-                        }
-                    },
-                    "default": {
-                        "description": "unexpected error",
-                        "schema": {
-                            "$ref": "./definitions/error/ErrorResponse.json"
-                        }
-                    }
-                },
-                "x-swagger-router-controller": "user-controller"
-            }
-        },
-        "/me": {
-            "get": {
-                "tags": [
-                    "user", "me"
-                ],
-                "description": "get the authorized user",
-                "operationId": "getMe",
-                "produces": [
-                    "application/json"
-                ],
-                "security": [
-                    {
-                        "user_auth": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User response",
-                        "schema": {
-                            "$ref": "./definitions/user/UserResponse.json"
-                        }
-                    },
-                    "default": {
-                        "description": "unexpected error",
-                        "schema": {
-                            "$ref": "./definitions/error/ErrorResponse.json"
-                        }
-                    }
-                },
-                "x-swagger-router-controller": "user-controller"
-            }
-        }
-
-    },
-
-    "securityDefinitions": {
-        "user_auth": {
-            "type": "basic",
-            "description": "HTTP Basic Authentication."
-        },
-        "api_key": {
-            "type": "apiKey",
-            "name": "api_key",
-            "in": "header"
-        }
-    },
-    "definitions": {
-        "$ref": "./definitions/definitions.json"
-    },
-
-    "externalDocs": {
-        "description": "Find out more about it!",
-        "url": ""
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
+  },
+  "host": "localhost:8080",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "post",
+      "description": "Everything about your Posts",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": ""
+      }
+    },
+    {
+      "name": "user",
+      "description": "Operations about user",
+      "externalDocs": {
+        "description": "Find out more about our Users",
+        "url": ""
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Register a new user",
+        "description": "",
+        "operationId": "register",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "./definitions/user/NewUser.json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User response",
+            "schema": {
+              "$ref": "./definitions/user/UserResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "user-controller"
+      }
+    },
+    "/changepassword": {
+      "post": {
+        "tags": [
+          "change password"
+        ],
+        "description": "User can change his password",
+        "operationId": "changePassword",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Old and new Password",
+            "required": true,
+            "schema": {
+              "$ref": "./definitions/user/ChangePassword.json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User response",
+            "schema": {
+              "$ref": "./definitions/user/UserResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "user-controller"
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "user",
+          "me"
+        ],
+        "description": "get the authorized user",
+        "operationId": "getMe",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User response",
+            "schema": {
+              "$ref": "./definitions/user/UserResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "user-controller"
+      }
+    },
+    "/movies": {
+      "post": {
+        "tags": [
+          "movie"
+        ],
+        "summary": "Post a new Movie",
+        "description": "",
+        "operationId": "createMovie",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created movie object",
+            "required": true,
+            "schema": {
+              "$ref": "./definitions/movie/NewMovie.json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-controller"
+      },
+      "get": {
+        "tags": [
+          "movie"
+        ],
+        "summary": "Get all Movies",
+        "description": "",
+        "operationId": "getMovies",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "titles",
+            "in": "query",
+            "description": "Titles to filter by",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movies response",
+            "schema": {
+              "$ref": "./definitions/movie/MoviesResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-controller"
+      }
+    },
+
+    "/movies/{movie_id}": {
+      "get": {
+        "tags": [
+          "movie"
+        ],
+        "summary": "Get a Movie",
+        "description": "",
+        "operationId": "getMovie",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie that needs to be returned",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-controller"
+      },
+      "put": {
+        "tags": [
+          "movie"
+        ],
+        "summary": "Update a Movie",
+        "description": "",
+        "operationId": "updateMovie",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie that needs to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated movie object",
+            "required": true,
+            "schema": {
+              "$ref": "./definitions/movie/UpdateMovie.json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-controller"
+      },
+      "delete": {
+        "tags": [
+          "movie"
+        ],
+        "summary": "Delete a Movie",
+        "description": "",
+        "operationId": "deleteMovie",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie that needs to be deleted",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-controller"
+      }
+    }
+
+
+
+  },
+  "securityDefinitions": {
+    "user_auth": {
+      "type": "basic",
+      "description": "HTTP Basic Authentication."
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "$ref": "./definitions/definitions.json"
+  },
+  "externalDocs": {
+    "description": "Find out more about it!",
+    "url": ""
+  }
 }

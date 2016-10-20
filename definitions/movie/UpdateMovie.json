@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "year": {
+      "type": "string"
+    },
+    "runtime": {
+      "type": "string"
+    },
+    "genre": {
+      "type": "string"
+    },
+    "director": {
+      "type": "string"
+    },
+    "writer": {
+      "type": "string"
+    },
+    "actors": {
+      "type": "string"
+    },
+    "plot": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "poster": {
+      "type": "string"
+    }
+  }
+}

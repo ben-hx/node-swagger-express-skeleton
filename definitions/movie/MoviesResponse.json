@@ -13,7 +13,10 @@
       "type": "string"
     },
     "data": {
-      "$ref": "User.json"
+      "type": "array",
+      "items": {
+        "$ref": "Movie.json"
+      }
     }
   }
 }
