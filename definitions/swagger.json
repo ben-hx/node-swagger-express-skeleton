@@ -118,7 +118,40 @@
                 },
                 "x-swagger-router-controller": "user-controller"
             }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "user", "me"
+                ],
+                "description": "get the authorized user",
+                "operationId": "getMe",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "user_auth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User response",
+                        "schema": {
+                            "$ref": "./definitions/user/UserResponse.json"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "./definitions/error/ErrorResponse.json"
+                        }
+                    }
+                },
+                "x-swagger-router-controller": "user-controller"
+            }
         }
+
     },
 
     "securityDefinitions": {
