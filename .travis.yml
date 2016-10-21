@@ -3,4 +3,9 @@ node_js:
   - "6"
   - "6.1"
   - "5.11"
+
 services: mongodb
+
+cache:
+  directories:
+    - node_modules
