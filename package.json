@@ -6,7 +6,8 @@
   "scripts": {
     "prestart": "npm install",
     "start": "node index.js",
-    "test": "node ./node_modules/mocha/bin/mocha test --recursive"
+    "test": "node ./node_modules/mocha/bin/mocha test --recursive",
+    "test-coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive"
   },
   "keywords": [
     "swagger"
@@ -28,12 +29,12 @@
     "swagger-tools": "0.10.1"
   },
   "devDependencies": {
-    "should": "^7.1.0",
-    "supertest": "^1.0.0",
-    "z-schema": "^3.12.0",
-    "request": "^2.58.0",
     "chai": "^3.0.0",
+    "coveralls": "^2.11.14",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^2.2.5",
-    "dotenv": "^1.2.0"
+    "request": "^2.58.0",
+    "supertest": "^1.0.0",
+    "z-schema": "^3.12.0"
   }
 }
