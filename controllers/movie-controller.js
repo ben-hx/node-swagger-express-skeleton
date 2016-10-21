@@ -25,19 +25,26 @@ function getMovieById(id, callback) {
     });
 }
 
-function castQueryParam(param) {
+function castQueryParamByOptionalArray(param) {
     if (param) {
         if (param instanceof Array) {
-            return {"$in": param}
-
+            return {"$in": param};
         } else {
-            return { "$regex": param, "$options": "i" };
+            return param;
         }
     }
     return undefined;
 }
 
+function castQueryParamByBeginning(param) {
+    if (param) {
+        return { "$regex": param, "$options": "i" };
+    }
+    return undefined;
+}
+
 module.exports.createMovie = function create(req, res, next) {
+    req.body.userCreatedId = req.user._id;
     var movie = new Movie(req.body);
     movie.save(function (err) {
         if (err) {
@@ -51,15 +58,10 @@ module.exports.createMovie = function create(req, res, next) {
 module.exports.getMovies = function (req, res, next) {
 
     var queryParams = {
-        title: castQueryParam(req.query.titles),
-        year: castQueryParam(req.query.years),
-        genre: castQueryParam(req.query.genres),
-        language: castQueryParam(req.query.languages),
-        director: castQueryParam(req.query.directors),
-        writer: castQueryParam(req.query.writers),
-        actor: castQueryParam(req.query.actors),
-        countrie: castQueryParam(req.query.countries),
-        userCreated: castQueryParam(req.query.usersCreated)
+        title: castQueryParamByBeginning(req.query.title),
+        actors: castQueryParamByBeginning(req.query.actors),
+        year: castQueryParamByOptionalArray(req.query.years),
+        userCreatedId: castQueryParamByOptionalArray(req.query.userCreatedIds)
     };
 
     /* Removing all undefined properties of queryParams */

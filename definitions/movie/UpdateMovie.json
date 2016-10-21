@@ -5,7 +5,7 @@
       "type": "string"
     },
     "year": {
-      "type": "string"
+      "type": "integer"
     },
     "runtime": {
       "type": "string"
@@ -13,10 +13,10 @@
     "genre": {
       "type": "string"
     },
-    "director": {
+    "directors": {
       "type": "string"
     },
-    "writer": {
+    "writers": {
       "type": "string"
     },
     "actors": {

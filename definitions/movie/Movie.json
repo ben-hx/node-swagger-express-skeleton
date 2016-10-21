@@ -6,7 +6,8 @@
     "genre",
     "plot",
     "language",
-    "poster"
+    "poster",
+    "userCreatedId"
   ],
   "properties": {
     "_id": {
@@ -16,7 +17,7 @@
       "type": "string"
     },
     "year": {
-      "type": "string"
+      "type": "integer"
     },
     "runtime": {
       "type": "string"
@@ -24,10 +25,10 @@
     "genre": {
       "type": "string"
     },
-    "director": {
+    "directors": {
       "type": "string"
     },
-    "writer": {
+    "writers": {
       "type": "string"
     },
     "actors": {
@@ -45,7 +46,7 @@
     "poster": {
       "type": "string"
     },
-    "userCreated": {
+    "userCreatedId": {
       "type": "string"
     }
   }

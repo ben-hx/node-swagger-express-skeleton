@@ -28,11 +28,11 @@ module.exports = {
     exampleMovies: {
         theToxicAvenger: {
             title: 'The Toxic Avenger',
-            year: '1984',
+            year: 1984,
             runtime: '82 min',
             genre: 'Action, Comedy, Horror',
-            director: 'Michael Herz, Lloyd Kaufman',
-            writer: 'Lloyd Kaufman (story), Joe Ritter (screenplay), Lloyd Kaufman (additional material), Gay Partington Terry (additional material), Stuart Strutin (additional material)',
+            directors: 'Michael Herz, Lloyd Kaufman',
+            writers: 'Lloyd Kaufman (story), Joe Ritter (screenplay), Lloyd Kaufman (additional material), Gay Partington Terry (additional material), Stuart Strutin (additional material)',
             actors: 'Andree Maranda, Mitch Cohen, Jennifer Babtist, Cindy Manion',
             plot: 'Tromaville has a monstrous new hero. The Toxic Avenger is born when meek mop boy Melvin falls into a vat of toxic waste. Now evildoers will have a lot to lose.',
             language: 'English',
@@ -41,20 +41,20 @@ module.exports = {
         },
         theToxicAvengerUpdated: {
             title: 'The Toxic Avenger!',
-            year: '1983',
+            year: 1983,
             runtime: '84 min',
             genre: 'Comedy, Horror',
-            director: 'Michael Herz, Lloyd Kaufmän',
-            writer: 'Lloyd Kaufman (story), Joe Ritter (screenplay), Lloyd Kaufman (additional material), Gay Partington Terry (additional material), Stuart Strutin',
-            actors: 'Andree Maranda, Mitch Cohen, Jennifer Babtist',
+            directors: 'Michael Herz, Lloyd Kaufmän',
+            writers: 'Lloyd Kaufman (story), Joe Ritter (screenplay), Lloyd Kaufman (additional material), Gay Partington Terry (additional material), Stuart Strutin',
+            actors: 'Andree Maranda, Sarah Bara, Musu Jogan',
             plot: 'Tromaville has a monstrous new hero. The Toxic Avenger is born when meek mop boy Melvin falls into a vat of toxic waste. Now evildoers will have a lot to lose!',
-            language: 'English German',
-            country: 'USA Usa',
+            language: 'German',
+            country: 'Germany',
             poster: 'http://ia.media-imdb.com/images/M/MV5BNzViNmQ5MTYtMmI4Yy00N2Y2LTg4NWUtYWU3MThkMTVjNjk3XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX301.jpg'
         },
         theToxicAvengerMinimal: {
             title: 'The Toxic Avenger',
-            year: '1984',
+            year: 1984,
             runtime: '82 min',
             genre: 'Action, Comedy, Horror',
             plot: 'Tromaville has a monstrous new hero. The Toxic Avenger is born when meek mop boy Melvin falls into a vat of toxic waste. Now evildoers will have a lot to lose.',
@@ -77,11 +77,13 @@ module.exports = {
         response.body.data.username.should.equal(user.username);
     },
 
-    evaluateSuccessfulMovieResponse: function (response, statusCode, movie) {
+    evaluateSuccessfulMovieResponse: function (response, statusCode, movie, user) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
         response.body.data.title.should.equal(movie.title);
+        response.body.data.userCreatedId.should.equal(user._id);
         delete response.body.data._id;
+        delete response.body.data.userCreatedId;
         response.body.data.should.deep.equal(movie);
     },
 
@@ -91,7 +93,8 @@ module.exports = {
 
         for (var i in response.body.data) {
             value = response.body.data[i];
-            delete value._id
+            delete value._id;
+            delete value.userCreatedId;
         }
         response.body.data.should.deep.include.members(movies)
     },
@@ -109,6 +112,9 @@ module.exports = {
             'password': user.password
         });
         result.end(function (err, res) {
+            if (res.body.success) {
+                user._id = res.body.data._id;
+            }
             done(err, res);
         });
     },
