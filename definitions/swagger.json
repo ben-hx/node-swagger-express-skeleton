@@ -152,6 +152,49 @@
         "x-swagger-router-controller": "user-controller"
       }
     },
+
+    "/movie-proposal": {
+      "get": {
+        "tags": [
+          "movie", "proposal"
+        ],
+        "summary": "Get proposal for movies from IMDB",
+        "description": "",
+        "operationId": "getMovieProposal",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Titles to filter by",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movies response",
+            "schema": {
+              "$ref": "./definitions/movie/MoviesResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-proposal-controller"
+      }
+    },
+
     "/movies": {
       "post": {
         "tags": [
@@ -212,9 +255,31 @@
         ],
         "parameters": [
           {
-            "name": "titles",
+            "name": "title",
             "in": "query",
             "description": "Titles to filter by",
+            "type": "string"
+          },
+          {
+            "name": "actors",
+            "in": "query",
+            "description": "Actors to filter by",
+            "type": "string"
+          },
+          {
+            "name": "years",
+            "in": "query",
+            "description": "Years to filter by",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "userCreatedIds",
+            "in": "query",
+            "description": "User id's to filter by",
             "type": "array",
             "items": {
               "type": "string"

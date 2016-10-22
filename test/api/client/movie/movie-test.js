@@ -27,7 +27,9 @@ describe('Movie-Endpoint Tests', function () {
 
     after(function (done) {
         Movie.collection.drop(function () {
-            done();
+            User.collection.drop(function () {
+                done();
+            });
         });
     });
 
@@ -216,14 +218,6 @@ describe('Movie-Endpoint Tests', function () {
 
             });
 
-
-            /*
-
-             Add more filters here11!
-
-             */
-
-
             it('should return no movie after deletion', function (done) {
                 testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
                     var id = res.body.data._id;
@@ -241,7 +235,6 @@ describe('Movie-Endpoint Tests', function () {
         describe('not logged in', function () {
 
             it('should return unauthorized when getting movies from unposted user', function (done) {
-                var id = 123;
                 testUtil.getExampleMovies(testUtil.exampleUsers.unpostedUser, {}, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
@@ -361,6 +354,5 @@ describe('Movie-Endpoint Tests', function () {
 
         });
     });
-
 
 });

@@ -10,11 +10,6 @@ function NotFoundError(message) {
     this.status = 404;
 }
 
-function getPublicMovieData(movie) {
-    movie.__v = undefined;
-    return movie;
-}
-
 function getMovieById(id, callback) {
     Movie.findOne({_id: id}, function (err, movie) {
         if (movie == null) {
@@ -76,7 +71,6 @@ module.exports.getMovies = function (req, res, next) {
         });
         res.json({success: true, data: movies});
     });
-
 
 };
 

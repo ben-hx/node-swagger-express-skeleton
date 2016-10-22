@@ -127,6 +127,15 @@ module.exports = {
         });
     },
 
+    getMovieProposal: function (user, queryParams, done) {
+        var result = api.get('/movie-proposal');
+        result.query(queryParams);
+        result.auth(user.username, user.password)
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
     postExampleMovie: function (user, movie, done) {
         var result = api.post('/movies');
         result.auth(user.username, user.password)
