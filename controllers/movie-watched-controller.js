@@ -3,13 +3,6 @@
 var MovieWatched = require('../models/movie-watched');
 var controllerUtil = require('./controller-util');
 
-function NotFoundError(message) {
-    Error.call(this);
-    this.name = 'NotFoundError';
-    this.message = message;
-    this.status = 404;
-}
-
 module.exports.isMovieWatched = function (req, res, next) {
     var data = {
         userId: req.user._id,
@@ -35,7 +28,6 @@ module.exports.setMovieWatched = function (req, res, next) {
         userId: req.user._id,
         movieId: req.swagger.params.movie_id.value
     };
-
     controllerUtil.getMovieById(data.movieId, function (err, movie) {
         if (err) {
             return next(err);

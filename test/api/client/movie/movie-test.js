@@ -7,14 +7,16 @@ var api = supertest.agent(testConfig.apiURI);
 var User = require("../../../../models/user");
 var Movie = require("../../../../models/movie");
 var testUtil = require("../helpers/test-util");
+var exampleUsers = require("../helpers/exampleUsers");
+var exampleMovies = require("../helpers/examleMovies");
 
 
 describe('Movie-Endpoint Tests', function () {
 
     before(function (done) {
         User.collection.drop(function () {
-            testUtil.registerExampleUser(testUtil.exampleUsers.bob, function () {
-                testUtil.registerExampleUser(testUtil.exampleUsers.alice, done);
+            testUtil.registerExampleUser(exampleUsers.bob, function () {
+                testUtil.registerExampleUser(exampleUsers.alice, done);
             });
         });
     });
@@ -41,21 +43,21 @@ describe('Movie-Endpoint Tests', function () {
 
         describe('logged in', function () {
             it('should return a movie when posting valid movie-data', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
-                    testUtil.evaluateSuccessfulMovieResponse(res, 201, testUtil.exampleMovies.theToxicAvenger, testUtil.exampleUsers.bob);
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
+                    testUtil.evaluateSuccessfulMovieResponse(res, 201, exampleMovies.theToxicAvenger, exampleUsers.bob);
                     done();
                 });
             });
 
             it('should return a movie when posting minimal movie-data', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvengerMinimal, function (err, res) {
-                    testUtil.evaluateSuccessfulMovieResponse(res, 201, testUtil.exampleMovies.theToxicAvengerMinimal, testUtil.exampleUsers.bob);
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvengerMinimal, function (err, res) {
+                    testUtil.evaluateSuccessfulMovieResponse(res, 201, exampleMovies.theToxicAvengerMinimal, exampleUsers.bob);
                     done();
                 });
             });
 
             it('should return a bad-request when posting invalid movie-data', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvengerInvalid, function (err, res) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvengerInvalid, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 400);
                     done();
                 });
@@ -65,7 +67,7 @@ describe('Movie-Endpoint Tests', function () {
         describe('not logged in', function () {
 
             it('should return unauthorized when posting a movie with unposted user', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.unpostedUser, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
+                testUtil.postExampleMovie(exampleUsers.unpostedUser, exampleMovies.theToxicAvenger, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
@@ -107,12 +109,12 @@ describe('Movie-Endpoint Tests', function () {
             describe('no filter', function () {
 
                 it('should return posted movies', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {}, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], done);
                 });
 
@@ -121,21 +123,21 @@ describe('Movie-Endpoint Tests', function () {
             describe('filter by title', function () {
 
                 it('should return movie searched by exactly the title', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {title: 'The Toxic Avenger!'}, [
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                        exampleMovies.theToxicAvengerUpdated
                     ], done);
                 });
 
                 it('should return movies searched by the beginning of the title', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {title: 'The Toxic Aven'}, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], done);
                 });
 
@@ -144,21 +146,21 @@ describe('Movie-Endpoint Tests', function () {
             describe('filter by actor', function () {
 
                 it('should return movie searched by exactly the actor', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {actors: 'Mitch Cohen'}, [
-                        testUtil.exampleMovies.theToxicAvenger
+                        exampleMovies.theToxicAvenger
                     ], done);
                 });
 
                 it('should return movies searched by the beginning of the actor', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {actors: 'Andree Mara'}, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], done);
                 });
 
@@ -167,21 +169,21 @@ describe('Movie-Endpoint Tests', function () {
             describe('filter by year', function () {
 
                 it('should return movie searched by year', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {years: 1984}, [
-                        testUtil.exampleMovies.theToxicAvenger
+                        exampleMovies.theToxicAvenger
                     ], done);
                 });
 
                 it('should return movies searched by year array', function (done) {
-                    evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], {years: [1984, 1983]}, [
-                        testUtil.exampleMovies.theToxicAvenger,
-                        testUtil.exampleMovies.theToxicAvengerUpdated
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
                     ], done);
                 });
 
@@ -190,26 +192,26 @@ describe('Movie-Endpoint Tests', function () {
             describe('filter by year', function () {
 
                 it('should return movie searched by year', function (done) {
-                    postMovieArray(testUtil.exampleUsers.alice, [
-                        testUtil.exampleMovies.theToxicAvenger
+                    postMovieArray(exampleUsers.alice, [
+                        exampleMovies.theToxicAvenger
                     ], function (err) {
-                        evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                            testUtil.exampleMovies.theToxicAvengerUpdated,
-                        ], {userCreatedIds: testUtil.exampleUsers.bob._id}, [
-                            testUtil.exampleMovies.theToxicAvengerUpdated
+                        evaluateGetMoviesByParam(exampleUsers.bob, [
+                            exampleMovies.theToxicAvengerUpdated,
+                        ], {userCreatedIds: exampleUsers.bob._id}, [
+                            exampleMovies.theToxicAvengerUpdated
                         ], done);
                     });
                 });
 
                 it('should return movies searched by year array', function (done) {
-                    postMovieArray(testUtil.exampleUsers.alice, [
-                        testUtil.exampleMovies.theToxicAvenger
+                    postMovieArray(exampleUsers.alice, [
+                        exampleMovies.theToxicAvenger
                     ], function (err) {
-                        evaluateGetMoviesByParam(testUtil.exampleUsers.bob, [
-                            testUtil.exampleMovies.theToxicAvengerUpdated,
-                        ], {userCreatedIds: [testUtil.exampleUsers.alice._id, testUtil.exampleUsers.bob._id]}, [
-                            testUtil.exampleMovies.theToxicAvenger,
-                            testUtil.exampleMovies.theToxicAvengerUpdated
+                        evaluateGetMoviesByParam(exampleUsers.bob, [
+                            exampleMovies.theToxicAvengerUpdated,
+                        ], {userCreatedIds: [exampleUsers.alice._id, exampleUsers.bob._id]}, [
+                            exampleMovies.theToxicAvenger,
+                            exampleMovies.theToxicAvengerUpdated
                         ], done);
                     });
                 });
@@ -217,10 +219,10 @@ describe('Movie-Endpoint Tests', function () {
             });
 
             it('should return no movie after deletion', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
                     var id = res.body.data._id;
-                    testUtil.deleteExampleMovie(testUtil.exampleUsers.bob, id, function (err, res) {
-                        testUtil.getExampleMovies(testUtil.exampleUsers.bob, {}, function (err, res) {
+                    testUtil.deleteExampleMovie(exampleUsers.bob, id, function (err, res) {
+                        testUtil.getExampleMovies(exampleUsers.bob, {}, function (err, res) {
                             testUtil.evaluateSuccessfulMoviesResponse(res, 200, []);
                             done();
                         });
@@ -233,7 +235,7 @@ describe('Movie-Endpoint Tests', function () {
         describe('not logged in', function () {
 
             it('should return unauthorized when getting movies from unposted user', function (done) {
-                testUtil.getExampleMovies(testUtil.exampleUsers.unpostedUser, {}, function (err, res) {
+                testUtil.getExampleMovies(exampleUsers.unpostedUser, {}, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
@@ -247,10 +249,10 @@ describe('Movie-Endpoint Tests', function () {
         describe('logged in', function () {
 
             it('should return a movie when getting by valid movie_id', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
                     var id = res.body.data._id;
-                    testUtil.getExampleMovie(testUtil.exampleUsers.bob, id, function (err, res) {
-                        testUtil.evaluateSuccessfulMovieResponse(res, 200, testUtil.exampleMovies.theToxicAvenger, testUtil.exampleUsers.bob);
+                    testUtil.getExampleMovie(exampleUsers.bob, id, function (err, res) {
+                        testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvenger, exampleUsers.bob);
                         done();
                     });
                 });
@@ -258,7 +260,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return a not-found when getting with invalid move_id', function (done) {
                 var id = 123;
-                testUtil.getExampleMovie(testUtil.exampleUsers.bob, id, function (err, res) {
+                testUtil.getExampleMovie(exampleUsers.bob, id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 404);
                     done();
                 });
@@ -270,7 +272,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return unauthorized when getting a movie with unposted user', function (done) {
                 var id = 123;
-                testUtil.getExampleMovie(testUtil.exampleUsers.unpostedUser, id, function (err, res) {
+                testUtil.getExampleMovie(exampleUsers.unpostedUser, id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
@@ -284,10 +286,10 @@ describe('Movie-Endpoint Tests', function () {
         describe('logged in', function () {
 
             it('should return a movie when putting a valid id and movie-data', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
                     var id = res.body.data._id;
-                    testUtil.putExampleMovie(testUtil.exampleUsers.bob, id, testUtil.exampleMovies.theToxicAvengerUpdated, function (err, res) {
-                        testUtil.evaluateSuccessfulMovieResponse(res, 200, testUtil.exampleMovies.theToxicAvengerUpdated, testUtil.exampleUsers.bob);
+                    testUtil.putExampleMovie(exampleUsers.bob, id, exampleMovies.theToxicAvengerUpdated, function (err, res) {
+                        testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvengerUpdated, exampleUsers.bob);
                         done();
                     });
                 });
@@ -295,7 +297,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return a bad-request when putting with invalid move_id', function (done) {
                 var id = 123;
-                testUtil.putExampleMovie(testUtil.exampleUsers.bob, id, testUtil.exampleMovies.theToxicAvengerUpdated, function (err, res) {
+                testUtil.putExampleMovie(exampleUsers.bob, id, exampleMovies.theToxicAvengerUpdated, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 404);
                     done();
                 });
@@ -307,7 +309,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return unauthorized when putting a movie with unposted user', function (done) {
                 var id = 123;
-                testUtil.putExampleMovie(testUtil.exampleUsers.unpostedUser, id, testUtil.exampleMovies.theToxicAvengerUpdated, function (err, res) {
+                testUtil.putExampleMovie(exampleUsers.unpostedUser, id, exampleMovies.theToxicAvengerUpdated, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
@@ -321,10 +323,10 @@ describe('Movie-Endpoint Tests', function () {
         describe('logged in', function () {
 
             it('should return a movie when deleting by valid movie_id', function (done) {
-                testUtil.postExampleMovie(testUtil.exampleUsers.bob, testUtil.exampleMovies.theToxicAvenger, function (err, res) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
                     var id = res.body.data._id;
-                    testUtil.deleteExampleMovie(testUtil.exampleUsers.bob, id, function (err, res) {
-                        testUtil.evaluateSuccessfulMovieResponse(res, 200, testUtil.exampleMovies.theToxicAvenger, testUtil.exampleUsers.bob);
+                    testUtil.deleteExampleMovie(exampleUsers.bob, id, function (err, res) {
+                        testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvenger, exampleUsers.bob);
                         done();
                     });
                 });
@@ -332,7 +334,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return a bad-request when deleting by invalid move_id', function (done) {
                 var id = 123;
-                testUtil.deleteExampleMovie(testUtil.exampleUsers.bob, id, function (err, res) {
+                testUtil.deleteExampleMovie(exampleUsers.bob, id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 404);
                     done();
                 });
@@ -344,7 +346,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return unauthorized when deleting a movie with unposted user', function (done) {
                 var id = 123;
-                testUtil.deleteExampleMovie(testUtil.exampleUsers.unpostedUser, id, function (err, res) {
+                testUtil.deleteExampleMovie(exampleUsers.unpostedUser, id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
