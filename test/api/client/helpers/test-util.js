@@ -68,6 +68,19 @@ module.exports = {
             plot: 'Tromaville has a monstrous new hero. The Toxic Avenger is born when meek mop boy Melvin falls into a vat of toxic waste. Now evildoers will have a lot to lose.',
             language: 'English',
             poster: 'http://ia.media-imdb.com/images/M/MV5BNzViNmQ5MTYtMmI4Yy00N2Y2LTg4NWUtYWU3MThkMTVjNjk3XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'
+        },
+        returnOfTheKillerTomatos: {
+            title: 'Return of the Killer Tomatoes!',
+            year: 1988,
+            runtime: '98 min',
+            genre: 'Comedy, Horror, Sci-Fi',
+            directors: 'John De Bello',
+            writers: 'Stephen Andrich, John De Bello, Costa Dillon, J. Stephen Peace',
+            actors: 'Anthony Starke, George Clooney, Karen M. Waldron, Steve Lundquist',
+            plot: 'Crazy old Professor Gangreen has developed a way to make tomatoes look human for a second invasion.',
+            language: 'English',
+            country: 'USA',
+            poster: 'https://images-na.ssl-images-amazon.com/images/M/MV5BOTExZmViMGYtNTBiMy00NmJlLThkNmEtOWFiMWVjMmZmOGUxXkEyXkFqcGdeQXVyMTQ2MjQyNDc@._V1_SX300.jpg'
         }
     },
 
@@ -99,6 +112,13 @@ module.exports = {
         response.body.data.should.deep.include.members(movies)
     },
 
+    evaluateSuccessfulMovieWatchedResponse: function (response, statusCode, movieWatched) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data.movieId.should.equal(movieWatched.movieId);
+        response.body.data.watched.should.equal(movieWatched.watched);
+    },
+
     evaluateErrorResponse: function (response, statusCode) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(false);
@@ -127,15 +147,6 @@ module.exports = {
         });
     },
 
-    getMovieProposal: function (user, queryParams, done) {
-        var result = api.get('/movie-proposal');
-        result.query(queryParams);
-        result.auth(user.username, user.password)
-        result.end(function (err, res) {
-            done(err, res);
-        });
-    },
-
     postExampleMovie: function (user, movie, done) {
         var result = api.post('/movies');
         result.auth(user.username, user.password)
@@ -146,8 +157,8 @@ module.exports = {
         });
     },
 
-    getExampleMovie: function (user, id, done) {
-        var result = api.get('/movies/' + id);
+    getExampleMovie: function (user, movieId, done) {
+        var result = api.get('/movies/' + movieId);
         result.auth(user.username, user.password)
         result.end(function (err, res) {
             done(err, res);
@@ -163,18 +174,45 @@ module.exports = {
         });
     },
 
-    putExampleMovie: function (user, id, movie, done) {
-        var result = api.put('/movies/' + id);
+    putExampleMovie: function (user, movieId, exampleMovie, done) {
+        var result = api.put('/movies/' + movieId);
         result.auth(user.username, user.password)
         result.set('Content-Type', 'application/json');
-        result.send(movie);
+        result.send(exampleMovie);
         result.end(function (err, res) {
             done(err, res);
         });
     },
 
-    deleteExampleMovie: function (user, id, done) {
-        var result = api.delete('/movies/' + id);
+    deleteExampleMovie: function (user, movieId, done) {
+        var result = api.delete('/movies/' + movieId);
+        result.auth(user.username, user.password)
+        result.set('Content-Type', 'application/json');
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    getExampleMovieWatched: function (user, movieId, done) {
+        var result = api.get('/movies/' + movieId + '/watched');
+        result.auth(user.username, user.password)
+        result.set('Content-Type', 'application/json');
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    setExampleMovieWatched: function (user, movieId, done) {
+        var result = api.put('/movies/' + movieId + '/watched');
+        result.auth(user.username, user.password)
+        result.set('Content-Type', 'application/json');
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    setExampleMovieUnWatched: function (user, movieId, done) {
+        var result = api.put('/movies/' + movieId + '/unwatched');
         result.auth(user.username, user.password)
         result.set('Content-Type', 'application/json');
         result.end(function (err, res) {

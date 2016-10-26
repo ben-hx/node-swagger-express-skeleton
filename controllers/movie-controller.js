@@ -3,23 +3,6 @@
 var Movie = require('../models/movie');
 var controllerUtil = require('./controller-util');
 
-function NotFoundError(message) {
-    Error.call(this);
-    this.name = 'NotFoundError';
-    this.message = message;
-    this.status = 404;
-}
-
-function getMovieById(id, callback) {
-    Movie.findOne({_id: id}, function (err, movie) {
-        if (movie == null) {
-            callback(new NotFoundError('Movie does not exist!'));
-        } else {
-            callback(null, movie);
-        }
-    });
-}
-
 function castQueryParamByOptionalArray(param) {
     if (param) {
         if (param instanceof Array) {
@@ -75,7 +58,7 @@ module.exports.getMovies = function (req, res, next) {
 };
 
 module.exports.getMovie = function (req, res, next) {
-    getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
+    controllerUtil.getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
         if (err) {
             return next(err);
         }
@@ -84,7 +67,7 @@ module.exports.getMovie = function (req, res, next) {
 };
 
 module.exports.updateMovie = function (req, res, next) {
-    getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
+    controllerUtil.getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
         if (err) {
             return next(err);
         }
@@ -92,7 +75,7 @@ module.exports.updateMovie = function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
+            controllerUtil.getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
                 if (err) {
                     return next(err);
                 }
@@ -103,7 +86,7 @@ module.exports.updateMovie = function (req, res, next) {
 };
 
 module.exports.deleteMovie = function (req, res, next) {
-    getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
+    controllerUtil.getMovieById(req.swagger.params.movie_id.value, function (err, movie) {
         if (err) {
             return next(err);
         }

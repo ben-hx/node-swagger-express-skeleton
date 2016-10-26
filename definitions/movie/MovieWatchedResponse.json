@@ -13,9 +13,18 @@
       "type": "string"
     },
     "data": {
-      "type": "array",
-      "items": {
-        "$ref": "Movie.json"
+      "type": "object",
+      "required": [
+        "movieId",
+        "watched"
+      ],
+      "properties": {
+        "movieId": {
+          "type": "string"
+        },
+        "watched": {
+          "type": "boolean"
+        }
       }
     }
   }

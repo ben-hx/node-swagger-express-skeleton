@@ -153,48 +153,6 @@
       }
     },
 
-    "/movie-proposal": {
-      "get": {
-        "tags": [
-          "movie", "proposal"
-        ],
-        "summary": "Get proposal for movies from IMDB",
-        "description": "",
-        "operationId": "getMovieProposal",
-        "produces": [
-          "application/json"
-        ],
-        "security": [
-          {
-            "user_auth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "title",
-            "in": "query",
-            "description": "Titles to filter by",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Movies response",
-            "schema": {
-              "$ref": "./definitions/movie/MoviesResponse.json"
-            }
-          },
-          "default": {
-            "description": "unexpected error",
-            "schema": {
-              "$ref": "./definitions/error/ErrorResponse.json"
-            }
-          }
-        },
-        "x-swagger-router-controller": "movie-proposal-controller"
-      }
-    },
-
     "/movies": {
       "post": {
         "tags": [
@@ -414,7 +372,7 @@
           {
             "name": "movie_id",
             "in": "path",
-            "description": "ID of the movie that needs to be deleted",
+            "description": "ID of the movie",
             "required": true,
             "type": "string"
           }
@@ -435,10 +393,134 @@
         },
         "x-swagger-router-controller": "movie-controller"
       }
+    },
+
+    "/movies/{movie_id}/watched": {
+      "get": {
+        "tags": [
+          "movie", "watched"
+        ],
+        "summary": "Get if the user has seen the Movie",
+        "description": "",
+        "operationId": "isMovieWatched",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie Watched response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieWatchedResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-watched-controller"
+      },
+
+      "put": {
+        "tags": [
+          "movie", "watched"
+        ],
+        "summary": "Set a Movie watched",
+        "description": "",
+        "operationId": "setMovieWatched",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie Watched response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieWatchedResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-watched-controller"
+      }
+    },
+
+    "/movies/{movie_id}/unwatched": {
+      "put": {
+        "tags": [
+          "movie"
+        ],
+        "summary": "Set a Movie unwatched",
+        "description": "",
+        "operationId": "setMovieUnwatched",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie Watched response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieWatchedResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-watched-controller"
+      }
     }
-
-
-
   },
   "securityDefinitions": {
     "user_auth": {

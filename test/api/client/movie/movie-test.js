@@ -26,10 +26,8 @@ describe('Movie-Endpoint Tests', function () {
     });
 
     after(function (done) {
-        Movie.collection.drop(function () {
-            User.collection.drop(function () {
-                done();
-            });
+        User.collection.drop(function () {
+            done();
         });
     });
 
@@ -258,7 +256,7 @@ describe('Movie-Endpoint Tests', function () {
                 });
             });
 
-            it('should return a bad-request when getting with invalid move_id', function (done) {
+            it('should return a not-found when getting with invalid move_id', function (done) {
                 var id = 123;
                 testUtil.getExampleMovie(testUtil.exampleUsers.bob, id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 404);
