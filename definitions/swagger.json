@@ -235,6 +235,16 @@
             "collectionFormat": "multi"
           },
           {
+            "name": "genres",
+            "in": "query",
+            "description": "Genres to filter by",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "userCreatedIds",
             "in": "query",
             "description": "User id's to filter by",
@@ -400,9 +410,9 @@
         "tags": [
           "movie", "watched"
         ],
-        "summary": "Get if the user has seen the Movie",
+        "summary": "Get the users who have seen the Movie",
         "description": "",
-        "operationId": "isMovieWatched",
+        "operationId": "getMovieWatched",
         "produces": [
           "application/json"
         ],

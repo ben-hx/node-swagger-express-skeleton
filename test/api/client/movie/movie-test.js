@@ -158,7 +158,7 @@ describe('Movie-Endpoint Tests', function () {
                     evaluateGetMoviesByParam(exampleUsers.bob, [
                         exampleMovies.theToxicAvenger,
                         exampleMovies.theToxicAvengerUpdated
-                    ], {actors: 'Andree Mara'}, [
+                    ], {actors: 'Andree'}, [
                         exampleMovies.theToxicAvenger,
                         exampleMovies.theToxicAvengerUpdated
                     ], done);
@@ -189,9 +189,32 @@ describe('Movie-Endpoint Tests', function () {
 
             });
 
-            describe('filter by year', function () {
+            describe('filter by genres', function () {
 
-                it('should return movie searched by year', function (done) {
+                it('should return movie searched by genre', function (done) {
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ], {genres: 'Action'}, [
+                        exampleMovies.theToxicAvenger
+                    ], done);
+                });
+
+                it('should return movies searched by year array', function (done) {
+                    evaluateGetMoviesByParam(exampleUsers.bob, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ], {genres: ['Comedy', 'Horror']}, [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ], done);
+                });
+
+            });
+
+            describe('filter by userIds', function () {
+
+                it('should return movie searched by userId', function (done) {
                     postMovieArray(exampleUsers.alice, [
                         exampleMovies.theToxicAvenger
                     ], function (err) {
@@ -203,7 +226,7 @@ describe('Movie-Endpoint Tests', function () {
                     });
                 });
 
-                it('should return movies searched by year array', function (done) {
+                it('should return movies searched by userId array', function (done) {
                     postMovieArray(exampleUsers.alice, [
                         exampleMovies.theToxicAvenger
                     ], function (err) {

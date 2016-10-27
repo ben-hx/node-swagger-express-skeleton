@@ -10,23 +10,38 @@
     "runtime": {
       "type": "string"
     },
-    "genre": {
-      "type": "string"
+    "genres": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "directors": {
-      "type": "string"
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "writers": {
-      "type": "string"
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "actors": {
-      "type": "string"
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "plot": {
       "type": "string"
     },
-    "language": {
-      "type": "string"
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "country": {
       "type": "string"

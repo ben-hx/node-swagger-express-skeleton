@@ -62,6 +62,7 @@ module.exports.getMovies = function (req, res, next) {
         title: castQueryParamByBeginning(req.query.title),
         actors: castQueryParamByBeginning(req.query.actors),
         year: castQueryParamByOptionalArray(req.query.years),
+        genres: castQueryParamByOptionalArray(req.query.genres),
         userCreatedId: castQueryParamByOptionalArray(req.query.userCreatedIds)
     };
 

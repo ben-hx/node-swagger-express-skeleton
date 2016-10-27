@@ -29,7 +29,7 @@ function getMovieUsersWatchedResponseBody(movieId, users, watched) {
     return result;
 }
 
-module.exports.isMovieWatched = function (req, res, next) {
+module.exports.getMovieWatched = function (req, res, next) {
     var data = {
         userId: req.user._id,
         movieId: req.swagger.params.movie_id.value
