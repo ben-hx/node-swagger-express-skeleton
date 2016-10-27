@@ -58,6 +58,12 @@ module.exports = {
         response.body.data.genres.should.deep.include.members(genres);
     },
 
+    evaluateSuccessfulMoviePropertyResponse: function (propertyName, response, statusCode, values) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data[propertyName].should.deep.include.members(values);
+    },
+
     evaluateErrorResponse: function (response, statusCode) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(false);
@@ -170,6 +176,14 @@ module.exports = {
 
     getGenres: function (user, done) {
         var result = api.get('/movies/genres');
+        result.auth(user.username, user.password)
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    getMovieProperty: function (propertyName, user, done) {
+        var result = api.get('/movies/'+propertyName);
         result.auth(user.username, user.password)
         result.end(function (err, res) {
             done(err, res);

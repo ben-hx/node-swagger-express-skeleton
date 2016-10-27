@@ -536,7 +536,7 @@
       "get": {
         "tags": [
           "movie",
-          "watched"
+          "genres"
         ],
         "summary": "Get the genres of all movies",
         "description": "",
@@ -555,7 +555,7 @@
           "200": {
             "description": "Genres response",
             "schema": {
-              "$ref": "./definitions/genre/GenresResponse.json"
+              "$ref": "./definitions/movie-property/MoviePropertyResponse.json"
             }
           },
           "default": {
@@ -565,9 +565,158 @@
             }
           }
         },
-        "x-swagger-router-controller": "genre-controller"
+        "x-swagger-router-controller": "movie-property-controller"
+      }
+    },
+
+    "/movies/directors": {
+      "get": {
+        "tags": [
+          "movie",
+          "directors"
+        ],
+        "summary": "Get the directors of all movies",
+        "description": "",
+        "operationId": "getDirectors",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Directors response",
+            "schema": {
+              "$ref": "./definitions/movie-property/MoviePropertyResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-property-controller"
+      }
+    },
+
+    "/movies/writers": {
+      "get": {
+        "tags": [
+          "movie",
+          "writers"
+        ],
+        "summary": "Get the writers of all movies",
+        "description": "",
+        "operationId": "getWriters",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Writers response",
+            "schema": {
+              "$ref": "./definitions/movie-property/MoviePropertyResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-property-controller"
+      }
+    },
+
+    "/movies/actors": {
+      "get": {
+        "tags": [
+          "movie",
+          "actors"
+        ],
+        "summary": "Get the actors of all movies",
+        "description": "",
+        "operationId": "getActors",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Actors response",
+            "schema": {
+              "$ref": "./definitions/movie-property/MoviePropertyResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-property-controller"
+      }
+    },
+
+    "/movies/languages": {
+      "get": {
+        "tags": [
+          "movie",
+          "languages"
+        ],
+        "summary": "Get the languages of all movies",
+        "description": "",
+        "operationId": "getLanguages",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Languages response",
+            "schema": {
+              "$ref": "./definitions/movie-property/MoviePropertyResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-property-controller"
       }
     }
+
   },
 
   "securityDefinitions": {
