@@ -530,8 +530,46 @@
         },
         "x-swagger-router-controller": "movie-watched-controller"
       }
+    },
+
+    "/movies/genres": {
+      "get": {
+        "tags": [
+          "movie",
+          "watched"
+        ],
+        "summary": "Get the genres of all movies",
+        "description": "",
+        "operationId": "getGenres",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Genres response",
+            "schema": {
+              "$ref": "./definitions/genre/GenresResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "genre-controller"
+      }
     }
   },
+
   "securityDefinitions": {
     "user_auth": {
       "type": "basic",

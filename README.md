@@ -53,8 +53,6 @@ is coming soon!!!
 
 ```
 
-This project leverages the mega-awesome [swagger-tools](https://github.com/apigee-127/swagger-tools) middleware which does most all the work.
-
 
 ## Special Thanks
 
@@ -72,5 +70,5 @@ Special Thanks to the following developer & git repos:
 
  - Ben Heller
 
-**Proudly developed @** [![FH Rosenheim Logo](http://www.fh-rosenheim.de/typo3conf/ext/in2template/Resources/Public/Images/favicon.ico)](http://fh-rosenheim.de) **University of Applied Sciences Rosenheim**p://localhost:8080/docs
+**Proudly developed @** [![FH Rosenheim Logo](http://www.fh-rosenheim.de/typo3conf/ext/in2template/Resources/Public/Images/favicon.ico)](http://fh-rosenheim.de) **University of Applied Sciences Rosenheim**
 ```

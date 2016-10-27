@@ -52,6 +52,12 @@ module.exports = {
         response.body.data.users.should.deep.include.members(userIds)
     },
 
+    evaluateSuccessfulGenresResponse: function (response, statusCode, genres) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data.genres.should.deep.include.members(genres);
+    },
+
     evaluateErrorResponse: function (response, statusCode) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(false);
@@ -157,6 +163,14 @@ module.exports = {
         var result = api.put('/movies/' + movieId + '/unwatched');
         result.auth(user.username, user.password)
         result.set('Content-Type', 'application/json');
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    getGenres: function (user, done) {
+        var result = api.get('/movies/genres');
+        result.auth(user.username, user.password)
         result.end(function (err, res) {
             done(err, res);
         });
