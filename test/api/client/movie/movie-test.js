@@ -220,7 +220,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return no movie after deletion', function (done) {
                 testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
-                    var id = res.body.data._id;
+                    var id = res.body.data.movie._id;
                     testUtil.deleteExampleMovie(exampleUsers.bob, id, function (err, res) {
                         testUtil.getExampleMovies(exampleUsers.bob, {}, function (err, res) {
                             testUtil.evaluateSuccessfulMoviesResponse(res, 200, []);
@@ -250,7 +250,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return a movie when getting by valid movie_id', function (done) {
                 testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
-                    var id = res.body.data._id;
+                    var id = res.body.data.movie._id;
                     testUtil.getExampleMovie(exampleUsers.bob, id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvenger, exampleUsers.bob);
                         done();
@@ -287,7 +287,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return a movie when putting a valid id and movie-data', function (done) {
                 testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
-                    var id = res.body.data._id;
+                    var id = res.body.data.movie._id;
                     testUtil.putExampleMovie(exampleUsers.bob, id, exampleMovies.theToxicAvengerUpdated, function (err, res) {
                         testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvengerUpdated, exampleUsers.bob);
                         done();
@@ -324,7 +324,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return a movie when deleting by valid movie_id', function (done) {
                 testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
-                    var id = res.body.data._id;
+                    var id = res.body.data.movie._id;
                     testUtil.deleteExampleMovie(exampleUsers.bob, id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvenger, exampleUsers.bob);
                         done();

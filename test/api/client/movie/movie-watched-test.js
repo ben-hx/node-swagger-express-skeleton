@@ -14,18 +14,13 @@ var exampleMovies = require("../helpers/examleMovies");
 
 describe('Movie-Watched-Endpoint Tests', function () {
 
-    var theToxicAvengerId;
-    var returnOfTheKillerTomatosId;
-
     before(function (done) {
         User.collection.drop(function () {
             testUtil.registerExampleUser(exampleUsers.bob, function () {
                 testUtil.registerExampleUser(exampleUsers.alice, function () {
                     Movie.collection.drop(function () {
-                        testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
-                            theToxicAvengerId = res.body.data._id;
-                            testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.returnOfTheKillerTomatos, function (err, res) {
-                                returnOfTheKillerTomatosId = res.body.data._id;
+                        testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function () {
+                            testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.returnOfTheKillerTomatos, function () {
                                 done();
                             });
                         });
@@ -60,9 +55,9 @@ describe('Movie-Watched-Endpoint Tests', function () {
         describe('logged in', function () {
 
             it('should return movie watched when setting the movie watched', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                        movieId: theToxicAvengerId,
+                        movieId: exampleMovies.theToxicAvenger._id,
                         watched: true
                     });
                     done();
@@ -70,10 +65,10 @@ describe('Movie-Watched-Endpoint Tests', function () {
             });
 
             it('should return movie watched when setting the movie watched a secound time', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
-                    testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                            movieId: theToxicAvengerId,
+                            movieId: exampleMovies.theToxicAvenger._id,
                             watched: true
                         });
                         done();
@@ -92,7 +87,7 @@ describe('Movie-Watched-Endpoint Tests', function () {
 
         describe('not logged in', function () {
             it('should return unauthorized when setting the movie watched with unposted user', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.unpostedUser, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.unpostedUser, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
@@ -106,10 +101,10 @@ describe('Movie-Watched-Endpoint Tests', function () {
         describe('logged in', function () {
 
             it('should return movie not watched when setting the movie unwatched', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
-                    testUtil.setExampleMovieUnWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.setExampleMovieUnWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                            movieId: theToxicAvengerId,
+                            movieId: exampleMovies.theToxicAvenger._id,
                             watched: false
                         });
                         done();
@@ -118,9 +113,9 @@ describe('Movie-Watched-Endpoint Tests', function () {
             });
 
             it('should return movie not watched when setting the movie unwatched which was not watched', function (done) {
-                testUtil.setExampleMovieUnWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieUnWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                        movieId: theToxicAvengerId,
+                        movieId: exampleMovies.theToxicAvenger._id,
                         watched: false
                     });
                     done();
@@ -138,7 +133,7 @@ describe('Movie-Watched-Endpoint Tests', function () {
 
         describe('not logged in', function () {
             it('should return unauthorized when setting the movie unwatched with unposted user', function (done) {
-                testUtil.setExampleMovieUnWatched(exampleUsers.unpostedUser, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieUnWatched(exampleUsers.unpostedUser, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });
@@ -151,10 +146,10 @@ describe('Movie-Watched-Endpoint Tests', function () {
 
         describe('logged in', function () {
             it('should return movie watched when getting a watched movie', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
-                    testUtil.getExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.getExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                            movieId: theToxicAvengerId,
+                            movieId: exampleMovies.theToxicAvenger._id,
                             watched: true
                         });
                         done();
@@ -163,10 +158,10 @@ describe('Movie-Watched-Endpoint Tests', function () {
             });
 
             it('should return movie not watched when getting a unwatched movie', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
-                    testUtil.getExampleMovieWatched(exampleUsers.bob, returnOfTheKillerTomatosId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.getExampleMovieWatched(exampleUsers.bob, exampleMovies.returnOfTheKillerTomatos._id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                            movieId: returnOfTheKillerTomatosId,
+                            movieId: exampleMovies.returnOfTheKillerTomatos._id,
                             watched: false
                         });
                         done();
@@ -175,15 +170,15 @@ describe('Movie-Watched-Endpoint Tests', function () {
             });
 
             it('should return movie not watched when getting a watched movie of another user', function (done) {
-                testUtil.setExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
-                    testUtil.getExampleMovieWatched(exampleUsers.alice, theToxicAvengerId, function (err, res) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.getExampleMovieWatched(exampleUsers.alice, exampleMovies.theToxicAvenger._id, function (err, res) {
                         testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                            movieId: theToxicAvengerId,
+                            movieId: exampleMovies.theToxicAvenger._id,
                             watched: false
                         });
-                        testUtil.getExampleMovieWatched(exampleUsers.bob, theToxicAvengerId, function (err, res) {
+                        testUtil.getExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                             testUtil.evaluateSuccessfulMovieWatchedResponse(res, 200, {
-                                movieId: theToxicAvengerId,
+                                movieId: exampleMovies.theToxicAvenger._id,
                                 watched: true
                             });
                             done();
@@ -192,7 +187,42 @@ describe('Movie-Watched-Endpoint Tests', function () {
                 });
             });
 
-            it('should return a not-found-error when getting watched with invalid move_id', function (done) {
+            it('should return a empty user-array when getting the movie which just I have seen', function (done) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.getExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                        testUtil.evaluateSuccessfulMovieUsersWatchedResponse(res, 200, []);
+                        done();
+                    });
+                });
+            });
+
+            it('should return a user-array containing all other users who have watched the posted movie when getting the movie I have watched too', function (done) {
+                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.setExampleMovieWatched(exampleUsers.alice, exampleMovies.theToxicAvenger._id, function (err, res) {
+                        testUtil.getExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                            testUtil.evaluateSuccessfulMovieUsersWatchedResponse(res, 200, [exampleUsers.alice]);
+                            testUtil.getExampleMovieWatched(exampleUsers.alice, exampleMovies.theToxicAvenger._id, function (err, res) {
+                                testUtil.evaluateSuccessfulMovieUsersWatchedResponse(res, 200, [exampleUsers.bob]);
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
+            it('should return a user-array containing all other users who have watched the posted movie when getting the movie I have not watched', function (done) {
+                testUtil.setExampleMovieWatched(exampleUsers.alice, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    testUtil.getExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                        testUtil.evaluateSuccessfulMovieUsersWatchedResponse(res, 200, [exampleUsers.alice]);
+                        testUtil.getExampleMovieWatched(exampleUsers.alice, exampleMovies.theToxicAvenger._id, function (err, res) {
+                            testUtil.evaluateSuccessfulMovieUsersWatchedResponse(res, 200, []);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            it('should return a not-found-error when getting a watched movie with invalid move_id', function (done) {
                 var id = 123;
                 testUtil.getExampleMovieWatched(exampleUsers.bob, id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 404);
@@ -204,7 +234,7 @@ describe('Movie-Watched-Endpoint Tests', function () {
 
         describe('not logged in', function () {
             it('should return unauthorized when getting the movie watched with unposted user', function (done) {
-                testUtil.getExampleMovieWatched(exampleUsers.unpostedUser, theToxicAvengerId, function (err, res) {
+                testUtil.getExampleMovieWatched(exampleUsers.unpostedUser, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 401);
                     done();
                 });

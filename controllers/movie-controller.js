@@ -3,6 +3,29 @@
 var Movie = require('../models/movie');
 var controllerUtil = require('./controller-util');
 
+function getMovieResponseBody(movie, message) {
+    var result = {
+        success: true,
+        data: {
+            movie: movie.toObject()
+        }
+    };
+    if (message) {
+        result.message = message;
+    }
+    return result;
+}
+
+function getMoviesResponseBody(movies) {
+    var result = {
+        success: true,
+        data: {
+            movies: movies
+        }
+    };
+    return result;
+}
+
 function castQueryParamByOptionalArray(param) {
     if (param) {
         if (param instanceof Array) {
@@ -29,7 +52,7 @@ module.exports.createMovie = function create(req, res, next) {
             return next(err);
         }
         res.status(201);
-        res.send({success: true, message: 'Movie created!', data: movie.toObject()});
+        res.send(getMovieResponseBody(movie, 'Movie created!'));
     });
 };
 
@@ -45,14 +68,14 @@ module.exports.getMovies = function (req, res, next) {
     /* Removing all undefined properties of queryParams */
     queryParams = controllerUtil.removeUndefinedPropertyOfObject(queryParams);
 
-    var cursor = Movie.find(queryParams, function (err, movies) {
+    Movie.find(queryParams, function (err, movies) {
         if (err) {
             return next(err);
         }
         var movies = movies.map(function(movie) {
             return movie.toObject();
         });
-        res.json({success: true, data: movies});
+        res.json(getMoviesResponseBody(movies));
     });
 
 };
@@ -62,7 +85,7 @@ module.exports.getMovie = function (req, res, next) {
         if (err) {
             return next(err);
         }
-        res.json({success: true, data: movie.toObject()});
+        res.send(getMovieResponseBody(movie));
     });
 };
 
@@ -71,6 +94,7 @@ module.exports.updateMovie = function (req, res, next) {
         if (err) {
             return next(err);
         }
+        delete req.body._id;
         movie.update(req.body, function (err, movie) {
             if (err) {
                 return next(err);
@@ -79,7 +103,7 @@ module.exports.updateMovie = function (req, res, next) {
                 if (err) {
                     return next(err);
                 }
-                res.json({success: true, message: 'Movie updated!', data: movie.toObject()});
+                res.send(getMovieResponseBody(movie, 'Movie updated!'));
             });
         });
     });
@@ -94,7 +118,7 @@ module.exports.deleteMovie = function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            res.json({success: true, message: 'Movie deleted!', data: movie.toObject()});
+            res.json(getMovieResponseBody(movie, 'Movie deleted!'));
         });
     });
 };
