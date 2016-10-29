@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "node ./node_modules/mocha/bin/mocha test --recursive",
     "test-coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive"
   },
@@ -17,6 +17,7 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "connect": "^3.2.0",
+    "cors": "^2.8.1",
     "express": "^4.14.0",
     "js-yaml": "^3.3.0",
     "json-refs": "^2.1.6",
@@ -32,6 +33,7 @@
     "chai": "^3.0.0",
     "coveralls": "^2.11.14",
     "istanbul": "^1.1.0-alpha.1",
+    "nodemon": "^1.11.0",
     "request": "^2.58.0",
     "supertest": "^1.0.0",
     "z-schema": "^3.12.0"

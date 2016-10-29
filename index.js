@@ -3,15 +3,17 @@
 var app = require('express')();
 var http = require('http');
 var passport = require('passport');
+var cors = require('cors');
 var q = require('q');
 var config = require('./config');
 var errorMiddleware = require('./middlewares/error-middleware');
-
+var corsMiddleware = require('./middlewares/cors-middleware');
 var mongooseConfig = require('./mongoose-config');
 var swaggerToolsConfig = require('./swagger-tools-config');
 var swaggerDoc = require('./definitions/swagger-doc');
 
 
+app.use(cors());
 swaggerToolsConfig.initialize(app, config, swaggerDoc.document)
     .then(function () {
         return mongooseConfig.initialize(app, config);

@@ -13,6 +13,6 @@ config.settings = {
     swagger: {
         ui: '/swagger.json'
     }
-}
+};
 
 module.exports = config;
