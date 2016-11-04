@@ -5,6 +5,9 @@
   "Movie": {
     "$ref": "./definitions/movie/Movie.json"
   },
+  "MovieRating": {
+    "$ref": "./definitions/movie/MovieRating.json"
+  },
   "MovieWatched": {
     "$ref": "./definitions/movie/MovieWatched.json"
   }

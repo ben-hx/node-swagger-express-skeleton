@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "required": [
+    "movieId",
+    "userId",
+    "value"
+  ],
+  "properties": {
+    "movieId": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "value": {
+      "type": "integer"
+    }
+  }
+}

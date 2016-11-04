@@ -34,6 +34,23 @@ module.exports = {
         response.body.data.movies.should.deep.include.members(movies)
     },
 
+    evaluateSuccessfulMovieRatingResponse: function (response, statusCode, value) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data.ownRating.should.equal(value);
+    },
+
+    evaluateSuccessfulMovieUsersRatingResponse: function (response, statusCode, usersWithRating) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        var userIdsWithRating = [];
+        for (var i in usersWithRating) {
+            value = usersWithRating[i];
+            userIdsWithRating.push({userId: value._id, rating: value.rating});
+        }
+        response.body.data.usersRating.should.deep.include.members(userIdsWithRating)
+    },
+
     evaluateSuccessfulMovieWatchedResponse: function (response, statusCode, movieWatched) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
@@ -142,6 +159,25 @@ module.exports = {
         var result = api.delete('/movies/' + movieId);
         result.auth(user.username, user.password)
         result.set('Content-Type', 'application/json');
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    getExampleMovieRating: function (user, movieId, done) {
+        var result = api.get('/movies/' + movieId + '/rating');
+        result.auth(user.username, user.password)
+        result.set('Content-Type', 'application/json');
+        result.end(function (err, res) {
+            done(err, res);
+        });
+    },
+
+    putExampleMovieRating: function (user, movieId, value, done) {
+        var result = api.put('/movies/' + movieId + '/rating');
+        result.auth(user.username, user.password)
+        result.set('Content-Type', 'application/json');
+        result.send({value: value});
         result.end(function (err, res) {
             done(err, res);
         });

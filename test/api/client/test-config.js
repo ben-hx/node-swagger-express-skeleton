@@ -18,5 +18,4 @@ module.exports = {
         "message": "string",
         "error": "object"
     }
-
 };

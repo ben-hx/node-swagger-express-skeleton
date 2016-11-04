@@ -152,7 +152,6 @@
         "x-swagger-router-controller": "user-controller"
       }
     },
-
     "/movies": {
       "post": {
         "tags": [
@@ -272,7 +271,6 @@
         "x-swagger-router-controller": "movie-controller"
       }
     },
-
     "/movies/{movie_id}": {
       "get": {
         "tags": [
@@ -404,11 +402,104 @@
         "x-swagger-router-controller": "movie-controller"
       }
     },
-
+    "/movies/{movie_id}/rating": {
+      "get": {
+        "tags": [
+          "movie",
+          "rating"
+        ],
+        "summary": "Get the rating of a Movie",
+        "description": "",
+        "operationId": "getMovieRating",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie Rating response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieRatingResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-rating-controller"
+      },
+      "put": {
+        "tags": [
+          "movie",
+          "rating"
+        ],
+        "summary": "Set a Movies rating",
+        "description": "",
+        "operationId": "setMovieRating",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "user_auth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "movie_id",
+            "in": "path",
+            "description": "ID of the movie",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated movie object",
+            "required": true,
+            "schema": {
+              "$ref": "./definitions/movie/UpdateMovieRating.json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie Rating response",
+            "schema": {
+              "$ref": "./definitions/movie/MovieRatingResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "movie-rating-controller"
+      }
+    },
     "/movies/{movie_id}/watched": {
       "get": {
         "tags": [
-          "movie", "watched"
+          "movie",
+          "watched"
         ],
         "summary": "Get the users who have seen the Movie",
         "description": "",
@@ -446,10 +537,10 @@
         },
         "x-swagger-router-controller": "movie-watched-controller"
       },
-
       "put": {
         "tags": [
-          "movie", "watched"
+          "movie",
+          "watched"
         ],
         "summary": "Set a Movie watched",
         "description": "",
@@ -488,7 +579,6 @@
         "x-swagger-router-controller": "movie-watched-controller"
       }
     },
-
     "/movies/{movie_id}/unwatched": {
       "put": {
         "tags": [
@@ -531,7 +621,6 @@
         "x-swagger-router-controller": "movie-watched-controller"
       }
     },
-
     "/movies/genres": {
       "get": {
         "tags": [
@@ -568,7 +657,6 @@
         "x-swagger-router-controller": "movie-property-controller"
       }
     },
-
     "/movies/directors": {
       "get": {
         "tags": [
@@ -605,7 +693,6 @@
         "x-swagger-router-controller": "movie-property-controller"
       }
     },
-
     "/movies/writers": {
       "get": {
         "tags": [
@@ -642,7 +729,6 @@
         "x-swagger-router-controller": "movie-property-controller"
       }
     },
-
     "/movies/actors": {
       "get": {
         "tags": [
@@ -679,7 +765,6 @@
         "x-swagger-router-controller": "movie-property-controller"
       }
     },
-
     "/movies/languages": {
       "get": {
         "tags": [
@@ -716,9 +801,7 @@
         "x-swagger-router-controller": "movie-property-controller"
       }
     }
-
   },
-
   "securityDefinitions": {
     "user_auth": {
       "type": "basic",

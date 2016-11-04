@@ -36,19 +36,4 @@ config.test = {
     }
 };
 
-config.db = {
-    mongoURI: {
-        production: 'mongodb://localhost/test-production',
-        development: 'mongodb://localhost/test-development',
-        test: 'mongodb://localhost/test-test'
-    }
-};
-
-config.settings = {
-    port: 8080,
-    swagger: {
-        ui: '/swagger.json'
-    }
-};
-
 module.exports = config;

@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "required": [
+    "success",
+    "message",
+    "data"
+  ],
+  "properties": {
+    "success": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "movieId",
+        "ownRating",
+        "averageRating"
+      ],
+      "properties": {
+        "movieId": {
+          "type": "string"
+        },
+        "ownRating": {
+          "type": "integer"
+        },
+        "averageRating": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

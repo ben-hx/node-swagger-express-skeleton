@@ -61,7 +61,7 @@ module.exports.initialize = function (app, config, swaggerDoc) {
 
         // swaggerRouter configuration
         var options = {
-            swaggerUi: config.settings.swagger.ui,
+            swaggerUi: config[app.settings.env].settings.swagger.ui,
             controllers: './controllers',
             useStubs: process.env.NODE_ENV === 'development' ? true : false
         };
