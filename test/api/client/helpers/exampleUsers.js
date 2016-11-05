@@ -9,6 +9,11 @@ module.exports = {
         password: 'alice'
     },
 
+    eve: {
+        username: 'eve',
+        password: 'eve'
+    },
+
     unpostedUser: {
         username: 'unpostedUser',
         password: 'unpostedUser'

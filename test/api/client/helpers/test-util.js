@@ -43,10 +43,14 @@ module.exports = {
     evaluateSuccessfulMovieUsersRatingResponse: function (response, statusCode, usersWithRating) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
+        var sumRating = 0;
+        var ratingCount = 0;
         var userIdsWithRating = [];
         for (var i in usersWithRating) {
-            value = usersWithRating[i];
-            userIdsWithRating.push({userId: value._id, rating: value.rating});
+            var value = usersWithRating[i];
+            ratingCount++;
+            ratingCount = ratingCount + value.rating;
+            userIdsWithRating.push({userid: value.user._id, rating: value.rating});
         }
         response.body.data.usersRating.should.deep.include.members(userIdsWithRating)
     },
@@ -86,6 +90,16 @@ module.exports = {
         response.body.success.should.equal(false);
     },
 
+    dropModels: function (models, done) {
+        var values = models;
+        var count = values.length;
+        for (var key in values) {
+            values[key].collection.drop(function (err) {
+                --count || done();
+            });
+        }
+    },
+
     registerExampleUser: function (user, done) {
         var result = api.post('/register');
         result.set('Content-Type', 'application/json');
@@ -99,6 +113,18 @@ module.exports = {
             }
             done(err, res);
         });
+    },
+
+    registerExampleUsers: function (users, done) {
+        var count = users.length;
+        for (var user in users) {
+            this.registerExampleUser(users[user], function (err, res) {
+                if (err) {
+                    return done(err, res);
+                }
+                --count || done();
+            });
+        }
     },
 
     registerExampleUserWithCredentials: function (credentials, done) {
@@ -123,6 +149,19 @@ module.exports = {
             }
             done(err, res);
         });
+    },
+
+    postExampleMovies: function (usersAndMovie, done) {
+        var values = usersAndMovie;
+        var count = values.length;
+        for (var key in values) {
+            this.postExampleMovie(values[key].user, values[key].movie, function (err, res) {
+                if (err) {
+                    return done(err, res);
+                }
+                --count || done();
+            });
+        }
     },
 
     getExampleMovie: function (user, movieId, done) {
@@ -192,7 +231,7 @@ module.exports = {
         });
     },
 
-    setExampleMovieWatched: function (user, movieId, done) {
+    putExampleMovieWatched: function (user, movieId, done) {
         var result = api.put('/movies/' + movieId + '/watched');
         result.auth(user.username, user.password)
         result.set('Content-Type', 'application/json');
@@ -219,7 +258,7 @@ module.exports = {
     },
 
     getMovieProperty: function (propertyName, user, done) {
-        var result = api.get('/movies/'+propertyName);
+        var result = api.get('/movies/' + propertyName);
         result.auth(user.username, user.password)
         result.end(function (err, res) {
             done(err, res);

@@ -60,6 +60,7 @@ module.exports.getMovieRating = function (req, res, next) {
             if (err) {
                 return next(err);
             }
+            //console.log(movieRating);
             var ownRating = movieRating.value;
 
             MovieRating.find({movieId: data.movieId, userId: {'$ne': data.userId }}, function (err, moviesRating) {

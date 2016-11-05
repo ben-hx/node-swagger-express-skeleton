@@ -15,44 +15,45 @@ var exampleMovies = require("../helpers/examleMovies");
 
 describe('Movie-Rating-Endpoint Tests', function () {
 
+    var dropForEach = [
+        MovieRating,
+        MovieWatched
+    ];
+
+    var dropForAll = [
+        Movie,
+        User
+    ];
+
     before(function (done) {
-        User.collection.drop(function () {
-            testUtil.registerExampleUser(exampleUsers.bob, function () {
-                testUtil.registerExampleUser(exampleUsers.alice, function () {
-                    Movie.collection.drop(function () {
-                        testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function () {
-                            testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.returnOfTheKillerTomatos, function () {
-                                done();
-                            });
-                        });
-                    });
+        var registerUsers = [
+            exampleUsers.bob,
+            exampleUsers.alice,
+            exampleUsers.eve
+        ];
+        var postMovies = [
+            {user: exampleUsers.bob, movie: exampleMovies.theToxicAvenger},
+            {user: exampleUsers.bob, movie: exampleMovies.returnOfTheKillerTomatos}
+        ];
+        testUtil.dropModels(dropForAll, function () {
+            testUtil.registerExampleUsers(registerUsers, function () {
+                testUtil.postExampleMovies(postMovies, function () {
+                    done();
                 });
             });
         });
     });
 
     beforeEach(function (done) {
-        MovieRating.collection.drop(function () {
-            MovieWatched.collection.drop(function () {
-                done();
-            });
-        });
-    });
-
-    after(function (done) {
-        Movie.collection.drop(function () {
-            User.collection.drop(function () {
-                done();
-            });
-        });
+        testUtil.dropModels(dropForEach, done);
     });
 
     afterEach(function (done) {
-        MovieRating.collection.drop(function () {
-            MovieWatched.collection.drop(function () {
-                done();
-            });
-        });
+        testUtil.dropModels(dropForEach, done);
+    });
+
+    after(function (done) {
+        testUtil.dropModels(dropForAll, done);
     });
 
     describe('PUT /movies/:movie_id/rating', function () {
@@ -61,7 +62,7 @@ describe('Movie-Rating-Endpoint Tests', function () {
 
             it('should return movie rating when setting the movies rating', function (done) {
                 var ratingValue = 2;
-                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                testUtil.putExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ratingValue, function (err, res) {
                         testUtil.evaluateSuccessfulMovieRatingResponse(res, 200, ratingValue);
                         done();
@@ -71,7 +72,7 @@ describe('Movie-Rating-Endpoint Tests', function () {
 
             it('should return movie rating when setting the movies rating a secound time', function (done) {
                 var ratingValue = 2;
-                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                testUtil.putExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ratingValue, function (err, res) {
                         testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ++ratingValue, function (err, res) {
                             testUtil.evaluateSuccessfulMovieRatingResponse(res, 200, ratingValue);
@@ -116,9 +117,9 @@ describe('Movie-Rating-Endpoint Tests', function () {
 
         describe('logged in', function () {
 
-            it('should return movie rating when getting a rated movie', function (done) {
+            it('should return movie rating when getting a movie which is rated by the the logged in user', function (done) {
                 var ratingValue = 2;
-                testUtil.setExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                testUtil.putExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                     testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ratingValue, function (err, res) {
                         testUtil.getExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
                             testUtil.evaluateSuccessfulMovieUsersRatingResponse(res, 200, []);
@@ -129,6 +130,42 @@ describe('Movie-Rating-Endpoint Tests', function () {
                 });
             });
 
+            function putExampleMovieRatingForUser(rating, done) {
+                testUtil.putExampleMovieWatched(rating.user, rating.movie._id, function (err, res) {
+                    testUtil.putExampleMovieRating(rating.user, rating.movie._id, rating.rating, function (err, res) {
+                        testUtil.getExampleMovieRating(rating.user, rating.movie._id, function (err, res) {
+                            done();
+                        });
+                    });
+                });
+            }
+
+            function putExampleMovieRatingForUsers(ratings, done) {
+                var ratingsCount = ratings.length;
+                for (var rating in ratings) {
+                    putExampleMovieRatingForUser(ratings[rating], function () {
+                        --ratingsCount || done();
+                    });
+                }
+            }
+
+            it('should return movie rating when getting a movie which is rated by the the logged in user and one other user', function (done) {
+                var ratings = [
+                    {user: exampleUsers.bob, movie: exampleMovies.theToxicAvenger, rating: 3},
+                    {user: exampleUsers.alice, movie: exampleMovies.theToxicAvenger, rating: 2},
+                    {user: exampleUsers.eve, movie: exampleMovies.theToxicAvenger, rating: 4},
+                ];
+                putExampleMovieRatingForUsers(ratings, function () {
+                    testUtil.getExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                        delete ratings[0];
+                        testUtil.evaluateSuccessfulMovieUsersRatingResponse(res, 200, ratings);
+                        done();
+                    });
+                });
+            });
+
+
         });
     });
-});
+})
+;
