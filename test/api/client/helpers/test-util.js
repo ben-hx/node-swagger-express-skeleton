@@ -11,7 +11,14 @@ module.exports = {
     evaluateSuccessfulUserResponse: function (response, statusCode, user) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
+        response.body.data.user.email.should.equal(user.email);
         response.body.data.user.username.should.equal(user.username);
+    },
+
+    evaluateSuccessfulMinimalUserResponse: function (response, statusCode, user) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data.user.email.should.equal(user.email);
     },
 
     evaluateSuccessfulMovieResponse: function (response, statusCode, movie, user) {
@@ -106,13 +113,14 @@ module.exports = {
         }
     },
 
+    setAuthenticationforRequest: function(request, user) {
+        request.auth(user.username, user.password);
+    },
+
     registerExampleUser: function (user, done) {
         var result = api.post('/register');
         result.set('Content-Type', 'application/json');
-        result.send({
-            'username': user.username,
-            'password': user.password
-        });
+        result.send(user);
         result.end(function (err, res) {
             if (res.body.success) {
                 user._id = res.body.data.user._id;
@@ -146,7 +154,7 @@ module.exports = {
 
     postExampleMovie: function (user, movie, done) {
         var result = api.post('/movies');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.send(movie);
         result.end(function (err, res) {
@@ -172,7 +180,7 @@ module.exports = {
 
     getExampleMovie: function (user, movieId, done) {
         var result = api.get('/movies/' + movieId);
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.end(function (err, res) {
             done(err, res);
         });
@@ -181,7 +189,7 @@ module.exports = {
     getExampleMovies: function (user, queryParams, done) {
         var result = api.get('/movies');
         result.query(queryParams);
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.end(function (err, res) {
             done(err, res);
         });
@@ -189,7 +197,7 @@ module.exports = {
 
     putExampleMovie: function (user, movieId, exampleMovie, done) {
         var result = api.put('/movies/' + movieId);
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.send(exampleMovie);
         result.end(function (err, res) {
@@ -202,7 +210,7 @@ module.exports = {
 
     deleteExampleMovie: function (user, movieId, done) {
         var result = api.delete('/movies/' + movieId);
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.end(function (err, res) {
             done(err, res);
@@ -211,7 +219,7 @@ module.exports = {
 
     getExampleMovieRating: function (user, movieId, done) {
         var result = api.get('/movies/' + movieId + '/rating');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.end(function (err, res) {
             done(err, res);
@@ -220,7 +228,7 @@ module.exports = {
 
     putExampleMovieRating: function (user, movieId, value, done) {
         var result = api.put('/movies/' + movieId + '/rating');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.send({value: value});
         result.end(function (err, res) {
@@ -230,7 +238,7 @@ module.exports = {
 
     getExampleMovieWatched: function (user, movieId, done) {
         var result = api.get('/movies/' + movieId + '/watched');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.end(function (err, res) {
             done(err, res);
@@ -239,7 +247,7 @@ module.exports = {
 
     putExampleMovieWatched: function (user, movieId, done) {
         var result = api.put('/movies/' + movieId + '/watched');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.end(function (err, res) {
             done(err, res);
@@ -248,7 +256,7 @@ module.exports = {
 
     setExampleMovieUnWatched: function (user, movieId, done) {
         var result = api.put('/movies/' + movieId + '/unwatched');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.end(function (err, res) {
             done(err, res);
@@ -257,7 +265,7 @@ module.exports = {
 
     getGenres: function (user, done) {
         var result = api.get('/movies/genres');
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.end(function (err, res) {
             done(err, res);
         });
@@ -265,7 +273,7 @@ module.exports = {
 
     getMovieProperty: function (propertyName, user, done) {
         var result = api.get('/movies/' + propertyName);
-        result.auth(user.username, user.password)
+        this.setAuthenticationforRequest(result, user);
         result.end(function (err, res) {
             done(err, res);
         });

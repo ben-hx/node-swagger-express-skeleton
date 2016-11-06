@@ -8,7 +8,6 @@ var User = require("../../../../models/user");
 var testUtil = require("../helpers/test-util");
 var exampleUsers = require("../helpers/exampleUsers");
 
-
 describe('User-Endpoint Tests', function () {
 
     beforeEach(function (done) {
@@ -53,6 +52,13 @@ describe('User-Endpoint Tests', function () {
             });
         });
 
+        it('should return a user when posting minimal-user-data', function (done) {
+            testUtil.registerExampleUser(exampleUsers.minimal, function (err, res) {
+                testUtil.evaluateSuccessfulMinimalUserResponse(res, 201, exampleUsers.minimal);
+                done();
+            });
+        });
+
         it('should return a bad-request when posting a user with no credentials', function (done) {
             testUtil.registerExampleUserWithCredentials({}, function (err, res) {
                 testUtil.evaluateErrorResponse(res, 400);
@@ -60,7 +66,7 @@ describe('User-Endpoint Tests', function () {
             });
         });
 
-        it('should return a bad-request when posting a user with no username', function (done) {
+        it('should return a bad-request when posting a user with no email', function (done) {
             testUtil.registerExampleUserWithCredentials({password: 'bob'}, function (err, res) {
                 testUtil.evaluateErrorResponse(res, 400);
                 done();
@@ -68,21 +74,55 @@ describe('User-Endpoint Tests', function () {
         });
 
         it('should return a bad-request when posting a user with no password', function (done) {
-            testUtil.registerExampleUserWithCredentials({username: 'bob'}, function (err, res) {
+            testUtil.registerExampleUserWithCredentials({email: 'bob'}, function (err, res) {
                 testUtil.evaluateErrorResponse(res, 400);
                 done();
             });
         });
 
+        it('should return a bad-request when posting a user with invalid email', function (done) {
+            var user = {
+                username: 'invalid',
+                email: 'invalid',
+                password: 'invalid'
+            };
+            testUtil.registerExampleUser(user, function (err, res) {
+                testUtil.evaluateErrorResponse(res, 400);
+                done();
+            });
+        });
+
+
         it('should return a bad-request when posting two users with the same username', function (done) {
             testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
                 testUtil.evaluateSuccessfulUserResponse(res, 201, exampleUsers.bob);
-                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                var user = {
+                    username: exampleUsers.bob.username,
+                    email: 'invalid@invalid.de',
+                    password: 'invalid'
+                };
+                testUtil.registerExampleUser(user, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 400);
                     done();
                 });
             });
         });
+
+        it('should return a bad-request when posting two users with the same email', function (done) {
+            testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                testUtil.evaluateSuccessfulUserResponse(res, 201, exampleUsers.bob);
+                var user = {
+                    username: 'invalid',
+                    email: exampleUsers.bob.email,
+                    password: 'invalid'
+                };
+                testUtil.registerExampleUser(user, function (err, res) {
+                    testUtil.evaluateErrorResponse(res, 400);
+                    done();
+                });
+            });
+        });
+
     });
 
     describe('POST /changepassword', function () {

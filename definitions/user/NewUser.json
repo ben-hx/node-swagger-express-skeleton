@@ -1,11 +1,17 @@
 {
   "type": "object",
   "required": [
-    "username",
+    "email",
     "password"
   ],
   "properties": {
+    "_id": {
+      "type": "string"
+    },
     "username": {
+      "type": "string"
+    },
+    "email": {
       "type": "string"
     },
     "password": {
@@ -15,9 +21,6 @@
       "type": "string"
     },
     "lastName": {
-      "type": "string"
-    },
-    "email": {
       "type": "string"
     },
     "phone": {

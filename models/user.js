@@ -1,4 +1,5 @@
 var bcrypt = require('bcrypt-nodejs');
+var validator = require('validator');
 var userModel = require('./models').User;
 var modelUtil = require('./model-util');
 
@@ -12,11 +13,20 @@ modelUtil.addToObjectToSchemaOptions(userModel.schema, function (doc, user, opti
 userModel.schema.path('username').validate(function (value, done) {
     var id = this._id;
     this.model('User').count({username: value, _id: {$ne: id}}, function (error, count) {
-        // Return false if an error is thrown or count > 0
         done(!(error || count));
     });
 }, 'User with same username is already existing!');
 
+userModel.schema.path('email').validate(function (value, done) {
+    var id = this._id;
+    this.model('User').count({email: value, _id: {$ne: id}}, function (error, count) {
+        done(!(error || count));
+    });
+}, 'User with same email is already existing!');
+
+userModel.schema.path('email').validate(function (value, done) {
+    done(validator.isEmail(value));
+}, 'Invalid email!');
 
 userModel.schema.pre('save', function (callback) {
     var user = this;
