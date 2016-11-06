@@ -13,6 +13,38 @@ var exampleMovies = require("../helpers/examleMovies");
 
 describe('Movie-Property-Endpoint Tests', function () {
 
+    var dropForEach = [
+        Movie
+    ];
+
+    var dropForAll = [
+        User
+    ];
+
+    before(function (done) {
+        var registerUsers = [
+            exampleUsers.bob,
+            exampleUsers.alice
+        ];
+        testUtil.dropModels(dropForAll, function () {
+            testUtil.registerExampleUsers(registerUsers, function () {
+                done();
+            });
+        });
+    });
+
+    beforeEach(function (done) {
+        testUtil.dropModels(dropForEach, done);
+    });
+
+    afterEach(function (done) {
+        testUtil.dropModels(dropForEach, done);
+    });
+
+    after(function (done) {
+        testUtil.dropModels(dropForAll, done);
+    });
+
     var movieProperties = [
         'genres',
         'directors',
@@ -21,40 +53,13 @@ describe('Movie-Property-Endpoint Tests', function () {
         'languages'
     ];
 
-    before(function (done) {
-        User.collection.drop(function () {
-            testUtil.registerExampleUser(exampleUsers.bob, function () {
-                testUtil.registerExampleUser(exampleUsers.alice, done);
-            });
-        });
-    });
-
-    beforeEach(function (done) {
-        Movie.collection.drop(function () {
-            done();
-        });
-    });
-
-    after(function (done) {
-        User.collection.drop(function () {
-            done();
-        });
-    });
-
-    afterEach(function (done) {
-        Movie.collection.drop(function () {
-            done();
-        });
-    });
-
-
     for (var i = 0; i < movieProperties.length; ++i) {
         testForMovieProperty(movieProperties[i]);
     }
-    
+
     function testForMovieProperty(propertyName) {
 
-        describe('GET /movies/'+propertyName, function () {
+        describe('GET /movies/' + propertyName, function () {
 
             describe('logged in', function () {
 
@@ -75,14 +80,14 @@ describe('Movie-Property-Endpoint Tests', function () {
                     }
                 }
 
-                it('should return posted '+propertyName+' of no movie', function (done) {
+                it('should return posted ' + propertyName + ' of no movie', function (done) {
                     testUtil.getMovieProperty(propertyName, exampleUsers.bob, function (err, res) {
                         testUtil.evaluateSuccessfulMoviePropertyResponse(propertyName, res, 200, []);
                         done();
                     });
                 });
 
-                it('should return posted '+propertyName+' of one movie', function (done) {
+                it('should return posted ' + propertyName + ' of one movie', function (done) {
                     postMovieArray(exampleUsers.bob, [
                         exampleMovies.theToxicAvenger
                     ], function (err) {
@@ -93,7 +98,7 @@ describe('Movie-Property-Endpoint Tests', function () {
                     });
                 });
 
-                it('should return posted '+propertyName+' of more than one movie', function (done) {
+                it('should return posted ' + propertyName + ' of more than one movie', function (done) {
                     postMovieArray(exampleUsers.bob, [
                         exampleMovies.theToxicAvenger,
                         exampleMovies.returnOfTheKillerTomatos

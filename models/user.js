@@ -11,25 +11,25 @@ modelUtil.addToObjectToSchemaOptions(userModel.schema, function (doc, user, opti
  */
 userModel.schema.path('username').validate(function (value, done) {
     var id = this._id;
-    this.model('User').count({ username: value, _id: { $ne: id } }, function (error, count) {
+    this.model('User').count({username: value, _id: {$ne: id}}, function (error, count) {
         // Return false if an error is thrown or count > 0
         done(!(error || count));
     });
 }, 'User with same username is already existing!');
 
 
-userModel.schema.pre('save', function(callback) {
+userModel.schema.pre('save', function (callback) {
     var user = this;
 
     if (!user.isModified('password')) {
         return callback();
     }
 
-    bcrypt.genSalt(5, function(err, salt) {
+    bcrypt.genSalt(5, function (err, salt) {
         if (err) {
             return callback(err)
         }
-        bcrypt.hash(user.password, salt, null, function(err, hash) {
+        bcrypt.hash(user.password, salt, null, function (err, hash) {
             if (err) {
                 return callback(err);
             }
@@ -42,9 +42,9 @@ userModel.schema.pre('save', function(callback) {
 /*
  Added to the Prototype, because userModel.schema.methods
  is not working after schema has been constructed
-*/
-userModel.prototype['verifyPassword'] = function(password, callback) {
-    bcrypt.compare(password, this.password, function(err, isMatch) {
+ */
+userModel.prototype['verifyPassword'] = function (password, callback) {
+    bcrypt.compare(password, this.password, function (err, isMatch) {
         if (err) {
             return callback(err);
         }

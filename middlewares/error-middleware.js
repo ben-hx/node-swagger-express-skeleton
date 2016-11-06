@@ -1,9 +1,7 @@
-// Middleware for all resource-errors
 module.exports.resourceErrorHandler = function (err, req, res, next) {
     if (!err) {
         return next();
     }
-    //console.log(err);
     var statusCode = err.status || 500;
     var message = "Unexpeced Error";
     if (err.name == 'ValidationError' || err.failedValidation) {
@@ -15,7 +13,7 @@ module.exports.resourceErrorHandler = function (err, req, res, next) {
         statusCode = 401;
         message = 'Authentication Error!'
     }
-    if (statusCode==500) {
+    if (statusCode == 500) {
         console.log(err);
     }
     err.status = statusCode;

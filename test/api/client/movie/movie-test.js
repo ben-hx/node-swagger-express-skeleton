@@ -13,30 +13,36 @@ var exampleMovies = require("../helpers/examleMovies");
 
 describe('Movie-Endpoint Tests', function () {
 
+    var dropForEach = [
+        Movie
+    ];
+
+    var dropForAll = [
+        User
+    ];
+
     before(function (done) {
-        User.collection.drop(function () {
-            testUtil.registerExampleUser(exampleUsers.bob, function () {
-                testUtil.registerExampleUser(exampleUsers.alice, done);
+        var registerUsers = [
+            exampleUsers.bob,
+            exampleUsers.alice
+        ];
+        testUtil.dropModels(dropForAll, function () {
+            testUtil.registerExampleUsers(registerUsers, function () {
+                done();
             });
         });
     });
 
     beforeEach(function (done) {
-        Movie.collection.drop(function () {
-            done();
-        });
-    });
-
-    after(function (done) {
-        User.collection.drop(function () {
-            done();
-        });
+        testUtil.dropModels(dropForEach, done);
     });
 
     afterEach(function (done) {
-        Movie.collection.drop(function () {
-            done();
-        });
+        testUtil.dropModels(dropForEach, done);
+    });
+
+    after(function (done) {
+        testUtil.dropModels(dropForAll, done);
     });
 
     describe('POST /movies', function () {

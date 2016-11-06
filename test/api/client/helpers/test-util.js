@@ -40,18 +40,24 @@ module.exports = {
         response.body.data.ownRating.should.equal(value);
     },
 
-    evaluateSuccessfulMovieUsersRatingResponse: function (response, statusCode, usersWithRating) {
+    evaluateSuccessfulMovieUsersRatingResponse: function (response, statusCode, movieRating) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
         var sumRating = 0;
         var ratingCount = 0;
         var userIdsWithRating = [];
-        for (var i in usersWithRating) {
-            var value = usersWithRating[i];
+        for (var i in movieRating.usersRating) {
+            var value = movieRating.usersRating[i];
             ratingCount++;
             ratingCount = ratingCount + value.rating;
-            userIdsWithRating.push({userid: value.user._id, rating: value.rating});
+            userIdsWithRating.push({userid: value.user._id, rating: value.ownRating});
         }
+        if (movieRating.ownRating == null) {
+            expect(response.body.data.ownRating).to.be.null;
+        } else {
+            response.body.data.ownRating.should.equal(movieRating.ownRating);
+        }
+        response.body.data.averageRating.should.be.closeTo(movieRating.averageRating, 0.001);
         response.body.data.usersRating.should.deep.include.members(userIdsWithRating)
     },
 

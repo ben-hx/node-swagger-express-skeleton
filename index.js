@@ -1,5 +1,5 @@
 'use strict';
-
+var debug = require('debug')('app');
 var app = require('express')();
 var http = require('http');
 var passport = require('passport');
@@ -14,7 +14,7 @@ var swaggerDoc = require('./definitions/swagger-doc');
 app.use(cors());
 swaggerToolsConfig.initialize(app, config, swaggerDoc.document)
     .then(function () {
-        return mongooseConfig.initialize(app, config);
+        return mongooseConfig.initialize(config);
     })
     .then(function () {
         addMiddleware();
@@ -28,11 +28,11 @@ function addMiddleware() {
 }
 
 function startServer() {
-    var port = config[app.settings.env].settings.port;
+    var port = config[process.env.NODE_ENV].settings.port;
     http.createServer(app).listen(port, function () {
-        console.log('App startet in %s-mode', app.settings.env);
-        console.log('Your server is listening on port %d (http://localhost:%d)', port, port);
-        console.log('Swagger-ui is available on http://localhost:%d/docs', port);
+        debug('App startet in %s-mode', process.env.NODE_ENV);
+        debug('Your server is listening on port %d (http://localhost:%d)', port, port);
+        debug('Swagger-ui is available on http://localhost:%d/docs', port);
     });
 }
 

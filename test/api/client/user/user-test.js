@@ -31,7 +31,7 @@ describe('User-Endpoint Tests', function () {
             'new_password': newPassword
         });
         result.auth(user.username, user.password);
-        result.end(function(err, res){
+        result.end(function (err, res) {
             done(err, res);
         });
     }
@@ -39,7 +39,7 @@ describe('User-Endpoint Tests', function () {
     function getMe(user, done) {
         var result = api.get("/me");
         result.auth(user.username, user.password);
-        result.end(function(err, res){
+        result.end(function (err, res) {
             done(err, res);
         });
     }
@@ -67,17 +67,17 @@ describe('User-Endpoint Tests', function () {
             });
         });
 
-        it('should return a bad-request when posting a user with no password',function(done){
-            testUtil.registerExampleUserWithCredentials({username: 'bob'}, function(err, res){
+        it('should return a bad-request when posting a user with no password', function (done) {
+            testUtil.registerExampleUserWithCredentials({username: 'bob'}, function (err, res) {
                 testUtil.evaluateErrorResponse(res, 400);
                 done();
             });
         });
 
-        it('should return a bad-request when posting two users with the same username',function(done){
-            testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
+        it('should return a bad-request when posting two users with the same username', function (done) {
+            testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
                 testUtil.evaluateSuccessfulUserResponse(res, 201, exampleUsers.bob);
-                testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 400);
                     done();
                 });
@@ -85,22 +85,22 @@ describe('User-Endpoint Tests', function () {
         });
     });
 
-    describe('POST /changepassword', function() {
+    describe('POST /changepassword', function () {
 
-        describe('logged in', function() {
+        describe('logged in', function () {
 
-            it('should return a user when changing a valid passwor',function(done){
-                testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
-                    changePassword(exampleUsers.bob, exampleUsers.bob.password, "1234", function(err, res) {
+            it('should return a user when changing a valid passwor', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    changePassword(exampleUsers.bob, exampleUsers.bob.password, "1234", function (err, res) {
                         testUtil.evaluateSuccessfulUserResponse(res, 200, exampleUsers.bob);
                         done();
                     });
                 });
             });
 
-            it('should return a bad-request when wrong old password is set',function(done){
-                testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
-                    changePassword(exampleUsers.bob, exampleUsers.bob.password+44, "1234", function(err, res) {
+            it('should return a bad-request when wrong old password is set', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    changePassword(exampleUsers.bob, exampleUsers.bob.password + 44, "1234", function (err, res) {
                         testUtil.evaluateErrorResponse(res, 400);
                         done();
                     });
@@ -109,11 +109,11 @@ describe('User-Endpoint Tests', function () {
 
         });
 
-        describe('not logged in', function() {
+        describe('not logged in', function () {
 
-            it('should return unauthorized when posting an unposted user',function(done){
-                testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
-                    changePassword(exampleUsers.unpostedUser, exampleUsers.unpostedUser.password, "1234", function(err, res) {
+            it('should return unauthorized when posting an unposted user', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    changePassword(exampleUsers.unpostedUser, exampleUsers.unpostedUser.password, "1234", function (err, res) {
                         testUtil.evaluateErrorResponse(res, 401);
                         done();
                     });
@@ -124,13 +124,13 @@ describe('User-Endpoint Tests', function () {
 
     });
 
-    describe('GET /me', function() {
+    describe('GET /me', function () {
 
-        describe('logged in', function() {
+        describe('logged in', function () {
 
-            it('should return the logged in user when getting me',function(done){
-                testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
-                    getMe(exampleUsers.bob, function(err, res) {
+            it('should return the logged in user when getting me', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    getMe(exampleUsers.bob, function (err, res) {
                         testUtil.evaluateSuccessfulUserResponse(res, 200, exampleUsers.bob);
                         done();
                     });
@@ -139,11 +139,11 @@ describe('User-Endpoint Tests', function () {
 
         });
 
-        describe('not logged in', function() {
+        describe('not logged in', function () {
 
-            it('should return unauthorized when getting an unposted user',function(done){
-                testUtil.registerExampleUser(exampleUsers.bob, function(err, res){
-                    getMe(exampleUsers.unpostedUser, function(err, res) {
+            it('should return unauthorized when getting an unposted user', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    getMe(exampleUsers.unpostedUser, function (err, res) {
                         testUtil.evaluateErrorResponse(res, 401);
                         done();
                     });

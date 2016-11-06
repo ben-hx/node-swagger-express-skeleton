@@ -14,40 +14,44 @@ var exampleMovies = require("../helpers/examleMovies");
 
 describe('Movie-Watched-Endpoint Tests', function () {
 
+    var dropForEach = [
+        MovieWatched
+    ];
+
+    var dropForAll = [
+        Movie,
+        User
+    ];
+
     before(function (done) {
-        User.collection.drop(function () {
-            testUtil.registerExampleUser(exampleUsers.bob, function () {
-                testUtil.registerExampleUser(exampleUsers.alice, function () {
-                    Movie.collection.drop(function () {
-                        testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function () {
-                            testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.returnOfTheKillerTomatos, function () {
-                                done();
-                            });
-                        });
-                    });
+        var registerUsers = [
+            exampleUsers.bob,
+            exampleUsers.alice,
+            exampleUsers.eve
+        ];
+        var postMovies = [
+            {user: exampleUsers.bob, movie: exampleMovies.theToxicAvenger},
+            {user: exampleUsers.bob, movie: exampleMovies.returnOfTheKillerTomatos}
+        ];
+        testUtil.dropModels(dropForAll, function () {
+            testUtil.registerExampleUsers(registerUsers, function () {
+                testUtil.postExampleMovies(postMovies, function () {
+                    done();
                 });
             });
         });
     });
 
     beforeEach(function (done) {
-        MovieWatched.collection.drop(function () {
-            done();
-        });
-    });
-
-    after(function (done) {
-        Movie.collection.drop(function () {
-            User.collection.drop(function () {
-                done();
-            });
-        });
+        testUtil.dropModels(dropForEach, done);
     });
 
     afterEach(function (done) {
-        MovieWatched.collection.drop(function () {
-            done();
-        });
+        testUtil.dropModels(dropForEach, done);
+    });
+
+    after(function (done) {
+        testUtil.dropModels(dropForAll, done);
     });
 
     describe('PUT /movies/:movie_id/watched', function () {

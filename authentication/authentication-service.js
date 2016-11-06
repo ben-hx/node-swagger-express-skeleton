@@ -1,27 +1,21 @@
-// Load required packages
 var passport = require('passport');
-var BasicStrategy = require('passport-http').BasicStrategy;
-var User = require('../models/user');
+var errors = require('../errors/errors');
+var BasicStrategy = require('../authentication/basic-authentication-strategy');
 
-passport.use(new BasicStrategy(
-    function(username, password, callback) {
-        User.findOne({ username: username }, function (err, user) {
-            if (err) { return callback(err); }
-
-            // No user found with that username
-            if (!user) { return callback(null, false); }
-
-            // Make sure the password is correct
-            user.verifyPassword(password, function(err, isMatch) {
-                if (err) { return callback(err); }
-
-                // Password did not match
-                if (!isMatch) { return callback(null, false); }
-                // Success
-                return callback(null, user);
-            });
-        });
-    }
-));
-
-exports.isAuthenticated = passport.authenticate('basic', { session : false, failWithError: true });
+module.exports.getOptions = function () {
+    return {
+        user_auth: function (req, authOrSecDef, scopesOrApiKey, callback) {
+            passport.use(new BasicStrategy());
+            passport.authenticate('basic', {session: false}, function (err, user, info) {
+                if (err) {
+                    return callback(new errors.AuthenticationError('Error while authentication'));
+                }
+                if (!user) {
+                    return callback(new errors.AuthenticationError('User validation Failed'));
+                }
+                req.user = user;
+                return callback();
+            })(req, null, callback);
+        }
+    };
+};

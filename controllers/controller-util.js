@@ -1,13 +1,7 @@
 var Movie = require('../models/movie');
+var errors = require('../errors/errors');
 
 module.exports = {
-
-    NotFoundError: function (message) {
-        Error.call(this);
-        this.name = 'NotFoundError';
-        this.message = message;
-        this.status = 404;
-    },
 
     removeUndefinedPropertyOfObject: function (object) {
         return JSON.parse(JSON.stringify(object));
@@ -16,7 +10,7 @@ module.exports = {
     getMovieById: function (id, callback) {
         Movie.findOne({_id: id}, function (err, movie) {
             if (movie == null) {
-                callback(new module.exports.NotFoundError('Movie does not exist!'));
+                callback(new errors.NotFoundError('Movie does not exist!'));
             } else {
                 callback(null, movie);
             }
