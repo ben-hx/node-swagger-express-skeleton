@@ -1,3 +1,5 @@
+var debug = require('debug')('app');
+
 module.exports.resourceErrorHandler = function (err, req, res, next) {
     if (!err) {
         return next();
@@ -14,7 +16,7 @@ module.exports.resourceErrorHandler = function (err, req, res, next) {
         message = 'Authentication Error!'
     }
     if (statusCode == 500) {
-        console.log(err);
+        debug(err);
     }
     err.status = statusCode;
     res.status(statusCode);

@@ -89,9 +89,18 @@ describe('User-Endpoint Tests', function () {
 
         describe('logged in', function () {
 
-            it('should return a user when changing a valid passwor', function (done) {
+            it('should return a user when changing a valid password', function (done) {
                 testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
                     changePassword(exampleUsers.bob, exampleUsers.bob.password, "1234", function (err, res) {
+                        testUtil.evaluateSuccessfulUserResponse(res, 200, exampleUsers.bob);
+                        done();
+                    });
+                });
+            });
+
+            it('should return a user when changing the password to the same as before', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    changePassword(exampleUsers.bob, exampleUsers.bob.password, exampleUsers.bob.password, function (err, res) {
                         testUtil.evaluateSuccessfulUserResponse(res, 200, exampleUsers.bob);
                         done();
                     });
@@ -132,6 +141,16 @@ describe('User-Endpoint Tests', function () {
                 testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
                     getMe(exampleUsers.bob, function (err, res) {
                         testUtil.evaluateSuccessfulUserResponse(res, 200, exampleUsers.bob);
+                        done();
+                    });
+                });
+            });
+
+            it('should return unauthorized when getting me with the wrong password', function (done) {
+                testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
+                    exampleUsers.bob.password = 'wrong'
+                    getMe(exampleUsers.bob, function (err, res) {
+                        testUtil.evaluateErrorResponse(res, 401);
                         done();
                     });
                 });
