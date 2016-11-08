@@ -14,7 +14,7 @@ var swaggerDoc = require('./definitions/swagger-doc');
 app.use(cors());
 swaggerToolsConfig.initialize(app, config, swaggerDoc.document)
     .then(function () {
-        return mongooseConfig.initialize(config);
+        return mongooseConfig.initialize(app, config);
     })
     .then(function () {
         addMiddleware();
@@ -28,9 +28,9 @@ function addMiddleware() {
 }
 
 function startServer() {
-    var port = config[process.env.NODE_ENV].settings.port;
+    var port = config[app.get('env')].settings.port;
     http.createServer(app).listen(port, function () {
-        debug('App startet in %s-mode', process.env.NODE_ENV);
+        debug('App startet in %s-mode', app.get('env'));
         debug('Your server is listening on port %d (http://localhost:%d)', port, port);
         debug('Swagger-ui is available on http://localhost:%d/docs', port);
     });

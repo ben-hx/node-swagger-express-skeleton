@@ -114,7 +114,7 @@ module.exports = {
     },
 
     setAuthenticationforRequest: function(request, user) {
-        request.auth(user.username, user.password);
+        request.auth(user.email, user.password);
     },
 
     registerExampleUser: function (user, done) {

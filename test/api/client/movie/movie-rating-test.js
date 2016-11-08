@@ -246,6 +246,23 @@ describe('Movie-Rating-Endpoint Tests', function () {
                     });
                 });
             });
+
+
+            it('should return movie rating when getting a movie which is not rated by the the logged in user and not rated by other users', function (done) {
+                testUtil.getExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
+                    var expectedOwnRating = null;
+                    var expectedAverageRating = 0;
+                    var expectedUsersRating = [];
+                    testUtil.evaluateSuccessfulMovieUsersRatingResponse(res, 200, {
+                        usersRating: expectedUsersRating,
+                        ownRating: expectedOwnRating,
+                        averageRating: expectedAverageRating
+                    });
+                    done();
+                });
+            });
+
+
         });
     });
 });

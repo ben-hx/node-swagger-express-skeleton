@@ -29,7 +29,7 @@ describe('User-Endpoint Tests', function () {
             'old_password': oldPassword,
             'new_password': newPassword
         });
-        result.auth(user.username, user.password);
+        testUtil.setAuthenticationforRequest(result, user);
         result.end(function (err, res) {
             done(err, res);
         });
@@ -37,7 +37,7 @@ describe('User-Endpoint Tests', function () {
 
     function getMe(user, done) {
         var result = api.get("/me");
-        result.auth(user.username, user.password);
+        testUtil.setAuthenticationforRequest(result, user);
         result.end(function (err, res) {
             done(err, res);
         });

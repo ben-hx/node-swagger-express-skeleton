@@ -68,7 +68,7 @@ module.exports.getMovieRating = function (req, res, next) {
                 }
             }
             ], function (err, averageMovieRating) {
-                var averageRating = averageMovieRating[0].value;
+                var averageRating = (averageMovieRating.length > 0 ? averageMovieRating[0].value : 0);
                 if (err) {
                     return next(err);
                 }
