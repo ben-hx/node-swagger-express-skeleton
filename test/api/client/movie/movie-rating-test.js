@@ -90,21 +90,28 @@ describe('Movie-Rating-Endpoint Tests', function () {
         describe('logged in', function () {
 
             it('should return movie rating when setting the movies rating', function (done) {
-                var ratingValue = 2;
+                var rating = {
+                    ownRating: 2,
+                    averageRating: 2
+                };
                 testUtil.putExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
-                    testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ratingValue, function (err, res) {
-                        testUtil.evaluateSuccessfulMovieRatingResponse(res, 200, ratingValue);
+                    testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, rating.ownRating, function (err, res) {
+                        testUtil.evaluateSuccessfulMovieRatingResponse(res, 200, rating);
                         done();
                     });
                 });
             });
 
             it('should return movie rating when setting the movies rating a secound time', function (done) {
-                var ratingValue = 2;
+                var rating = {
+                    ownRating: 2,
+                    averageRating: 2
+                };
                 testUtil.putExampleMovieWatched(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {
-                    testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ratingValue, function (err, res) {
-                        testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ++ratingValue, function (err, res) {
-                            testUtil.evaluateSuccessfulMovieRatingResponse(res, 200, ratingValue);
+                    testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, rating.ownRating, function (err, res) {
+                        testUtil.putExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, ++rating.ownRating, function (err, res) {
+                            rating.averageRating++;
+                            testUtil.evaluateSuccessfulMovieRatingResponse(res, 200, rating);
                             done();
                         });
                     });
@@ -246,7 +253,6 @@ describe('Movie-Rating-Endpoint Tests', function () {
                     });
                 });
             });
-
 
             it('should return movie rating when getting a movie which is not rated by the the logged in user and not rated by other users', function (done) {
                 testUtil.getExampleMovieRating(exampleUsers.bob, exampleMovies.theToxicAvenger._id, function (err, res) {

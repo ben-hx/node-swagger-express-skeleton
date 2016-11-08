@@ -41,10 +41,11 @@ module.exports = {
         response.body.data.movies.should.deep.include.members(movies)
     },
 
-    evaluateSuccessfulMovieRatingResponse: function (response, statusCode, value) {
+    evaluateSuccessfulMovieRatingResponse: function (response, statusCode, movieRating) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
-        response.body.data.ownRating.should.equal(value);
+        response.body.data.ownRating.should.equal(movieRating.ownRating);
+        response.body.data.averageRating.should.be.closeTo(movieRating.averageRating, 0.001);
     },
 
     evaluateSuccessfulMovieUsersRatingResponse: function (response, statusCode, movieRating) {

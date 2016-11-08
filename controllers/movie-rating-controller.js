@@ -5,12 +5,13 @@ var MovieWatched = require('../models/movie-watched');
 var controllerUtil = require('./controller-util');
 var errors = require('../errors/errors');
 
-function getMovieRatingResponseBody(movieId, ownRating, message) {
+function getMovieRatingResponseBody(movieId, ownRating, averageRating, message) {
     var result = {
         success: true,
         data: {
             movieId: movieId,
-            ownRating: ownRating
+            ownRating: ownRating,
+            averageRating: averageRating
         }
     };
     if (message) {
@@ -42,6 +43,26 @@ function isMovieWatched(userId, movieId, callback) {
     });
 }
 
+function getMovieAverageRating(movieId, callback) {
+    MovieRating.aggregate([{
+        $match: {
+            movieId: movieId
+        }
+    }, {
+        $group: {
+            _id: "$movieId",
+            value: {$avg: "$value"}
+        }
+    }
+    ], function (err, averageMovieRating) {
+        if (err) {
+            return callback(err);
+        }
+        var averageRating = (averageMovieRating.length > 0 ? averageMovieRating[0].value : 0);
+        return callback(null, averageRating);
+    });
+}
+
 module.exports.getMovieRating = function (req, res, next) {
     var data = {
         userId: req.user._id,
@@ -56,19 +77,7 @@ module.exports.getMovieRating = function (req, res, next) {
                 return next(err);
             }
             var ownRating = (movieRating ? movieRating.value : null);
-
-            MovieRating.aggregate([{
-                $match: {
-                    movieId: data.movieId
-                }
-            }, {
-                $group: {
-                    _id: "$movieId",
-                    value: {$avg: "$value"}
-                }
-            }
-            ], function (err, averageMovieRating) {
-                var averageRating = (averageMovieRating.length > 0 ? averageMovieRating[0].value : 0);
+            getMovieAverageRating(data.movieId, function (err, averageMovieRating) {
                 if (err) {
                     return next(err);
                 }
@@ -79,7 +88,7 @@ module.exports.getMovieRating = function (req, res, next) {
                     var usersRating = moviesRating.map(function (userMovieRating) {
                         return {userid: userMovieRating.userId, rating: userMovieRating.value};
                     });
-                    res.json(getMovieUsersRatingResponseBody(data.movieId, ownRating, averageRating, usersRating));
+                    res.json(getMovieUsersRatingResponseBody(data.movieId, ownRating, averageMovieRating, usersRating));
                 });
             });
         });
@@ -110,7 +119,13 @@ module.exports.setMovieRating = function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            res.send(getMovieRatingResponseBody(id.movieId, movieRating.value, 'Movie-Rating set to ' + value.value))
+            var ownRating = movieRating.value;
+            getMovieAverageRating(id.movieId, function (err, averageMovieRating) {
+                if (err) {
+                    return next(err);
+                }
+                res.send(getMovieRatingResponseBody(id.movieId, ownRating, averageMovieRating, 'Movie-Rating set to ' + value.value));
+            });
         });
     });
 };
