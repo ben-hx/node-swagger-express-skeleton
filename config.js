@@ -8,6 +8,10 @@ config.production = {
         port: 8090,
         swagger: {
             ui: '/swagger.json'
+        },
+        movie: {
+            moviesPerPageDefault: 10,
+            moviesSortDefault: 'title'
         }
     }
 };
@@ -20,6 +24,10 @@ config.development = {
         port: 8080,
         swagger: {
             ui: '/swagger.json'
+        },
+        movie: {
+            moviesPerPageDefault: 10,
+            moviesSortDefault: 'title'
         }
     }
 };
@@ -32,6 +40,10 @@ config.test = {
         port: 9000,
         swagger: {
             ui: '/swagger.json'
+        },
+        movie: {
+            moviesPerPageDefault: 10,
+            moviesSortDefault: 'title'
         }
     }
 };

@@ -5,7 +5,7 @@ modelUtil.addToObjectToSchemaOptions(movieModel.schema);
 
 movieModel.schema.path('title').validate(function (value, done) {
     var id = this._id;
-    this.model('Movie').count({title: value, _id: {$ne: id}}, function (error, count) {
+    movieModel.count({title: value, _id: {$ne: id}}, function (error, count) {
         done(!(error || count));
     });
 }, 'Movie with the same Title already existing!');

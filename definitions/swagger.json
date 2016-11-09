@@ -252,6 +252,18 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page to filter by",
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Movie-count-limit per page to filter by",
+            "type": "integer"
           }
         ],
         "responses": {

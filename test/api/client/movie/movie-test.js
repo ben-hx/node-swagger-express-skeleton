@@ -256,6 +256,110 @@ describe('Movie-Endpoint Tests', function () {
 
             });
 
+            describe('filter by pagination', function () {
+
+                function evaluatePaginationResult(user, param, expectedData, done) {
+                    testUtil.getExampleMovies(user, param, function (err, res) {
+                        testUtil.evaluateSuccessfulMoviesPaginationResponse(res, 200, expectedData);
+                        done();
+                    });
+                }
+
+                function checkPagination(data, done) {
+                    var randomMovieArray = exampleMovies.getArrayOfExampleMovies(data.movieCount, exampleMovies.theToxicAvenger);
+                    postMovieArray(exampleUsers.bob, randomMovieArray, function (err) {
+                        evaluatePaginationResult(exampleUsers.bob, data.searchData, data.expectedData, done);
+                    });
+                }
+
+
+                it('should return 10 movies of 22 searched by pagination page 0 and limit 10', function (done) {
+                    checkPagination({
+                        movieCount: 22,
+                        searchData: {
+                            limit: 10,
+                            page: 0
+                        },
+                        expectedData: {
+                            count: 10,
+                            limit: 10,
+                            page: 0,
+                            totalCount: 22,
+                            totalPages: 3
+                        }
+                    }, done);
+                });
+
+                it('should return 10 movies of 22 searched by pagination page 1 and limit 10', function (done) {
+                    checkPagination({
+                        movieCount: 22,
+                        searchData: {
+                            limit: 10,
+                            page: 1
+                        },
+                        expectedData: {
+                            count: 10,
+                            limit: 10,
+                            page: 1,
+                            totalCount: 22,
+                            totalPages: 3
+                        }
+                    }, done);
+                });
+
+                it('should return 2 movies of 22 searched by pagination page 2 and limit 10', function (done) {
+                    checkPagination({
+                        movieCount: 22,
+                        searchData: {
+                            limit: 10,
+                            page: 2
+                        },
+                        expectedData: {
+                            count: 2,
+                            limit: 10,
+                            page: 2,
+                            totalCount: 22,
+                            totalPages: 3
+                        }
+                    }, done);
+                });
+
+                it('should return 2 movies of 2 searched by pagination page 0 and limit 10', function (done) {
+                    checkPagination({
+                        movieCount: 2,
+                        searchData: {
+                            limit: 10,
+                            page: 0
+                        },
+                        expectedData: {
+                            count: 2,
+                            limit: 10,
+                            page: 0,
+                            totalCount: 2,
+                            totalPages: 1
+                        }
+                    }, done);
+                });
+
+                it('should return 0 movies of 20 searched by pagination page 2 and limit 10', function (done) {
+                    checkPagination({
+                        movieCount: 20,
+                        searchData: {
+                            limit: 10,
+                            page: 2
+                        },
+                        expectedData: {
+                            count: 0,
+                            limit: 10,
+                            page: 0,
+                            totalCount: 20,
+                            totalPages: 2
+                        }
+                    }, done);
+                });
+
+            });
+
             it('should return no movie after deletion', function (done) {
                 testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
                     var id = res.body.data.movie._id;
@@ -267,7 +371,6 @@ describe('Movie-Endpoint Tests', function () {
                     });
                 });
             });
-
         });
 
         describe('not logged in', function () {
@@ -280,7 +383,9 @@ describe('Movie-Endpoint Tests', function () {
             });
         });
 
+
     });
+
 
     describe('GET /movies/:movie_id', function () {
 
@@ -329,6 +434,18 @@ describe('Movie-Endpoint Tests', function () {
                     testUtil.putExampleMovie(exampleUsers.bob, id, exampleMovies.theToxicAvengerUpdated, function (err, res) {
                         testUtil.evaluateSuccessfulMovieResponse(res, 200, exampleMovies.theToxicAvengerUpdated, exampleUsers.bob);
                         done();
+                    });
+                });
+            });
+
+            it('should return a bad-request when putting a movie with title that already exists', function (done) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
+                    testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvengerUpdated, function (err, res) {
+                        var id = res.body.data.movie._id;
+                        testUtil.putExampleMovie(exampleUsers.bob, id, {title: exampleMovies.theToxicAvenger.title}, function (err, res) {
+                            testUtil.evaluateErrorResponse(res, 400);
+                            done();
+                        });
                     });
                 });
             });

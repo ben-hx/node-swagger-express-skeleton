@@ -1,6 +1,7 @@
 'use strict';
 
 var Movie = require('../models/movie');
+var config = require('../config');
 var controllerUtil = require('./controller-util');
 
 function getMovieResponseBody(movie, message) {
@@ -16,11 +17,12 @@ function getMovieResponseBody(movie, message) {
     return result;
 }
 
-function getMoviesResponseBody(movies) {
+function getMoviesResponseBody(movies, pagination) {
     var result = {
         success: true,
         data: {
-            movies: movies
+            movies: movies,
+            pagination: pagination
         }
     };
     return result;
@@ -39,7 +41,7 @@ function castQueryParamByOptionalArray(param) {
 
 function castQueryParamByBeginning(param) {
     if (param) {
-        return { "$regex": param, "$options": "i" };
+        return {"$regex": param, "$options": "i"};
     }
     return undefined;
 }
@@ -66,18 +68,36 @@ module.exports.getMovies = function (req, res, next) {
         userCreatedId: castQueryParamByOptionalArray(req.query.userCreatedIds)
     };
 
+    var paginationParams = {
+        page: parseInt(req.query.page) || 0,
+        limit: parseInt(req.query.limit) || config[req.app.get('env')].settings.movie.moviesPerPageDefault
+    };
+
+    var sort = req.query.sort || config[req.app.get('env')].settings.movie.moviesSortDefault;
+
     /* Removing all undefined properties of queryParams */
     queryParams = controllerUtil.removeUndefinedPropertyOfObject(queryParams);
 
-    Movie.find(queryParams, function (err, movies) {
-        if (err) {
-            return next(err);
-        }
-        var movies = movies.map(function(movie) {
-            return movie.toObject();
+    Movie.find(queryParams)
+        .skip(paginationParams.page * paginationParams.limit)
+        .limit(paginationParams.limit)
+        .sort(sort)
+        .exec(function (err, movies) {
+            if (err) {
+                return next(err);
+            }
+            var movies = movies.map(function (movie) {
+                return movie.toObject();
+            });
+            Movie.count(queryParams, function (err, totalCount) {
+                if (err) {
+                    return next(err);
+                }
+                paginationParams.totalCount = totalCount;
+                paginationParams.totalPages = Math.ceil(totalCount / paginationParams.limit);
+                res.json(getMoviesResponseBody(movies, paginationParams));
+            });
         });
-        res.json(getMoviesResponseBody(movies));
-    });
 
 };
 
@@ -96,7 +116,7 @@ module.exports.updateMovie = function (req, res, next) {
             return next(err);
         }
         delete req.body._id;
-        movie.update(req.body, function (err, movie) {
+        movie.update(req.body, {runValidators: true}, function (err, movie) {
             if (err) {
                 return next(err);
             }

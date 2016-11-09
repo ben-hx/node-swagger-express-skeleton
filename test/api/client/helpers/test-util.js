@@ -8,6 +8,10 @@ var api = supertest.agent(testConfig.apiURI);
 
 module.exports = {
 
+    cleanUpExampleModel: function (model) {
+        delete model._id;
+    },
+
     evaluateSuccessfulUserResponse: function (response, statusCode, user) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
@@ -39,6 +43,17 @@ module.exports = {
             delete value.userCreatedId;
         }
         response.body.data.movies.should.deep.include.members(movies)
+    },
+
+    evaluateSuccessfulMoviesPaginationResponse: function (response, statusCode, expectedData) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data.movies.length.should.equal(expectedData.count);
+        response.body.data.pagination.limit.should.equal(expectedData.limit);
+
+        response.body.data.pagination.totalCount.should.equal(expectedData.totalCount);
+        response.body.data.pagination.totalPages.should.equal(expectedData.totalPages);
+
     },
 
     evaluateSuccessfulMovieRatingResponse: function (response, statusCode, movieRating) {
@@ -114,7 +129,7 @@ module.exports = {
         }
     },
 
-    setAuthenticationforRequest: function(request, user) {
+    setAuthenticationforRequest: function (request, user) {
         request.auth(user.email, user.password);
     },
 
@@ -155,6 +170,7 @@ module.exports = {
 
     postExampleMovie: function (user, movie, done) {
         var result = api.post('/movies');
+        this.cleanUpExampleModel(movie);
         this.setAuthenticationforRequest(result, user);
         result.set('Content-Type', 'application/json');
         result.send(movie);
