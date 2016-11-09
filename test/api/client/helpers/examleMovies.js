@@ -12,6 +12,19 @@ module.exports = {
         country: 'USA',
         poster: 'http://ia.media-imdb.com/images/M/MV5BNzViNmQ5MTYtMmI4Yy00N2Y2LTg4NWUtYWU3MThkMTVjNjk3XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'
     },
+    theToxicAvengerSame: {
+        title: 'The Toxic Avenger',
+        year: 1984,
+        runtime: '82 min',
+        genres: ['Comedy', 'Horror', 'Action'],
+        directors: ['Michael Herz', 'Lloyd Kaufman'],
+        writers: ['Lloyd Kaufman (story)', 'Joe Ritter (screenplay)', 'Gay Partington Terry (additional material)',  'Stuart Strutin (additional material)'],
+        actors: ['Andree Maranda', 'Mitch Cohen', 'Jennifer Babtist', 'Cindy Manion'],
+        plot: 'Tromaville has a monstrous new hero. The Toxic Avenger is born when meek mop boy Melvin falls into a vat of toxic waste. Now evildoers will have a lot to lose.',
+        languages: ['English'],
+        country: 'USA',
+        poster: 'http://ia.media-imdb.com/images/M/MV5BNzViNmQ5MTYtMmI4Yy00N2Y2LTg4NWUtYWU3MThkMTVjNjk3XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'
+    },
     theToxicAvengerUpdated: {
         title: 'The Toxic Avenger!',
         year: 1983,

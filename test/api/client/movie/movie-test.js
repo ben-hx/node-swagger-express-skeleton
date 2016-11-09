@@ -62,6 +62,15 @@ describe('Movie-Endpoint Tests', function () {
                 });
             });
 
+            it('should return a validation-error when posting two movies with the same title', function (done) {
+                testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvenger, function (err, res) {
+                    testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvengerSame, function (err, res) {
+                        testUtil.evaluateErrorResponse(res, 400);
+                        done();
+                    });
+                });
+            });
+
             it('should return a bad-request when posting invalid movie-data', function (done) {
                 testUtil.postExampleMovie(exampleUsers.bob, exampleMovies.theToxicAvengerInvalid, function (err, res) {
                     testUtil.evaluateErrorResponse(res, 400);
