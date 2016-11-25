@@ -11,7 +11,7 @@ describe('User-Repository-Tests', function () {
     var errors = require("../../../errors/errors");
     var mongoose = require('../../../mongoose-config')(debug, config);
     mongoose.initialize();
-    var generateExampleUsers = require("../helpers/example-users").generate;
+    var generateExampleUsers = require("../helpers/user/example-users").generate;
     var exampleUsers = generateExampleUsers();
     var User = require("../../../models/user");
     var InaktiveUser = require("../../../models/inaktive-user");

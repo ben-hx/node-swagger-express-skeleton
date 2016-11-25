@@ -3,26 +3,26 @@ var chai = require('chai');
 var should = chai.should();
 var q = require('q');
 
-describe('User-Model-Tests', function () {
+describe('InaktiveUser-Model-Tests', function () {
 
-    var errors = require("../../../../errors/errors");
-    var generateExampleUsers = require("../../helpers/example-users").generate;
-    var exampleUsers = generateExampleUsers();
     var User = require("../../../../models/user");
     var InaktiveUser = require("../../../../models/inaktive-user");
 
-    var dbTestUtil = require('../../helpers/db/db-test-util')();
-    var userEvaluation = require('../../helpers/user/user-evaluation-util')();
-    var errorEvaluation = require('../../helpers/error/error-evaluation-util')(errors);
+    var testFactory = require("../../helpers/test-factory")();
+    var exampleUsers = testFactory.exampleData.generateUsers();
+    var dbTestUtil = testFactory.dbTestUtil();
+    var userEvaluation = testFactory.userEvaluation();
+    var errorEvaluation = testFactory.errorEvaluation();
 
     before(dbTestUtil.setUpDb);
 
     after(dbTestUtil.tearDownDb);
 
     beforeEach(function (done) {
-        exampleUsers = generateExampleUsers();
+        exampleUsers = testFactory.exampleData.generateUsers();
         q.all([
             User.remove(),
+            InaktiveUser.remove(),
         ]).then(function () {
             done();
         });
@@ -31,6 +31,7 @@ describe('User-Model-Tests', function () {
     afterEach(function (done) {
         q.all([
             User.remove(),
+            InaktiveUser.remove(),
         ]).then(function () {
             done();
         });
@@ -39,38 +40,37 @@ describe('User-Model-Tests', function () {
     describe('save()', function () {
 
         it('should return an user when saving with valid user-data', function (done) {
-            var user = new User(exampleUsers.bob);
+            var user = new InaktiveUser(exampleUsers.bob);
             user.save().then(function (result) {
-                userEvaluation.evaluateUser(result, exampleUsers.bob);
+                userEvaluation.evaluateInaktiveUser(result, exampleUsers.bob);
                 done();
             });
         });
 
         it('should return an user (with default role=looser) when saving with minimal-user-data', function (done) {
-            var user = new User(exampleUsers.minimal);
+            var user = new InaktiveUser(exampleUsers.minimal);
             user.save().then(function (result) {
                 userEvaluation.evaluateMinimalUser(result, exampleUsers.minimal);
-                result.role.should.equal('looser');
                 done();
             });
         });
 
         it('should return an error when saving a user with no credentials', function (done) {
-            var user = new User({});
+            var user = new InaktiveUser({});
             user.save().catch(function () {
                 done();
             });
         });
 
         it('should return an error when saving a user with no email', function (done) {
-            var user = new User({password: 'bob'});
+            var user = new InaktiveUser({password: 'bob'});
             user.save().catch(function () {
                 done();
             });
         });
 
         it('should return an error when registering a user with no password', function (done) {
-            var user = new User({email: 'bob@test.de'});
+            var user = new InaktiveUser({email: 'bob@test.de'});
             user.save().catch(function () {
                 done();
             });
@@ -82,7 +82,7 @@ describe('User-Model-Tests', function () {
                 email: 'invalid',
                 password: 'invalid'
             };
-            var user = new User(user);
+            var user = new InaktiveUser(user);
             user.save().catch(function () {
                 done();
             });
@@ -95,7 +95,7 @@ describe('User-Model-Tests', function () {
                 email: 'invalid@invalid.de',
                 password: 'invalid'
             };
-            (new User(user1)).save().then(function () {
+            (new InaktiveUser(user1)).save().then(function () {
                 return (new User(user2)).save();
             }).catch(function (error) {
                 done();
@@ -109,7 +109,7 @@ describe('User-Model-Tests', function () {
                 email: exampleUsers.bob.email,
                 password: 'invalid'
             };
-            (new User(user1)).save().then(function () {
+            (new InaktiveUser(user1)).save().then(function () {
                 return (new User(user2)).save();
             }).catch(function (error) {
                 done();
@@ -121,11 +121,10 @@ describe('User-Model-Tests', function () {
     describe('Plugin: toObjectTransformation', function () {
 
         it('should return an transformed user when calling toObject', function (done) {
-            var user = new User(exampleUsers.bob);
+            var user = new InaktiveUser(exampleUsers.bob);
             user.save().then(function (result) {
                 var transformedUser = result.toObject();
                 transformedUser.email.should.equal(exampleUsers.bob.email);
-                transformedUser.role.should.equal(exampleUsers.bob.role);
                 transformedUser.username.should.equal(exampleUsers.bob.username);
                 transformedUser.should.not.have.ownProperty('password');
                 transformedUser.should.not.have.ownProperty('__v');
@@ -139,7 +138,7 @@ describe('User-Model-Tests', function () {
     describe('Plugin: lastModified', function () {
 
         it('should return an user with lastModified-field when saving Object', function (done) {
-            var user = new User(exampleUsers.bob);
+            var user = new InaktiveUser(exampleUsers.bob);
             user.save().then(function (result) {
                 var transformedUser = result.toObject();
                 transformedUser.should.have.ownProperty('lastModified');

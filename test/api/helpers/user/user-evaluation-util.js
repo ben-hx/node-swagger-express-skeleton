@@ -18,6 +18,7 @@ module.exports = function () {
         evaluateUsers: function (actualUsers, expectedUsers) {
             actualUsers.forEach(function (user) {
                 delete user.password;
+                delete user.lastModified;
             });
             expectedUsers.should.deep.include.members(expectedUsers);
         },

@@ -1,24 +1,28 @@
-var debug = require('debug')('test');
-var config = require('../../../../config');
-var mongooseConfig = require('../../../../mongoose-config')(debug, config);
+var q = require('q');
 
 var isConnected = false;
 
-module.exports = function () {
+module.exports = function (mongooseConfig) {
 
     return {
-        setUpDb: function (done) {
+        setUpDb: function () {
+            var deferred = q.defer();
             if (!isConnected) {
                 mongooseConfig.initialize().then(function () {
                     isConnected = true;
-                    done();
+                    deferred.resolve(isConnected);
+                }).catch(function (error) {
+                    deferred.reject(error);
                 });
             } else {
-                done();
+                deferred.resolve(isConnected);
             }
+            return deferred.promise;
         },
-        tearDownDb: function (done) {
-            return done();
+        tearDownDb: function () {
+            var deferred = q.defer();
+            deferred.resolve();
+            return deferred.promise;
         }
     }
 };

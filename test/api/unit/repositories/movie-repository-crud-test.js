@@ -3,33 +3,31 @@ var chai = require('chai');
 var should = chai.should();
 var q = require('q');
 
-describe('Movie-Repository-Tests', function () {
+describe('Movie-Repository-CRUD-Tests', function () {
 
-    var debug = require('debug')('test');
-    var config = require('../../../../config');
-    var errors = require("../../../../errors/errors");
-    var mongoose = require("mongoose");
-    var generateExampleUsers = require("../../helpers/example-users").generate;
-    var generateExampleMovies = require("../../helpers/examle-movies").generate;
-    var exampleUsers = generateExampleUsers();
-    var exampleMovies = generateExampleMovies();
+    var mongoose = require('mongoose');
     var User = require("../../../../models/user");
+    var InaktiveUser = require("../../../../models/inaktive-user");
     var Movie = require("../../../../models/movie");
-    var MovieRepository = require("../../../../repositories/movie-repository")(config, errors, Movie);
 
-    var dbTestUtil = require('../../helpers/db/db-test-util')();
-    var movieRepositoryTestUtil = require('../../helpers/movie/movie-repository-test-util')(MovieRepository);
-    var userTestUtil = require('../../helpers/user/user-test-util')(User);
-    var movieEvaluation = require('../../helpers/movie/movie-evaluation-util')();
-    var errorEvaluation = require('../../helpers/error/error-evaluation-util')(errors);
+    var testFactory = require("../../helpers/test-factory")();
+    var config = testFactory.config;
+    var exampleUsers = testFactory.exampleData.generateUsers();
+    var exampleMovies = testFactory.exampleData.generateMovies();
+    var dbTestUtil = testFactory.dbTestUtil();
+    var movieTestUtil = testFactory.movieTestUtil();
+    var movieRepositoryTestUtil = testFactory.movieTestUtil().repositoryDecorator;
+    var userTestUtil = testFactory.userTestUtil();
+    var movieEvaluation = testFactory.movieEvaluation();
+    var errorEvaluation = testFactory.errorEvaluation();
 
     before(dbTestUtil.setUpDb);
 
     after(dbTestUtil.tearDownDb);
 
     beforeEach(function (done) {
-        exampleUsers = generateExampleUsers();
-        exampleMovies = generateExampleMovies();
+        exampleUsers = testFactory.exampleData.generateUsers();
+        exampleMovies = testFactory.exampleData.generateMovies();
         q.all([
             User.remove(),
             Movie.remove(),

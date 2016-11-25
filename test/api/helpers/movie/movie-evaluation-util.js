@@ -4,12 +4,30 @@ var expect = chai.expect;
 
 module.exports = function () {
     return {
-        evaluateMovie: function (actualMovie, expectedMovie) {
-            actualMovie.should.deep.equal(expectedMovie);
+        evaluateMovies: function (actual, expected) {
+            actual.should.have.length(expected.length);
+            actual.should.deep.include.members(expected);
         },
-        evaluateMovies: function (actualMovies, expectedMovies) {
-            actualMovies.should.have.length(expectedMovies.length);
-            actualMovies.should.deep.include.members(expectedMovies);
+        evaluateMovie: function (actual, expected) {
+            actual.should.deep.equal(expected);
+        },
+        evaluateMovieWatched: function (actual, expected) {
+            String(actual.movie).should.equal(String(expected.movie));
+            String(actual.user).should.equal(String(expected.user));
+            actual.watched.should.equal(expected.watched);
+        },
+        evaluateUserIdsMovieWatched: function (actual, expected) {
+            actual.should.have.length(expected.length);
+            actual.should.deep.include.members(expected)
+        },
+        evaluateMovieIdsUserWatched: function (actual, expected) {
+            actual.should.have.length(expected.length);
+            actual.should.deep.include.members(expected)
+        },
+        evaluateMovieRating: function (actual, expected) {
+            String(actual.movie).should.equal(String(expected.movie));
+            String(actual.user).should.equal(String(expected.user));
+            actual.value.should.equal(expected.value);
         }
     }
 };

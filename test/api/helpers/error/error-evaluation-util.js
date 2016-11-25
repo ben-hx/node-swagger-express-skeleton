@@ -9,6 +9,9 @@ module.exports = function (errors) {
         },
         evaluateNotFoundError: function (actualError, expectedError) {
             actualError.should.be.an.instanceOf(errors.NotFoundError);
+        },
+        evaluateDuplicationError: function (actualError, expectedError) {
+            actualError.should.be.an.instanceOf(errors.DuplicationError);
         }
     }
 };

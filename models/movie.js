@@ -45,21 +45,16 @@ var MovieSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    lastModifiedUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
+    lastModifiedUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
 });
 
 MovieSchema.plugin(mongoosePlugins.lastModified);
 MovieSchema.plugin(mongoosePlugins.paginate);
 MovieSchema.plugin(mongoosePlugins.toObjectTransformation);
-
-MovieSchema.pre('save', function (done) {
-    var self = this;
-    self.model('Movie').find().then(function (result) {
-        //console.log(result);
-        done();
-    })
-});
-
 
 module.exports = mongoose.model('Movie', MovieSchema);
 

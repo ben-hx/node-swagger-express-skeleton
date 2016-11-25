@@ -5,26 +5,22 @@ var q = require('q');
 
 describe('User-Repository-Tests', function () {
 
-    var debug = require('debug')('test');
-    var config = require('../../../../config');
-    var errors = require("../../../../errors/errors");
-    var generateExampleUsers = require("../../helpers/example-users").generate;
-    var exampleUsers = generateExampleUsers();
     var User = require("../../../../models/user");
     var InaktiveUser = require("../../../../models/inaktive-user");
-    var UserRepository = require("../../../../repositories/user-repository")(config, errors, User, InaktiveUser);
 
-    var dbTestUtil = require('../../helpers/db/db-test-util')();
-    var userEvaluation = require('../../helpers/user/user-evaluation-util')();
-    var errorEvaluation = require('../../helpers/error/error-evaluation-util')(errors);
-    var userRepositoryTestUtil = require('../../helpers/user/user-repository-test-util')(UserRepository);
+    var testFactory = require("../../helpers/test-factory")();
+    var exampleUsers = testFactory.exampleData.generateUsers();
+    var dbTestUtil = testFactory.dbTestUtil();
+    var userEvaluation = testFactory.userEvaluation();
+    var errorEvaluation = testFactory.errorEvaluation();
+    var userRepositoryTestUtil = testFactory.userTestUtil().repositoryDecorator;
 
     before(dbTestUtil.setUpDb);
 
     after(dbTestUtil.tearDownDb);
 
     beforeEach(function (done) {
-        exampleUsers = generateExampleUsers();
+        exampleUsers = testFactory.exampleData.generateUsers();
         q.all([
             User.remove(),
             InaktiveUser.remove()

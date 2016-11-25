@@ -40,6 +40,14 @@ module.exports = {
         this.data = data;
         this.status = 400;
     },
+    DuplicationError: function (data) {
+        Error.call(this);
+        Error.captureStackTrace(this, arguments.callee);
+        this.name = 'DuplicationError';
+        this.message = data.message || '';
+        this.data = data;
+        this.status = 400;
+    },
     UnexpectedError: function (message) {
         Error.call(this);
         Error.captureStackTrace(this, arguments.callee);
