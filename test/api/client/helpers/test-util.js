@@ -2,7 +2,7 @@ var chai = require('chai');
 var supertest = require('supertest');
 var should = chai.should();
 var expect = chai.expect;
-var testConfig = require('../test-config');
+var testConfig = require('../test-init');
 var api = supertest.agent(testConfig.apiURI);
 
 
@@ -12,11 +12,19 @@ module.exports = {
         delete model._id;
     },
 
+    evaluateSuccessfulUnregisteredUserResponse: function (response, statusCode, user) {
+        response.status.should.equal(statusCode);
+        response.body.success.should.equal(true);
+        response.body.data.user.email.should.equal(user.email);
+        response.body.data.user.username.should.equal(user.username);
+    },
+
     evaluateSuccessfulUserResponse: function (response, statusCode, user) {
         response.status.should.equal(statusCode);
         response.body.success.should.equal(true);
         response.body.data.user.email.should.equal(user.email);
         response.body.data.user.username.should.equal(user.username);
+        response.body.data.user.role.should.equal(user.role);
     },
 
     evaluateSuccessfulMinimalUserResponse: function (response, statusCode, user) {

@@ -2,11 +2,11 @@
 var chai = require('chai');
 var supertest = require('supertest');
 var should = chai.should();
-var testConfig = require('../test-config');
+var testConfig = require('../test-init');
 var api = supertest.agent(testConfig.apiURI);
 var User = require("../../../../models/user");
-var testUtil = require("../helpers/test-util");
-var exampleUsers = require("../helpers/exampleUsers");
+var testUtil = require(".././test-util");
+var exampleUsers = require(".././exampleUsers");
 
 describe('User-Endpoint Tests', function () {
 

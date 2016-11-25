@@ -16,6 +16,7 @@ module.exports.resourceErrorHandler = function (err, req, res, next) {
         message = 'Authentication Error!'
     }
     if (statusCode == 500) {
+        console.log(err);
         debug(err);
     }
     err.status = statusCode;

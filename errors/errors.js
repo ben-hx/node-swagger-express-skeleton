@@ -16,12 +16,36 @@ module.exports = {
         this.status = 401;
     },
 
-    ValidationError: function (message) {
+    ReadError: function (message) {
+        Error.call(this);
+        Error.captureStackTrace(this, arguments.callee);
+        this.name = 'ReadError';
+        this.message = message || 'Error while reading from Database';
+        this.status = 500;
+    },
+
+    WriteError: function (message) {
+        Error.call(this);
+        Error.captureStackTrace(this, arguments.callee);
+        this.name = 'ReadError';
+        this.message = message || 'Error while writing to Database';
+        this.status = 500;
+    },
+
+    ValidationError: function (data) {
         Error.call(this);
         Error.captureStackTrace(this, arguments.callee);
         this.name = 'ValidationError';
-        this.message = message;
+        this.message = data.message || '';
+        this.data = data;
         this.status = 400;
+    },
+    UnexpectedError: function (message) {
+        Error.call(this);
+        Error.captureStackTrace(this, arguments.callee);
+        this.name = 'UnexpectedError';
+        this.message = message || 'Don not know what happened';
+        this.status = 500;
     }
 
 };

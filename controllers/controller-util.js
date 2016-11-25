@@ -15,5 +15,18 @@ module.exports = {
                 callback(null, movie);
             }
         });
+    },
+    getUserResponseBody: function (user, message) {
+        var result = {
+            success: true,
+            data: {
+                user: user.toObject()
+            }
+        };
+        if (message) {
+            result.message = message;
+        }
+        return result;
     }
+
 };

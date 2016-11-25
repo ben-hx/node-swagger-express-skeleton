@@ -1,14 +1,65 @@
-var movieModel = require('./models').Movie;
-var modelUtil = require('./model-util');
+var bcrypt = require('bcrypt-nodejs');
+var validator = require('validator');
+var mongoose = require('mongoose');
+var mongoosePlugins = require('./../misc/mongoose-plugins');
 
-modelUtil.addToObjectToSchemaOptions(movieModel.schema);
+var MovieSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        index: true,
+        unique: true,
+    },
+    year: {
+        type: Number,
+        required: true
+    },
+    runtime: {
+        type: String,
+        required: true
+    },
+    plot: {
+        type: String,
+        required: true
+    },
+    country: {
+        type: String
+    },
+    poster: {
+        type: String
+    },
+    genres: [{
+        type: String,
+        required: true
+    }],
+    directors: [{
+        type: String
+    }],
+    writers: [{
+        type: String
+    }],
+    actors: [{
+        type: String
+    }],
+    languages: [{
+        type: String,
+        required: true
+    }],
+    lastModifiedUser: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
+});
 
-movieModel.schema.path('title').validate(function (value, done) {
-    var id = this._id;
-    movieModel.count({title: value, _id: {$ne: id}}, function (error, count) {
-        done(!(error || count));
-    });
-}, 'Movie with the same Title already existing!');
+MovieSchema.plugin(mongoosePlugins.lastModified);
+MovieSchema.plugin(mongoosePlugins.paginate);
+MovieSchema.plugin(mongoosePlugins.toObjectTransformation);
 
-module.exports = movieModel;
+MovieSchema.pre('save', function (done) {
+    var self = this;
+    self.model('Movie').find().then(function (result) {
+        //console.log(result);
+        done();
+    })
+});
+
+
+module.exports = mongoose.model('Movie', MovieSchema);
 

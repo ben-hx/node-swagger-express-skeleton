@@ -107,7 +107,7 @@ module.exports.setMovieRating = function (req, res, next) {
                 if (err) {
                     next(err);
                 }
-                next(new errors.ValidationError('Movie is not Watched!'));
+                next(new errors.ValidationError({message: 'Movie is not Watched!'}));
             });
             return;
         }

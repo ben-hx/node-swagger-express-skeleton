@@ -25,6 +25,14 @@
     },
     "phone": {
       "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "moderator",
+        "looser"
+      ]
     }
   }
 }

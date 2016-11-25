@@ -2,15 +2,15 @@
 var chai = require('chai');
 var supertest = require('supertest');
 var should = chai.should();
-var testConfig = require('../test-config');
+var testConfig = require('../test-init');
 var api = supertest.agent(testConfig.apiURI);
 var User = require("../../../../models/user");
 var Movie = require("../../../../models/movie");
 var MovieRating = require("../../../../models/movie-rating");
 var MovieWatched = require("../../../../models/movie-watched");
-var testUtil = require("../helpers/test-util");
-var exampleUsers = require("../helpers/exampleUsers");
-var exampleMovies = require("../helpers/examleMovies");
+var testUtil = require(".././test-util");
+var exampleUsers = require(".././exampleUsers");
+var exampleMovies = require(".././examleMovies");
 
 
 describe('Movie-Rating-Endpoint Tests', function () {

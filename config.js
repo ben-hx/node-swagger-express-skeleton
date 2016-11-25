@@ -12,6 +12,12 @@ config.production = {
         movie: {
             moviesPerPageDefault: 10,
             moviesSortDefault: 'title'
+        },
+        user: {
+            verification: {
+                secret: 'mysupersecret',
+                expiresIn: '6h',
+            }
         }
     }
 };
@@ -28,6 +34,12 @@ config.development = {
         movie: {
             moviesPerPageDefault: 10,
             moviesSortDefault: 'title'
+        },
+        user: {
+            verification: {
+                secret: 'mysupersecret',
+                expiresIn: '6h',
+            }
         }
     }
 };
@@ -44,6 +56,12 @@ config.test = {
         movie: {
             moviesPerPageDefault: 10,
             moviesSortDefault: 'title'
+        },
+        user: {
+            verification: {
+                secret: 'mysupersecret',
+                expiresIn: '6h',
+            }
         }
     }
 };

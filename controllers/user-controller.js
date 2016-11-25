@@ -16,6 +16,7 @@ function getUserResponseBody(user, message) {
 }
 
 module.exports.register = function create(req, res, next) {
+    delete req.body.role;
     var user = new User(req.body);
     user.save(function (err) {
         if (err) {

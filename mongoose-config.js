@@ -1,22 +1,19 @@
 var q = require('q');
 var mongoose = require('mongoose');
-var debug = require('debug')('app');
 
-module.exports.initialize = function (app, config) {
-
-    mongoose.Promise = q.Promise;
-
-    var deferred = q.defer();
-
-    mongoose.connect(config[app.get('env')].db.mongoURI, function (err, res) {
-        if (err) {
-            debug('Error connecting to the database. ' + err);
-            deferred.reject();
-        } else {
-            debug('Connected to Database: ' + config[app.get('env')].db.mongoURI);
-            deferred.resolve();
+module.exports = function (debug, config) {
+    return {
+        initialize: function () {
+            var deferred = q.defer();
+            mongoose.Promise = q.Promise;
+            mongoose.connect(config[process.env.NODE_ENV].db.mongoURI).then(function () {
+                debug('Connected to Database: ' + config[process.env.NODE_ENV].db.mongoURI);
+                deferred.resolve();
+            }).catch(function (error) {
+                debug('Error connecting to the database. ' + err);
+                deferred.reject();
+            });
+            return deferred.promise;
         }
-    });
-
-    return deferred.promise;
-}
+    }
+};

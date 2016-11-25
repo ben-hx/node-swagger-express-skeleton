@@ -17,14 +17,6 @@
   "basePath": "/v1",
   "tags": [
     {
-      "name": "post",
-      "description": "Everything about your Posts",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": ""
-      }
-    },
-    {
       "name": "user",
       "description": "Operations about user",
       "externalDocs": {
@@ -37,6 +29,87 @@
     "http"
   ],
   "paths": {
+    "/user/{user_id}/activate": {
+      "post": {
+        "tags": [
+          "user",
+          "activation"
+        ],
+        "summary": "Activate a unregistered user (only for user-role = 'admin')",
+        "description": "",
+        "operationId": "activateUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID of the user that needs to be activated",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activated User response",
+            "schema": {
+              "$ref": "./definitions/user/UserResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "user-activation-controller"
+      }
+    },
+    "/user/inactive": {
+      "get": {
+        "tags": [
+          "user",
+          "activation"
+        ],
+        "summary": "Get all inaktive users (only for user-role = 'admin')",
+        "description": "",
+        "operationId": "activateUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page to filter by",
+            "type": "integer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "User-count-limit per page to filter by",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inactive Users response",
+            "schema": {
+              "$ref": "./definitions/user/UsersResponse.json"
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "./definitions/error/ErrorResponse.json"
+            }
+          }
+        },
+        "x-swagger-router-controller": "user-activation-controller"
+      }
+    },
     "/register": {
       "post": {
         "tags": [
@@ -73,7 +146,7 @@
             }
           }
         },
-        "x-swagger-router-controller": "user-controller"
+        "x-swagger-router-controller": "register-controller"
       }
     },
     "/changepassword": {

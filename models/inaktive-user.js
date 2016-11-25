@@ -3,7 +3,7 @@ var validator = require('validator');
 var mongoose = require('mongoose');
 var mongoosePlugins = require('./../misc/mongoose-plugins');
 
-var UserSchema = new mongoose.Schema({
+var InaktiveUserSchema = new mongoose.Schema({
     email: {
         unique: true,
         type: String,
@@ -22,16 +22,12 @@ var UserSchema = new mongoose.Schema({
     },
     lastName: {
         type: String,
-    },
-    role: {
-        type: String,
-        enum: ['admin', 'moderator', 'looser']
     }
 });
 
-UserSchema.plugin(mongoosePlugins.lastModified);
-UserSchema.plugin(mongoosePlugins.paginate);
-UserSchema.plugin(mongoosePlugins.toObjectTransformation, {
+InaktiveUserSchema.plugin(mongoosePlugins.lastModified);
+InaktiveUserSchema.plugin(mongoosePlugins.paginate);
+InaktiveUserSchema.plugin(mongoosePlugins.toObjectTransformation, {
     transformCallback: function (doc, value, options) {
         delete value.password;
     }
@@ -40,7 +36,7 @@ UserSchema.plugin(mongoosePlugins.toObjectTransformation, {
 /*
  Error Hook for Duplication
  */
-UserSchema.path('username').validate(function (value, done) {
+InaktiveUserSchema.path('username').validate(function (value, done) {
     var id = this._id;
     var self = this;
     self.model('User').count({username: value, _id: {$ne: id}}, function (error, count) {
@@ -48,12 +44,13 @@ UserSchema.path('username').validate(function (value, done) {
             return done(false);
         }
         self.model('InaktiveUser').count({username: value, _id: {$ne: id}}, function (error, count) {
+
             done(!(error || count));
         });
     });
 }, 'User with same username is already existing!');
 
-UserSchema.path('email').validate(function (value, done) {
+InaktiveUserSchema.path('email').validate(function (value, done) {
     var id = this._id;
     var self = this;
     self.model('User').count({email: value, _id: {$ne: id}}, function (error, count) {
@@ -66,23 +63,34 @@ UserSchema.path('email').validate(function (value, done) {
     });
 }, 'User with same email is already existing!');
 
-UserSchema.path('email').validate(function (value, done) {
+InaktiveUserSchema.path('email').validate(function (value, done) {
     done(validator.isEmail(value));
 }, 'Invalid email!');
 
-UserSchema.pre('save', function (done) {
+InaktiveUserSchema.pre('save', function (done) {
     var user = this;
-    if (!user.role) {
-        user.role = 'looser';
+    if (!user.isModified('password')) {
+        return done();
     }
-    done();
+    bcrypt.genSalt(5, function (err, salt) {
+        if (err) {
+            return done(err)
+        }
+        bcrypt.hash(user.password, salt, null, function (err, hash) {
+            if (err) {
+                return done(err);
+            }
+            user.password = hash;
+            done();
+        });
+    });
 });
 
 /*
  Added to the Prototype, because userModel.schema.methods
  is not working after schema has been constructed
  */
-UserSchema.methods.verifyPassword = function (password, done) {
+InaktiveUserSchema.methods.verifyPassword = function (password, done) {
     bcrypt.compare(password, this.password, function (err, isMatch) {
         if (err) {
             return done(err);
@@ -91,4 +99,4 @@ UserSchema.methods.verifyPassword = function (password, done) {
     });
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('InaktiveUser', InaktiveUserSchema);
