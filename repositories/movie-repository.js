@@ -87,13 +87,13 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             var deferred = q.defer();
             movieData = Object.assign({}, movieData);
             movieData.lastModifiedUser = user._id;
+            delete movieData._id;
             var self = this;
             Movie.update({_id: id}, movieData, {runValidators: true}).then(function (result) {
                 return self.getById(id);
             }).then(function (movie) {
                 return deferred.resolve(movie);
             }).catch(function (error) {
-                console.log(error);
                 if (!(error instanceof errors.NotFoundError)) {
                     return deferred.reject(new errors.ValidationError(error));
                 }
