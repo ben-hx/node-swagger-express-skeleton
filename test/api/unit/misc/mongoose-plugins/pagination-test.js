@@ -5,11 +5,10 @@ var q = require('q');
 
 describe('Pagination-Tests', function () {
 
-    var debug = require('debug')('test');
-    var config = require('../../../../../config');
     var mongoose = require('mongoose');
-    var mongooseConfig = require('../../../../../mongoose-config')(debug, config);
     var mongoosePlugins = require('../../../../../misc/mongoose-plugins');
+    var testFactory = require("../../../helpers/test-factory")();
+    var dbTestUtil = testFactory.dbTestUtil();
 
     var TestModelSchema = new mongoose.Schema({
         name: String,
@@ -30,13 +29,9 @@ describe('Pagination-Tests', function () {
 
     var maxRecordCount = 22;
 
-    before(function (done) {
-        q.all([
-            mongooseConfig.initialize(),
-        ]).then(function () {
-            done();
-        });
-    });
+    before(dbTestUtil.setUpDb);
+
+    after(dbTestUtil.tearDownDb);
 
     beforeEach(function (done) {
         q.all([
@@ -50,15 +45,6 @@ describe('Pagination-Tests', function () {
     afterEach(function (done) {
         q.all([
             TestModel.remove()
-        ]).then(function () {
-            done();
-        });
-    });
-
-    after(function (done) {
-        q.all([
-            mongoose.connection.db.dropDatabase(),
-            mongoose.disconnect(done)
         ]).then(function () {
             done();
         });

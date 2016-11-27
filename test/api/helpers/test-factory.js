@@ -3,6 +3,7 @@ var config = require('../../../config');
 var errors = require("../../../errors/errors");
 var mongooseConfig = require('../../../mongoose-config')(debug, config);
 
+var AuthorizationService = require("../../../auth/authoriszation-service")(errors);
 var User = require("../../../models/user");
 var InaktiveUser = require("../../../models/inaktive-user");
 var UserRepository = require("../../../repositories/user-repository")(config, errors, User, InaktiveUser);
@@ -23,6 +24,9 @@ module.exports = function () {
         },
         errorEvaluation: function () {
             return require('./error/error-evaluation-util')(errors);
+        },
+        authTestUtil: function () {
+            return require('./auth/auth-test-util')(AuthorizationService);
         },
         movieTestUtil: function () {
             return require('./movie/movie-test-util')(Movie, MovieWatched, MovieRating, MovieRepository);

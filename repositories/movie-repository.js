@@ -258,7 +258,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             return deferred.promise;
         },
 
-        deleteRatingByMovieIdAndUserId: function (movieId, userId, value) {
+        deleteRatingByMovieIdAndUserId: function (movieId, userId) {
             var deferred = q.defer();
             var id = {
                 user: userId,

@@ -1,6 +1,6 @@
 var passport = require('passport');
 var errors = require('../errors/errors');
-var BasicStrategy = require('../authentication/basic-authentication-strategy');
+var BasicStrategy = require('/basic-authentication-strategy');
 
 module.exports.getOptions = function () {
     return {
@@ -8,7 +8,7 @@ module.exports.getOptions = function () {
             passport.use(new BasicStrategy());
             passport.authenticate('basic', {session: false}, function (err, user, info) {
                 if (err) {
-                    return callback(new errors.AuthenticationError('Error while authentication'));
+                    return callback(new errors.AuthenticationError('Error while auth'));
                 }
                 if (!user) {
                     return callback(new errors.AuthenticationError('User validation Failed'));

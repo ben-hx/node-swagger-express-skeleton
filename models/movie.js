@@ -8,7 +8,7 @@ var MovieSchema = new mongoose.Schema({
         type: String,
         required: true,
         index: true,
-        unique: true,
+        unique: true
     },
     year: {
         type: Number,

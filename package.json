@@ -8,6 +8,7 @@
     "start": "set DEBUG=app & nodemon index.js",
     "test": "set DEBUG=app & node ./node_modules/mocha/bin/mocha test --recursive",
     "test-coverage": "DEBUG=app ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
+    "test-coverage-unit": "DEBUG=app & ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha test/api/unit -- --recursive",
     "drop-test": "set NODE_ENV=test&&node ./scripts/drop-db.js",
     "drop-development": "set NODE_ENV=development&&node ./scripts/drop-db.js",
     "drop": "scripts/drop-db.js"
@@ -36,12 +37,14 @@
     "validator": "^6.1.0"
   },
   "devDependencies": {
-    "debug": "^2.2.0",
     "chai": "^3.0.0",
     "coveralls": "^2.11.14",
+    "debug": "^2.2.0",
     "istanbul": "^1.1.0-alpha.1",
     "nodemon": "^1.11.0",
     "request": "^2.58.0",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0",
     "supertest": "^1.0.0",
     "z-schema": "^3.12.0"
   }

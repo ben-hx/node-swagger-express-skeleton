@@ -1,0 +1,51 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'run-script',
+1 verbose cli   'test-coverage-unit' ]
+2 info using npm@3.10.3
+3 info using node@v6.4.0
+4 verbose run-script [ 'pretest-coverage-unit',
+4 verbose run-script   'test-coverage-unit',
+4 verbose run-script   'posttest-coverage-unit' ]
+5 info lifecycle trashbay-api@1.0.0~pretest-coverage-unit: trashbay-api@1.0.0
+6 silly lifecycle trashbay-api@1.0.0~pretest-coverage-unit: no script for pretest-coverage-unit, continuing
+7 info lifecycle trashbay-api@1.0.0~test-coverage-unit: trashbay-api@1.0.0
+8 verbose lifecycle trashbay-api@1.0.0~test-coverage-unit: unsafe-perm in lifecycle true
+9 verbose lifecycle trashbay-api@1.0.0~test-coverage-unit: PATH: C:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin;D:\Entwicklung\trashbay\api\node-swagger-express-skeleton\node_modules\.bin;C:\Program Files\nodejs;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\MongoDB\Server\3.2\bin;JAVA_HOME\bin;C:\Program Files (x86)\JetBrains\IntelliJ IDEA 2016.2.2\plugins\maven\lib\maven3\bin;C:\Users\Ben\AppData\Local\Microsoft\WindowsApps;C:\Users\Ben\AppData\Roaming\npm
+10 verbose lifecycle trashbay-api@1.0.0~test-coverage-unit: CWD: D:\Entwicklung\trashbay\api\node-swagger-express-skeleton
+11 silly lifecycle trashbay-api@1.0.0~test-coverage-unit: Args: [ '/d /s /c',
+11 silly lifecycle   'set DEBUG=app & ./node_modules/.bin/istanbul cover & ./node_modules/mocha/bin/_mocha test/api/unit -- --recursive' ]
+12 silly lifecycle trashbay-api@1.0.0~test-coverage-unit: Returned: code: 1  signal: null
+13 info lifecycle trashbay-api@1.0.0~test-coverage-unit: Failed to exec test-coverage-unit script
+14 verbose stack Error: trashbay-api@1.0.0 test-coverage-unit: `set DEBUG=app & ./node_modules/.bin/istanbul cover & ./node_modules/mocha/bin/_mocha test/api/unit -- --recursive`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (C:\Program Files\nodejs\node_modules\npm\lib\utils\lifecycle.js:242:16)
+14 verbose stack     at emitTwo (events.js:106:13)
+14 verbose stack     at EventEmitter.emit (events.js:191:7)
+14 verbose stack     at ChildProcess.<anonymous> (C:\Program Files\nodejs\node_modules\npm\lib\utils\spawn.js:40:14)
+14 verbose stack     at emitTwo (events.js:106:13)
+14 verbose stack     at ChildProcess.emit (events.js:191:7)
+14 verbose stack     at maybeClose (internal/child_process.js:852:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:215:5)
+15 verbose pkgid trashbay-api@1.0.0
+16 verbose cwd D:\Entwicklung\trashbay\api\node-swagger-express-skeleton
+17 error Windows_NT 10.0.14393
+18 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "run-script" "test-coverage-unit"
+19 error node v6.4.0
+20 error npm  v3.10.3
+21 error code ELIFECYCLE
+22 error trashbay-api@1.0.0 test-coverage-unit: `set DEBUG=app & ./node_modules/.bin/istanbul cover & ./node_modules/mocha/bin/_mocha test/api/unit -- --recursive`
+22 error Exit status 1
+23 error Failed at the trashbay-api@1.0.0 test-coverage-unit script 'set DEBUG=app & ./node_modules/.bin/istanbul cover & ./node_modules/mocha/bin/_mocha test/api/unit -- --recursive'.
+23 error Make sure you have the latest version of node.js and npm installed.
+23 error If you do, this is most likely a problem with the trashbay-api package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     set DEBUG=app & ./node_modules/.bin/istanbul cover & ./node_modules/mocha/bin/_mocha test/api/unit -- --recursive
+23 error You can get information on how to open an issue for this project with:
+23 error     npm bugs trashbay-api
+23 error Or if that isn't available, you can get their info via:
+23 error     npm owner ls trashbay-api
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]

@@ -1,5 +1,13 @@
 module.exports = {
 
+    IllegalArgumentError: function (message) {
+        Error.call(this);
+        Error.captureStackTrace(this, arguments.callee);
+        this.name = 'IllegalArgumentExcpetion';
+        this.message = message;
+        this.status = 500;
+    },
+
     NotFoundError: function (message) {
         Error.call(this);
         Error.captureStackTrace(this, arguments.callee);
