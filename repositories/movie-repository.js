@@ -89,11 +89,11 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             movieData.lastModifiedUser = user._id;
             var self = this;
             Movie.update({_id: id}, movieData, {runValidators: true}).then(function (result) {
-                console.log(result);
                 return self.getById(id);
             }).then(function (movie) {
                 return deferred.resolve(movie);
             }).catch(function (error) {
+                console.log(error);
                 if (!(error instanceof errors.NotFoundError)) {
                     return deferred.reject(new errors.ValidationError(error));
                 }
