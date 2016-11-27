@@ -11,7 +11,6 @@ var MovieRating = require("../../../models/movie-rating");
 var MovieWatched = require("../../../models/movie-watched");
 var MovieRepository = require("../../../repositories/movie-repository")(config, errors, Movie, MovieRating, MovieWatched);
 
-
 module.exports = function () {
     return {
         exampleData: {

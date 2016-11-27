@@ -9,14 +9,14 @@ module.exports = function (Movie, MovieWatched, MovieRating, MovieRepository) {
                 return movie;
             });
         },
-        setExampleMovieFromUserWatched: function (movieData, userData) {
+        watchExampleMovieFromUser: function (movieData, userData) {
             var data = {
                 user: userData._id,
                 movie: movieData._id
             };
             return (new MovieWatched(data)).save();
         },
-        setExampleMovieFromUserRating: function (movieData, userData, value) {
+        rateExampleMovieFromUser: function (movieData, userData, value) {
             var data = {
                 user: userData._id,
                 movie: movieData._id,
@@ -48,6 +48,11 @@ module.exports = function (Movie, MovieWatched, MovieRating, MovieRepository) {
             getWatchedByMovieIdAndUserId: MovieRepository.getWatchedByMovieIdAndUserId,
             getUsersWatchedByMovieId: MovieRepository.getUsersWatchedByMovieId,
             getMoviesWatchedByUserId: MovieRepository.getMoviesWatchedByUserId,
+            setRatingByMovieIdAndUserId: MovieRepository.setRatingByMovieIdAndUserId,
+            deleteRatingByMovieIdAndUserId: MovieRepository.deleteRatingByMovieIdAndUserId,
+            getAverageRatingByMovieId: MovieRepository.getAverageRatingByMovieId,
+            getRatingByMovieId: MovieRepository.getRatingByMovieId,
+            getRatingByMovieIdAndUserId: MovieRepository.getRatingByMovieIdAndUserId
         }
     }
 };

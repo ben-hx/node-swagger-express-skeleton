@@ -26,13 +26,19 @@ describe('Movie-Repository-Watched-Tests', function () {
         exampleUsers = testFactory.exampleData.generateUsers();
         exampleMovies = testFactory.exampleData.generateMovies();
         q.all([
-            dbTestUtil.setUpDb(),
-            User.remove(),
-            Movie.remove(),
-            userTestUtil.saveExampleUser(exampleUsers.bob),
-            userTestUtil.saveExampleUser(exampleUsers.alice),
-            userTestUtil.saveExampleUser(exampleUsers.eve)
+            dbTestUtil.setUpDb()
         ]).then(function () {
+            return q.all([
+                User.remove(),
+                Movie.remove()
+            ]);
+        }).then(function () {
+            return q.all([
+                userTestUtil.saveExampleUser(exampleUsers.bob),
+                userTestUtil.saveExampleUser(exampleUsers.alice),
+                userTestUtil.saveExampleUser(exampleUsers.eve)
+            ]);
+        }).then(function () {
             return q.all([
                 movieTestUtil.saveExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob),
                 movieTestUtil.saveExampleMovieFromUser(exampleMovies.returnOfTheKillerTomatos, exampleUsers.eve)
@@ -45,16 +51,19 @@ describe('Movie-Repository-Watched-Tests', function () {
     after(function (done) {
         q.all([
             User.remove(),
-            Movie.remove(),
-            dbTestUtil.tearDownDb()
+            Movie.remove()
         ]).then(function () {
+            return q.all([
+                dbTestUtil.tearDownDb()
+            ]);
+        }).then(function () {
             done();
         });
     });
 
     beforeEach(function (done) {
         q.all([
-            MovieWatched.remove(),
+            MovieWatched.remove()
         ]).then(function () {
             done();
         });

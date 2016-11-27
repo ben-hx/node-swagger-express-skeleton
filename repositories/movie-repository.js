@@ -145,7 +145,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             };
             MovieWatched.findOne(id).then(function (watched) {
                 if (watched === null) {
-                    throw new errors.ValidationError('Movie is not set to watched');
+                    throw new errors.ValidationError('Movie is not set to watched!');
                 }
                 return watched.remove();
             }).then(function (watched) {
@@ -233,104 +233,140 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             return deferred.promise
         },
 
-        getRatingByIds: function (movieId, userId) {
+        setRatingByMovieIdAndUserId: function (movieId, userId, value) {
             var deferred = q.defer();
-            var data = {
-                userId: userId,
-                movieId: movieId
+            var id = {
+                user: userId,
+                movie: movieId
             };
-            q.all([
-                getAverageRatingById(data.movieId),
-                getOwnRankingByIds(data.movieId, data.userId),
-                getOthersRankingByIds(data.movieId, data.userId),
-            ]).spread(function (averageRating, ownRanking, othersRanking) {
-                var result = {
-                    averageRating: averageRating,
-                    ownRanking: ownRanking,
-                    othersRanking: othersRanking
-                };
-                return deferred.resolve(result);
+            MovieRating.findOne(id).then(function (rating) {
+                if (rating == null) {
+                    rating = new MovieRating({
+                        user: userId,
+                        movie: movieId,
+                        value: value
+                    });
+                } else {
+                    rating.value = value;
+                }
+                return rating.save();
+            }).then(function (rating) {
+                return deferred.resolve(rating.toObject());
             }).catch(function (error) {
-                return deferred.reject(error);
+                return deferred.reject(new errors.ValidationError(error));
             });
             return deferred.promise;
         },
-        getRating: function (movie, user) {
-            return this.getRatingByIds(movie._id, user._id);
+
+        deleteRatingByMovieIdAndUserId: function (movieId, userId, value) {
+            var deferred = q.defer();
+            var id = {
+                user: userId,
+                movie: movieId
+            };
+            MovieRating.findOne(id).then(function (rating) {
+                if (rating === null) {
+                    throw new errors.ValidationError('Movie is not rated!');
+                }
+                return rating.remove();
+            }).then(function (rating) {
+                return deferred.resolve(rating.toObject());
+            }).catch(function (error) {
+                return deferred.reject(new errors.ValidationError(error));
+            });
+            return deferred.promise;
         },
-        getAverageRatingById: function (movieId) {
-            return MovieRating.aggregate([{
+
+        getAverageRatingByMovieId: function (movieId) {
+            var deferred = q.defer();
+            MovieRating.aggregate([{
                 $match: {
-                    movieId: movieId
+                    movie: movieId
                 }
             }, {
                 $group: {
-                    _id: "$movieId",
+                    _id: "$movie",
                     value: {$avg: "$value"}
                 }
             }]).then(function (averageMovieRating) {
-                return (averageMovieRating.length > 0 ? averageMovieRating[0].value : 0);
+                return deferred.resolve((averageMovieRating.length > 0 ? averageMovieRating[0].value : 0));
+            }).catch(function (error) {
+                return deferred.reject(new errors.ValidationError(error));
             });
+            return deferred.promise;
         },
-        getAverageRating: function (movie) {
-            return this.getAverageRatingById(movie._id);
-        },
-        getOwnRatingByIds: function (movieId, ownId) {
+
+        getRatingByMovieId: function (movieId, options) {
+            var deferred = q.defer();
             var id = {
-                userId: movieId,
-                movieId: userId
+                movie: movieId
             };
-            return MovieRating.findOne(id).then(function (ownRating) {
-                return (ownRating ? ownRating.value : null);
-            });
-        },
-        getOwnRating: function (movie, own) {
-            return getOthersRatingByIds(movie._id, own._id);
-        },
-        getOthersRatingByIds: function (movieId, ownId) {
-            var id = {
-                userId: movieId,
-                movieId: userId
-            };
-            return MovieRating.find({movieId: id.movieId, userId: {'$ne': id.userId}}).then(function (moviesRating) {
-                var result = moviesRating.map(function (userMovieRating) {
-                    return {userid: userMovieRating.userId, rating: userMovieRating.value};
+            var promise = MovieRating.find(id);
+            if (options && options.populate) {
+                promise.populate('user').then(function (rating) {
+                    var result = rating.map(function (value) {
+                        return {user: value.user.toObject(), rating: value.value};
+                    });
+                    return deferred.resolve(result);
                 });
-                return result;
-            });
-        },
-        getOthersRating: function (movie, own) {
-            return this.getOthersRatingByIds(movie._id, own._id);
-        },
-        isWatchedByIds: function (movieId, ownId) {
-            var id = {
-                userId: userId,
-                movieId: movieId,
-            };
-            return MovieWatched.findOne(id).then(function (watched) {
-                return watched != null
-            });
-        },
-        isWatched: function (movie, own) {
-            return this.isWatchedByIds(movie._id, own._id);
-        },
-
-        getOthersWatchedByIds: function (movieId, ownId) {
-            var id = {
-                userId: movieId,
-                movieId: userId
-            };
-            return MovieWatched.find({movieId: id.movieId, userId: {'$ne': id.userId}}).then(function (moviesWatched) {
-                var result = moviesWatched.map(function (userMovieWatched) {
-                    return userMovieWatched.userId;
+            } else {
+                promise.then(function (rating) {
+                    var result = rating.map(function (value) {
+                        return {user: value.user, rating: value.value};
+                    });
+                    return deferred.resolve(result);
                 });
-                return result;
+            }
+            promise.catch(function (error) {
+                return deferred.reject(new errors.ValidationError(error));
             });
-        },
-        getOthersWatched: function (movie, own) {
-            return this.getOthersWatchedByIds(movie._id, own._id);
+            return deferred.promise;
         },
 
+        getRatingByMovieIdAndUserId: function (movieId, userId) {
+            var deferred = q.defer();
+            var data = {
+                user: userId,
+                movie: movieId
+            };
+            MovieRating.findOne(data).then(function (rating) {
+                if (rating === null) {
+                    return deferred.resolve({
+                        user: userId,
+                        movie: movieId,
+                        value: null
+                    });
+                }
+                return deferred.resolve(rating.toObject());
+            }).catch(function (error) {
+                return deferred.reject(new errors.ValidationError(error));
+            });
+            return deferred.promise;
+        }
 
+        /*
+         getRatingByMovieIdAndUserId: function (movieId, userId) {
+         var deferred = q.defer();
+         var data = {
+         userId: userId,
+         movieId: movieId
+         };
+         q.all([
+         this.getAverageRatingByMovieId(data.movieId),
+         getOwnRankingByIds(data.movieId, data.userId),
+         getOthersRankingByIds(data.movieId, data.userId),
+         ]).spread(function (averageRating, ownRanking, othersRanking) {
+         var result = {
+         averageRating: averageRating,
+         ownRanking: ownRanking,
+         othersRanking: othersRanking
+         };
+         return deferred.resolve(result);
+         }).catch(function (error) {
+         return deferred.reject(error);
+         });
+         return deferred.promise;
+         }
+         */
     }
 };

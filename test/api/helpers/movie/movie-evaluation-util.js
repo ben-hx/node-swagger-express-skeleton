@@ -22,12 +22,31 @@ module.exports = function () {
         },
         evaluateMovieIdsUserWatched: function (actual, expected) {
             actual.should.have.length(expected.length);
-            actual.should.deep.include.members(expected)
+            actual.should.deep.include.members(expected);
         },
         evaluateMovieRating: function (actual, expected) {
             String(actual.movie).should.equal(String(expected.movie));
             String(actual.user).should.equal(String(expected.user));
-            actual.value.should.equal(expected.value);
+            if (actual.value == null) {
+                expect(actual.value).to.be.null;
+            } else {
+                actual.value.should.equal(expected.value);
+            }
+        },
+        evaluateUserIdsMovieRating: function (actual, expected) {
+            actual.should.have.length(expected.length);
+            actual.should.deep.include.members(expected);
+        },
+        evaluateUsersMovieRating: function (actual, expected) {
+            actual.forEach(function (value) {
+                delete value.user.password;
+                delete value.user.lastModified;
+            });
+            expected.forEach(function (value) {
+                delete value.user.password;
+                delete value.user.lastModified;
+            });
+            actual.should.deep.include.members(expected);
         }
     }
 };
