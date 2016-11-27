@@ -36,7 +36,6 @@ module.exports = function (Movie, MovieWatched, MovieRating, MovieRepository) {
             getById: MovieRepository.getById,
             updateById: function (id, movieData, user) {
                 return MovieRepository.updateById(id, movieData, user).then(function (movie) {
-                    console.log("ceeeeeeck");
                     movieData._id = movie._id;
                     movieData.lastModified = movie.lastModified;
                     movieData.lastModifiedUser = movie.lastModifiedUser;
