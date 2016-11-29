@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'test';
-var server = require('../../../index');
+var server = require('../../../index-old');
 var config = require('../../../config');
 
 module.exports = {

@@ -335,18 +335,18 @@ paths:
       - "user"
       summary: "Logs user into the system"
       description: ""
-      operationId: "login"
+      operationId: "authenticate"
       produces:
       - "application/json"
       parameters:
       - name: "username"
         in: "query"
-        description: "The user name for login"
+        description: "The user name for authenticate"
         required: true
         type: "string"
       - name: "password"
         in: "query"
-        description: "The password for login in clear text"
+        description: "The password for authenticate in clear text"
         required: true
         type: "string"
       responses:

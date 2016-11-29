@@ -1,6 +1,6 @@
 var swaggerTools = require('swagger-tools');
 var q = require('q');
-var authenticationService = require('./auth/authentication-service');
+var authenticationService = require('./auth/old/authentication-service');
 
 module.exports.initialize = function (app, config, swaggerDoc) {
 

@@ -7,6 +7,20 @@ module.exports = function (User, UserRepository) {
             });
         },
         repositoryDecorator: {
+            getActivatedUser: function (user) {
+                self = this;
+                return self.registerExampleUser(user).then(function () {
+                    return self.activateExampleUser(user);
+                });
+            },
+
+            getActivatedUserWithRole: function (user, role) {
+                self = this;
+                return self.getActivatedUser(user).then(function () {
+                    return self.setRoleToExampleUser(user, role);
+                });
+            },
+
             registerExampleUser: function (user) {
                 return UserRepository.register(user).then(function (resolvedUser) {
                     user._id = resolvedUser._id;
@@ -24,14 +38,14 @@ module.exports = function (User, UserRepository) {
             },
 
             activateExampleUser: function (user) {
-                return UserRepository.activate(user).then(function (resolvedUser) {
+                return UserRepository.activateById(user._id).then(function (resolvedUser) {
                     user._id = resolvedUser._id;
                     return resolvedUser;
                 });
             },
 
             setRoleToExampleUser: function (user, role) {
-                return UserRepository.setRole(user, role);
+                return UserRepository.setRoleById(user._id, role);
             },
 
             getInaktiveExampleUsers: function (options) {

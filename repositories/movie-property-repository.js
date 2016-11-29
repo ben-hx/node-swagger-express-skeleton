@@ -1,7 +1,7 @@
 'use strict';
 var q = require('q');
 
-module.exports = function (Movie) {
+module.exports = function (config, error, Movie) {
 
     function findByMovieProperty(propertyName) {
         var deferred = q.defer();

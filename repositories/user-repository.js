@@ -17,16 +17,16 @@ module.exports = function (config, errors, User, InaktiveUser) {
             return deferred.promise;
         },
 
-        activate: function (user) {
+        activateById: function (inaktiveUserId) {
             var deferred = q.defer();
-            InaktiveUser.findOne({_id: user._id}).then(function (tempUser) {
-                if (tempUser == null) {
+            InaktiveUser.findOne({_id: inaktiveUserId}).then(function (inaktiveUser) {
+                if (inaktiveUser == null) {
                     throw new errors.NotFoundError('User does not exist!');
                 }
-                return tempUser.remove();
-            }).then(function (tempUser) {
-                var password = tempUser.password;
-                var data = tempUser.toObject();
+                return inaktiveUser.remove();
+            }).then(function (inaktiveUser) {
+                var password = inaktiveUser.password;
+                var data = inaktiveUser.toObject();
                 delete data._id;
                 data.role = 'looser';
                 data.password = password;
@@ -35,6 +35,9 @@ module.exports = function (config, errors, User, InaktiveUser) {
             }).then(function (user) {
                 return deferred.resolve(user.toObject());
             }).catch(function (error) {
+                if (error.name == 'CastError') {
+                    return deferred.reject(new errors.NotFoundError('User does not exist!'));
+                }
                 if (!(error instanceof errors.NotFoundError)) {
                     return deferred.reject(new errors.ReadError('Error while reading User from Database'));
                 }
@@ -43,9 +46,9 @@ module.exports = function (config, errors, User, InaktiveUser) {
             return deferred.promise;
         },
 
-        setRole: function (user, role) {
+        setRoleById: function (userId, role) {
             var deferred = q.defer();
-            User.findOne({_id: user._id}).then(function (user) {
+            User.findOne({_id: userId}).then(function (user) {
                 if (user == null) {
                     throw new errors.NotFoundError('User does not exist!');
                 }
@@ -54,6 +57,9 @@ module.exports = function (config, errors, User, InaktiveUser) {
             }).then(function (user) {
                 deferred.resolve(user.toObject());
             }).catch(function (error) {
+                if (error.name == 'CastError') {
+                    return deferred.reject(new errors.NotFoundError('User does not exist!'));
+                }
                 if (error.name == 'ValidationError') {
                     return deferred.reject(new errors.ValidationError(error));
                 }
@@ -68,7 +74,10 @@ module.exports = function (config, errors, User, InaktiveUser) {
         getUsers: function (options) {
             var deferred = q.defer();
             User.paginate(options).then(function (result) {
-                deferred.resolve({users: result.docs, pagination: result.pagination});
+                var docs = result.docs.map(function (user) {
+                    return user.toObject();
+                });
+                deferred.resolve({users: docs, pagination: result.pagination});
             }).catch(function (error) {
                 deferred.reject(err);
             });
@@ -78,7 +87,10 @@ module.exports = function (config, errors, User, InaktiveUser) {
         getInaktiveUsers: function (options) {
             var deferred = q.defer();
             InaktiveUser.paginate(options).then(function (result) {
-                deferred.resolve({users: result.docs, pagination: result.pagination});
+                var docs = result.docs.map(function (user) {
+                    return user.toObject();
+                });
+                deferred.resolve({users: docs, pagination: result.pagination});
             }).catch(function (error) {
                 deferred.reject(err);
             });

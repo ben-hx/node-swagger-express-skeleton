@@ -1,6 +1,6 @@
 'use strict';
 
-var TempUser = require('../models/inaktive-user');
+var TempUser = require('../../models/inaktive-user');
 
 function getUserResponseBody(user, message) {
     var result = {

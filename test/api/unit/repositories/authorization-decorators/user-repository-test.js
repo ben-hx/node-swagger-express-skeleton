@@ -34,12 +34,12 @@ describe('User-Authorization-Repository-Tests', function () {
 
     });
 
-    describe('activate()', function () {
+    describe('activateById()', function () {
 
         var user = sinon.spy();
 
         it('should be callable for admin', function (done) {
-            checkMethodForRole('admin', 'activate', user);
+            checkMethodForRole('admin', 'activateById', user);
             done();
         });
 
@@ -47,7 +47,7 @@ describe('User-Authorization-Repository-Tests', function () {
             var roles = authTestUtil.allPossibleRolesExcept(['admin']);
             roles.forEach(function (role) {
                 errorEvaluation.evaluateExecption(function () {
-                    checkMethodForRole(role, 'activate', user);
+                    checkMethodForRole(role, 'activateById', user);
                 }, errors.AuthenticationError);
             });
             done();
@@ -55,12 +55,12 @@ describe('User-Authorization-Repository-Tests', function () {
 
     });
 
-    describe('setRole()', function () {
+    describe('setRoleById()', function () {
 
         var user = sinon.spy();
 
         it('should be callable for admin', function (done) {
-            checkMethodForRole('admin', 'setRole', user, 'moderator');
+            checkMethodForRole('admin', 'setRoleById', user, 'moderator');
             done();
         });
 
@@ -68,7 +68,7 @@ describe('User-Authorization-Repository-Tests', function () {
             var roles = authTestUtil.allPossibleRolesExcept(['admin']);
             roles.forEach(function (role) {
                 errorEvaluation.evaluateExecption(function () {
-                    checkMethodForRole(role, 'setRole', user, 'moderator');
+                    checkMethodForRole(role, 'setRoleById', user, 'moderator');
                 }, errors.AuthenticationError);
             });
             done();

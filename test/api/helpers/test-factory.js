@@ -1,9 +1,11 @@
+'use strict';
+
 var debug = require('debug');
 var config = require('../../../config');
 var errors = require("../../../errors/errors");
 var mongooseConfig = require('../../../mongoose-config')(debug, config);
 
-var AuthorizationService = require("../../../auth/authoriszation-service")(errors);
+var AuthorizationService = require("../../../auth/auth-service")(errors);
 var User = require("../../../models/user");
 var InaktiveUser = require("../../../models/inaktive-user");
 var UserRepository = require("../../../repositories/user-repository")(config, errors, User, InaktiveUser);
@@ -21,6 +23,13 @@ module.exports = function () {
         config: config,
         dbTestUtil: function () {
             return require('./db/db-test-util')(mongooseConfig);
+        },
+        apiTestUtil: function () {
+            var server = require("../../../app")();
+            return require('./api/api-test-util')(config, debug, server);
+        },
+        apiEvaluation: function () {
+            return require('./api/api-evaluation-util')();
         },
         errorEvaluation: function () {
             return require('./error/error-evaluation-util')(errors);

@@ -1,3 +1,4 @@
+var q = require('q');
 var bcrypt = require('bcrypt-nodejs');
 var validator = require('validator');
 var mongoose = require('mongoose');
@@ -33,7 +34,22 @@ UserSchema.plugin(mongoosePlugins.lastModified);
 UserSchema.plugin(mongoosePlugins.paginate);
 UserSchema.plugin(mongoosePlugins.toObjectTransformation, {
     transformCallback: function (doc, value, options) {
+
+        var selfPassword = value.password;
+
         delete value.password;
+
+        value.verifyPassword = function (password) {
+            var deferred = q.defer();
+            bcrypt.compare(password, selfPassword, function (err, isMatch) {
+                if (err) {
+                    deferred.reject(err);
+                }
+                deferred.resolve(isMatch);
+            });
+            return deferred.promise;
+        };
+
     }
 });
 
@@ -82,13 +98,15 @@ UserSchema.pre('save', function (done) {
  Added to the Prototype, because userModel.schema.methods
  is not working after schema has been constructed
  */
-UserSchema.methods.verifyPassword = function (password, done) {
+UserSchema.methods.verifyPassword = function (password) {
+    var deferred = q.defer();
     bcrypt.compare(password, this.password, function (err, isMatch) {
         if (err) {
-            return done(err);
+            deferred.reject(err);
         }
-        done(null, isMatch);
+        deferred.resolve(isMatch);
     });
+    return deferred.promise;
 };
 
 module.exports = mongoose.model('User', UserSchema);

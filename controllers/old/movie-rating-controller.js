@@ -1,9 +1,9 @@
 'use strict';
 
-var MovieRating = require('../models/movie-rating');
-var MovieWatched = require('../models/movie-watched');
+var MovieRating = require('../../models/movie-rating');
+var MovieWatched = require('../../models/movie-watched');
 var controllerUtil = require('./controller-util');
-var errors = require('../errors/errors');
+var errors = require('../../errors/errors');
 
 function getMovieRatingResponseBody(movieId, ownRating, averageRating, message) {
     var result = {

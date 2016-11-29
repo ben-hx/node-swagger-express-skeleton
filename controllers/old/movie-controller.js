@@ -1,7 +1,7 @@
 'use strict';
 
-var Movie = require('../models/movie');
-var config = require('../config');
+var Movie = require('../../models/movie');
+var config = require('../../config');
 var controllerUtil = require('./controller-util');
 
 function getMovieResponseBody(movie, message) {

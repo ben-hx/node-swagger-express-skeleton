@@ -1,5 +1,5 @@
-var Movie = require('../models/movie');
-var errors = require('../errors/errors');
+var Movie = require('../../models/movie');
+var errors = require('../../errors/errors');
 
 module.exports = {
 

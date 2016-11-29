@@ -7,14 +7,14 @@ module.exports = function (userRepository, authorizationService) {
     return {
         register: userRepository.register,
 
-        activate: function (user) {
+        activateById: function (inaktiveUserId) {
             authorizationService.checkPermission(['admin']);
-            return userRepository.activate(user);
+            return userRepository.activateById(inaktiveUserId);
         },
 
-        setRole: function (user, role) {
+        setRoleById: function (userId, role) {
             authorizationService.checkPermission(['admin']);
-            return userRepository.setRole(user, role);
+            return userRepository.setRoleById(userId, role);
         },
 
         getUsers: function (options) {

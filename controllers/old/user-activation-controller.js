@@ -1,9 +1,9 @@
 'use strict';
 
 var jwt = require('jsonwebtoken');
-var config = require('../config');
+var config = require('../../config');
 
-var TempUser = require('../models/inaktive-user');
+var TempUser = require('../../models/inaktive-user');
 var controllerUtil = require('./controller-util');
 
 var verificationConfig = config[process.env.NODE_ENV].settings.user.verification;

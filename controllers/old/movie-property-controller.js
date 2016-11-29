@@ -1,6 +1,6 @@
 'use strict';
 
-var Movie = require('../models/movie');
+var Movie = require('../../models/movie');
 var controllerUtil = require('./controller-util');
 
 function findByMovieProperty(propertyName, req, res, next) {

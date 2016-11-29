@@ -1,6 +1,6 @@
 'use strict';
 
-var MovieWatched = require('../models/movie-watched');
+var MovieWatched = require('../../models/movie-watched');
 var controllerUtil = require('./controller-util');
 
 function getMovieWatchedResponseBody(movieId, watched, message) {

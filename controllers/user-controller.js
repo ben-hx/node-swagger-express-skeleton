@@ -1,65 +1,50 @@
 'use strict';
 
-var User = require('../models/user');
+var moongose = require('mongoose');
 
-function getUserResponseBody(user, message) {
-    var result = {
-        success: true,
-        data: {
-            user: user.toObject()
-        }
-    };
-    if (message) {
-        result.message = message;
-    }
-    return result;
-}
+module.exports = function (UserRepository) {
 
-module.exports.register = function create(req, res, next) {
-    delete req.body.role;
-    var user = new User(req.body);
-    user.save(function (err) {
-        if (err) {
-            return next(err);
-        }
-        res.status(201);
-        res.send(getUserResponseBody(user, 'User created!'));
-    });
-};
-
-module.exports.changePassword = function (req, res, next) {
-    User.findOne({_id: req.user._id}, function (err, user) {
-        if (err) {
-            return next(err);
-        }
-        var oldPassword = req.body.old_password;
-        var newPassword = req.body.new_password;
-        user.verifyPassword(oldPassword, function (err, isMatch) {
-            if (err) {
-                return next(err);
-            }
-
-            if (!isMatch) {
-                return next({status: 400, message: 'Old password does not match!'});
-            }
-
-            user.password = newPassword;
-            user.save(function (err) {
-                if (err) {
-                    return next(err);
-                }
-                res.status(200);
-                res.send(getUserResponseBody(user, 'Password changed!'));
+    return {
+        register: function (req, res, next) {
+            UserRepository.register(req.body).then(function (user) {
+                res.status(201);
+                res.sendData({user: user}, 'User registered! The Admin will activateById your account as soon as possible!');
+            }).catch(function (error) {
+                next(error);
             });
-        });
-    });
-};
-
-module.exports.getMe = function (req, res) {
-    User.findOne({_id: req.user._id}, function (err, user) {
-        if (err) {
-            return next(err);
+        },
+        activate: function (req, res, next) {
+            UserRepository.activateById(req.params.inaktive_user_id).then(function (user) {
+                res.status(200);
+                res.sendData({user: user}, 'User activated!');
+            }).catch(function (error) {
+                next(error);
+            });
+        },
+        setRole: function (req, res, next) {
+            UserRepository.setRoleById(req.params.user_id, req.params.new_role_name).then(function (user) {
+                res.status(200);
+                res.sendData({user: user}, 'New Role set to "' + req.params.new_role_name + '"!');
+            }).catch(function (error) {
+                next(error);
+            });
+        },
+        getUsers: function (req, res, next) {
+            UserRepository.getUsers(req.resourceOptions).then(function (result) {
+                res.status(200);
+                res.sendData(result);
+            }).catch(function (error) {
+                next(error);
+            });
+        },
+        getInaktiveUsers: function (req, res, next) {
+            UserRepository.getInaktiveUsers(req.resourceOptions).then(function (result) {
+                res.status(200);
+                res.sendData(result);
+            }).catch(function (error) {
+                next(error);
+            });
         }
-        res.send(getUserResponseBody(user));
-    });
-};
+    }
+
+}

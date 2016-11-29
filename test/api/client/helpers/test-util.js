@@ -5,7 +5,6 @@ var expect = chai.expect;
 var testConfig = require('../test-init');
 var api = supertest.agent(testConfig.apiURI);
 
-
 module.exports = {
 
     cleanUpExampleModel: function (model) {

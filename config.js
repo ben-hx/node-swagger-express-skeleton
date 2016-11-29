@@ -5,6 +5,8 @@ config.production = {
         mongoURI: 'mongodb://localhost/production'
     },
     settings: {
+        appName: "trashbay",
+        appBaseUrl: '/v1',
         port: 8090,
         swagger: {
             ui: '/swagger.json'
@@ -27,6 +29,8 @@ config.development = {
         mongoURI: 'mongodb://localhost/development'
     },
     settings: {
+        appName: "trashbay",
+        appBaseUrl: '/v1',
         port: 8080,
         swagger: {
             ui: '/swagger.json'
@@ -49,6 +53,8 @@ config.test = {
         mongoURI: 'mongodb://localhost/test'
     },
     settings: {
+        appName: "trashbay",
+        appBaseUrl: '/v1',
         port: 9000,
         swagger: {
             ui: '/swagger.json'

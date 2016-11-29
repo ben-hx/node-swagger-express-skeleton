@@ -9,11 +9,25 @@ module.exports.generate = function () {
             role: defaultRole
         },
 
+        looserBob: {
+            username: 'looserBob',
+            email: 'looserBob@test.de',
+            password: 'looserBob',
+            role: 'looser'
+        },
+
         adminBob: {
-            username: 'bob',
-            email: 'bob@test.de',
-            password: 'bob',
+            username: 'adminBob',
+            email: 'adminBob@test.de',
+            password: 'adminBob',
             role: 'admin'
+        },
+
+        moderatorBob: {
+            username: 'moderatorBob',
+            email: 'moderatorBob@test.de',
+            password: 'moderatorBob',
+            role: 'moderator'
         },
 
         alice: {

@@ -27,7 +27,7 @@ describe('Registration-Endpoint Tests', function () {
 
         it('should return a user when registering with valid user-data', function (done) {
             testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
-                testUtil.evaluateSuccessfulUnregisteredUserResponse(res, 201, exampleUsers.bob);
+                testUtil.evaluateSuccessfulRegisterResponse(res, 201, exampleUsers.bob);
                 done();
             });
         });
@@ -74,7 +74,7 @@ describe('Registration-Endpoint Tests', function () {
 
         it('should return a bad-request when registering two users with the same username', function (done) {
             testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
-                testUtil.evaluateSuccessfulUnregisteredUserResponse(res, 201, exampleUsers.bob);
+                testUtil.evaluateSuccessfulRegisterResponse(res, 201, exampleUsers.bob);
                 var user = {
                     username: exampleUsers.bob.username,
                     email: 'invalid@invalid.de',
@@ -89,7 +89,7 @@ describe('Registration-Endpoint Tests', function () {
 
         it('should return a bad-request when registering two users with the same email', function (done) {
             testUtil.registerExampleUser(exampleUsers.bob, function (err, res) {
-                testUtil.evaluateSuccessfulUnregisteredUserResponse(res, 201, exampleUsers.bob);
+                testUtil.evaluateSuccessfulRegisterResponse(res, 201, exampleUsers.bob);
                 var user = {
                     username: 'invalid',
                     email: exampleUsers.bob.email,

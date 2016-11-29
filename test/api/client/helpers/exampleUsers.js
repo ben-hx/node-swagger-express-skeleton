@@ -8,13 +8,6 @@ module.exports = {
         role: defaultRole
     },
 
-    adminBob: {
-        username: 'bob',
-        email: 'bob@test.de',
-        password: 'bob',
-        role: 'admin'
-    },
-
     alice: {
         username: 'alice',
         email: 'alice@test.de',

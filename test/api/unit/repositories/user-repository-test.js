@@ -125,7 +125,7 @@ describe('User-Repository-Tests', function () {
 
     });
 
-    describe('activate()', function () {
+    describe('activateById()', function () {
 
         it('should return a user when activating him', function (done) {
             userRepositoryTestUtil.registerExampleUser(exampleUsers.bob).then(function (user) {
@@ -160,7 +160,7 @@ describe('User-Repository-Tests', function () {
 
     });
 
-    describe('setRole()', function () {
+    describe('setRoleById()', function () {
 
         function checkRole(role) {
             it('should return a user when setting role to ' + role, function (done) {
