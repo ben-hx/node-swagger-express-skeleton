@@ -1,6 +1,7 @@
 'use strict';
 
 var q = require('q');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
 
@@ -34,7 +35,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             movie.save().then(function (movie) {
                 return deferred.resolve(movie.toObject());
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -63,7 +64,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                 });
                 return deferred.resolve({movies: docs, pagination: result.pagination});
             }).catch(function (error) {
-                return deferred.reject(error);
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -76,10 +77,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                     return deferred.resolve(movie.toObject());
                 }
             }).catch(function (error) {
-                if (!(error instanceof errors.NotFoundError)) {
-                    return deferred.reject(new errors.ValidationError(error));
-                }
-                return deferred.reject(error);
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -89,15 +87,13 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             movieData.lastModifiedUser = user._id;
             delete movieData._id;
             var self = this;
-            Movie.update({_id: id}, movieData, {runValidators: true}).then(function (result) {
-                return self.getById(id);
+            Movie.findByIdAndUpdate({_id: id}, {$set: movieData}, {
+                runValidators: true,
+                new: true
             }).then(function (movie) {
-                return deferred.resolve(movie);
+                return deferred.resolve(movie.toObject());
             }).catch(function (error) {
-                if (!(error instanceof errors.NotFoundError)) {
-                    return deferred.reject(new errors.ValidationError(error));
-                }
-                return deferred.reject(error);
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -110,10 +106,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                     return deferred.resolve(movie.toObject());
                 }
             }).catch(function (error) {
-                if (!(error instanceof errors.NotFoundError)) {
-                    return deferred.reject(new errors.ValidationError(error));
-                }
-                return deferred.reject(error);
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -133,7 +126,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             }).then(function (watched) {
                 return deferred.resolve(watched.toObject());
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -154,7 +147,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                 result.watched = false;
                 return deferred.resolve(result);
             }).catch(function (error) {
-                return deferred.reject(error);
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -175,7 +168,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                 }
                 return deferred.resolve(watched.toObject());
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -198,7 +191,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                     var result = watched.map(function (value) {
                         return value.user;
                     });
-                    return deferred.resolve(result);
+                    return deferred.reject(errors.convertError(error));
                 });
             }
             promise.catch(function (error) {
@@ -229,7 +222,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                 });
             }
             promise.catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise
         },
@@ -254,7 +247,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             }).then(function (rating) {
                 return deferred.resolve(rating.toObject());
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -273,16 +266,17 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             }).then(function (rating) {
                 return deferred.resolve(rating.toObject());
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
 
         getAverageRatingByMovieId: function (movieId) {
             var deferred = q.defer();
+            var id = ObjectId(String(movieId));
             MovieRating.aggregate([{
                 $match: {
-                    movie: movieId
+                    movie: id//String(movieId)
                 }
             }, {
                 $group: {
@@ -292,12 +286,12 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             }]).then(function (averageMovieRating) {
                 return deferred.resolve((averageMovieRating.length > 0 ? averageMovieRating[0].value : 0));
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
 
-        getRatingByMovieId: function (movieId, options) {
+        getUsersRatingByMovieId: function (movieId, options) {
             var deferred = q.defer();
             var id = {
                 movie: movieId
@@ -319,7 +313,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                 });
             }
             promise.catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -340,7 +334,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                 }
                 return deferred.resolve(rating.toObject());
             }).catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         }

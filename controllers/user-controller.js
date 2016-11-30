@@ -38,7 +38,7 @@ module.exports = function (UserRepository) {
             });
         },
         getInaktiveUsers: function (req, res, next) {
-            UserRepository.getInaktiveUsers(req.resourceOptions).then(function (result) {
+            UserRepository.getInaktiveUsers({query: req.query}).then(function (result) {
                 res.status(200);
                 res.sendData(result);
             }).catch(function (error) {

@@ -3,7 +3,7 @@ var chai = require('chai');
 var should = chai.should();
 var q = require('q');
 
-describe('Movie-Repository-Watched-Tests', function () {
+describe('Movie-Repository-Rating-Tests', function () {
 
     var mongoose = require('mongoose');
     var User = require("../../../../models/user");
@@ -212,7 +212,7 @@ describe('Movie-Repository-Watched-Tests', function () {
 
     });
 
-    describe('getRatingByMovieId()', function () {
+    describe('getUsersRatingByMovieId()', function () {
 
         beforeEach(function () {
             return q.all([
@@ -222,7 +222,7 @@ describe('Movie-Repository-Watched-Tests', function () {
         });
 
         it('should return user ratings when getting user ratings', function (done) {
-            movieRepository.getRatingByMovieId(exampleMovies.theToxicAvenger._id).then(function (result) {
+            movieRepository.getUsersRatingByMovieId(exampleMovies.theToxicAvenger._id).then(function (result) {
                 var expected = [
                     {user: exampleUsers.bob._id, rating: 5},
                     {user: exampleUsers.alice._id, rating: 4}
@@ -233,7 +233,7 @@ describe('Movie-Repository-Watched-Tests', function () {
         });
 
         it('should return array of full users when getting users watched movie with option: population=true', function (done) {
-            movieRepository.getRatingByMovieId(exampleMovies.theToxicAvenger._id, {populate: true}).then(function (result) {
+            movieRepository.getUsersRatingByMovieId(exampleMovies.theToxicAvenger._id, {populate: true}).then(function (result) {
                 var expected = [
                     {user: exampleUsers.bob, rating: 5},
                     {user: exampleUsers.alice, rating: 4}
@@ -244,7 +244,7 @@ describe('Movie-Repository-Watched-Tests', function () {
         });
 
         it('should return empty array when getting unrated movie', function (done) {
-            movieRepository.getRatingByMovieId(exampleMovies.returnOfTheKillerTomatos._id).then(function (result) {
+            movieRepository.getUsersRatingByMovieId(exampleMovies.returnOfTheKillerTomatos._id).then(function (result) {
                 var expected = [];
                 movieEvaluation.evaluateUserIdsMovieRating(result, expected);
                 done();

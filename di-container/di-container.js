@@ -13,7 +13,7 @@ module.exports = function (debug, config) {
 
     var authServiceInstance = require('../auth/auth-service')(errors, UserRepository).initialize();
     var userRepositoryInstance = require("../repositories/authorization-decorators/user-repository")(UserRepository, authServiceInstance);
-    var movieRepositoryInstance = require("../repositories/authorization-decorators/movie-repository")(MovieRepository, authServiceInstance);
+    var movieRepositoryInstance = require("../repositories/user-movie-repository")(MovieRepository, authServiceInstance);
     var moviePropertyRepositoryInstance = require("../repositories/authorization-decorators/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
     var basicAuthenticationInstance = require("../auth/basic-authentication")(authServiceInstance);
 
@@ -35,6 +35,9 @@ module.exports = function (debug, config) {
         },
         getUserController: function () {
             return require("../controllers/user-controller")(this.getUserRepository());
+        },
+        getMovieController: function () {
+            return require("../controllers/movie-controller")(this.getMovieRepository());
         }
     };
 }

@@ -52,7 +52,7 @@ module.exports = function (errors, UserRepository) {
                     return deferred.promise;
                 },
                 getCurrentUser: function () {
-                    return this.currentUser;
+                    return currentUser;
                 },
                 checkPermission: function (roles) {
                     if (!currentUser) {

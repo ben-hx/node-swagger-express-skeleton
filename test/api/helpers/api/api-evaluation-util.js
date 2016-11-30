@@ -55,25 +55,48 @@ module.exports = function () {
             expectedUsers.should.deep.include.members(response.body.data.users);
         },
 
-        evaluateSuccessfulMovieResponse: function (response, statusCode, movie, user) {
+        evaluateMovieResponse: function (response, statusCode, expectedMovie, expectedUserCreatedBy) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
-            response.body.data.movie.title.should.equal(movie.title);
-            response.body.data.movie.userCreatedId.should.equal(user._id);
-            delete response.body.data.movie.userCreatedId;
-            response.body.data.movie.should.deep.equal(movie);
+            response.body.data.movie.title.should.equal(expectedMovie.title);
+            response.body.data.movie.lastModifiedUser.should.equal(String(expectedUserCreatedBy._id));
+            delete response.body.data.movie.lastModifiedUser;
+            delete response.body.data.movie.lastModified;
+            response.body.data.movie.should.deep.equal(expectedMovie);
         },
 
-        evaluateSuccessfulMoviesResponse: function (response, statusCode, movies) {
+        evaluateMoviesResponse: function (response, statusCode, expectedMovies) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
+            response.body.data.movies.should.have.length(expectedMovies.length);
+            response.body.data.movies.forEach(function (movie) {
+                delete movie.lastModifiedUser;
+                delete movie.lastModified;
+            });
+            response.body.data.movies.should.deep.include.members(expectedMovies)
+        },
 
-            for (var i in response.body.data.movies) {
-                value = response.body.data.movies[i];
-                delete value.userCreatedId;
+        evaluateMovieWatchedResponse: function (response, statusCode, expectedMovieWatched) {
+            response.status.should.equal(statusCode);
+            response.body.success.should.equal(true);
+            response.body.data.movie.should.equal(expectedMovieWatched.movie);
+            response.body.data.watched.value.should.equal(expectedMovieWatched.watched.value);
+        },
+
+        evaluateMovieRatingResponse: function (response, statusCode, expectedMovieRating) {
+            response.status.should.equal(statusCode);
+            response.body.success.should.equal(true);
+            response.body.data.movie.should.equal(expectedMovieRating.movie);
+            if (response.body.data.rating.value == null) {
+                expect(response.body.data.rating.value).to.be.null;
+            } else {
+                response.body.data.rating.value.should.equal(expectedMovieRating.rating.value);
             }
-            response.body.data.movies.should.deep.include.members(movies)
         },
+
+
+
+
 
         evaluateSuccessfulMoviesPaginationResponse: function (response, statusCode, expectedData) {
             response.status.should.equal(statusCode);

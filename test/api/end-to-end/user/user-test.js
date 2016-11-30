@@ -4,12 +4,12 @@ var chai = require('chai');
 var q = require('q');
 
 
-describe('Registration-Endpoint Tests', function () {
+describe('User-Endpoint Tests', function () {
 
-    var testConfig = require('./test-init');
-    var User = require("../../../models/user");
-    var InaktiveUser = require("../../../models/inaktive-user");
-    var testFactory = require("../helpers/test-factory")();
+    var testConfig = require('./../test-init');
+    var User = require("../../../../models/user");
+    var InaktiveUser = require("../../../../models/inaktive-user");
+    var testFactory = require("../../helpers/test-factory")();
     var exampleUsers = testFactory.exampleData.generateUsers();
     var apiTestUtil = testFactory.apiTestUtil();
     var apiEvaluation = testFactory.apiEvaluation();
@@ -94,6 +94,10 @@ describe('Registration-Endpoint Tests', function () {
                 });
             });
 
+        });
+
+        describe('not authorized', function () {
+
             it('should return 401 unauthorized when activating a user as moderator', function (done) {
                 api.activate(exampleUsers.moderatorBob, exampleUsers.bob._id).then(function (res) {
                     apiEvaluation.evaluateErrorResponse(res, 401);
@@ -158,6 +162,10 @@ describe('Registration-Endpoint Tests', function () {
                     done();
                 });
             });
+
+        });
+
+        describe('not authroized', function () {
 
             it('should return 401 unauthorized when setting role as moderator', function (done) {
                 api.setRole(exampleUsers.moderatorBob, exampleUsers.bob._id, 'moderator').then(function (res) {
@@ -227,6 +235,10 @@ describe('Registration-Endpoint Tests', function () {
                 });
             });
 
+        });
+
+        describe('not authorized', function () {
+
             it('should return 401 unauthorized when getting all users as moderator', function (done) {
                 api.getUsers(exampleUsers.moderatorBob).then(function (res) {
                     apiEvaluation.evaluateErrorResponse(res, 401);
@@ -290,6 +302,9 @@ describe('Registration-Endpoint Tests', function () {
                     done();
                 });
             });
+        });
+
+        describe('not authenticated', function () {
 
             it('should return 401 unauthorized when getting all inaktive-users as moderator', function (done) {
                 api.getInaktiveUsers(exampleUsers.moderatorBob).then(function (res) {
@@ -304,6 +319,7 @@ describe('Registration-Endpoint Tests', function () {
                     done();
                 });
             });
+
         });
 
         describe('not authenticated', function () {

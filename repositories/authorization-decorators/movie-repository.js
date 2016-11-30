@@ -36,7 +36,7 @@ module.exports = function (movieRepository, authorizationService) {
 
         getAverageRatingByMovieId: movieRepository.getAverageRatingByMovieId,
 
-        getRatingByMovieId: movieRepository.getRatingByMovieId,
+        getUsersRatingByMovieId: movieRepository.getUsersRatingByMovieId,
 
         getRatingByMovieIdAndUserId: movieRepository.getRatingByMovieIdAndUserId
     }

@@ -14,6 +14,8 @@ var MovieRating = require("../../../models/movie-rating");
 var MovieWatched = require("../../../models/movie-watched");
 var MovieRepository = require("../../../repositories/movie-repository")(config, errors, Movie, MovieRating, MovieWatched);
 
+var apiTestUtilInstance = require('./api/api-test-util')(config, debug, require("../../../app")());
+
 module.exports = function () {
     return {
         exampleData: {
@@ -25,8 +27,7 @@ module.exports = function () {
             return require('./db/db-test-util')(mongooseConfig);
         },
         apiTestUtil: function () {
-            var server = require("../../../app")();
-            return require('./api/api-test-util')(config, debug, server);
+            return apiTestUtilInstance;
         },
         apiEvaluation: function () {
             return require('./api/api-evaluation-util')();

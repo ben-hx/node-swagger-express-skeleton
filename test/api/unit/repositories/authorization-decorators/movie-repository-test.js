@@ -230,12 +230,12 @@ describe('Movie-Authorization-Repository-Tests', function () {
 
     });
 
-    describe('getRatingByMovieId()', function () {
+    describe('getUsersRatingByMovieId()', function () {
 
         it('should be callable for everybody', function (done) {
             var roles = authTestUtil.allPossibleRoles();
             roles.forEach(function (role) {
-                checkMethodCalledWithArgumentsForRole(role, 'getRatingByMovieId', 1, {});
+                checkMethodCalledWithArgumentsForRole(role, 'getUsersRatingByMovieId', 1, {});
             });
             done();
         });

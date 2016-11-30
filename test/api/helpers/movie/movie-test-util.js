@@ -51,7 +51,7 @@ module.exports = function (Movie, MovieWatched, MovieRating, MovieRepository) {
             setRatingByMovieIdAndUserId: MovieRepository.setRatingByMovieIdAndUserId,
             deleteRatingByMovieIdAndUserId: MovieRepository.deleteRatingByMovieIdAndUserId,
             getAverageRatingByMovieId: MovieRepository.getAverageRatingByMovieId,
-            getRatingByMovieId: MovieRepository.getRatingByMovieId,
+            getUsersRatingByMovieId: MovieRepository.getUsersRatingByMovieId,
             getRatingByMovieIdAndUserId: MovieRepository.getRatingByMovieIdAndUserId
         }
     }
