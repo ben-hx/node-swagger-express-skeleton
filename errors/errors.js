@@ -56,11 +56,12 @@ module.exports = {
         this.data = data;
         this.status = 400;
     },
-    UnexpectedError: function (message) {
+    UnexpectedError: function (error) {
         Error.call(this);
         Error.captureStackTrace(this, arguments.callee);
         this.name = 'UnexpectedError';
-        this.message = message || 'Don not know what happened';
+        this.message = 'Do not know what happened';
+        this.parentError = error;
         this.status = 500;
     },
 
@@ -74,6 +75,6 @@ module.exports = {
         else if (error.name == 'NotFoundError' || error.name == 'DuplicationError') {
             return error;
         }
-        return new this.UnexpectedError();
+        return new this.UnexpectedError(error);
     }
 }
