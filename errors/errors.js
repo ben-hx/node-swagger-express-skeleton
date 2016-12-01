@@ -69,7 +69,7 @@ module.exports = {
         if (error.name == 'CastError') {
             return new this.NotFoundError('Resource does not exist!');
         }
-        else if (error.name == 'ValidationError' || error.code == 11000) {
+        else if (error.name == 'ValidationError' || error.code == 11000 || error.code == 11001) {
             return new this.ValidationError(error);
         }
         else if (error.name == 'NotFoundError' || error.name == 'DuplicationError') {
