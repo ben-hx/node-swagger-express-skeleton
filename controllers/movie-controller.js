@@ -71,7 +71,15 @@ module.exports = function (MovieRepository) {
             });
         },
         rate: function (req, res, next) {
-            MovieRepository.setRatingById(req.params.movie_id, req.body.value).then(function (result) {
+            MovieRepository.setRatingById(req.params.movie_id, req.body.value).then(function (ratingResult) {
+                return MovieRepository.getAverageRatingId(req.params.movie_id).then(function (averageRatingResult) {
+                    return {
+                        movie: ratingResult.movie,
+                        rating: ratingResult.rating,
+                        averageRating: {value: averageRatingResult}
+                    }
+                });
+            }).then(function (result) {
                 res.status(200);
                 res.sendData(result);
             }).catch(function (error) {
@@ -79,7 +87,15 @@ module.exports = function (MovieRepository) {
             });
         },
         deleteRating: function (req, res, next) {
-            MovieRepository.deleteRatingById(req.params.movie_id).then(function (result) {
+            MovieRepository.deleteRatingById(req.params.movie_id).then(function (ratingResult) {
+                return MovieRepository.getAverageRatingId(req.params.movie_id).then(function (averageRatingResult) {
+                    return {
+                        movie: ratingResult.movie,
+                        rating: ratingResult.rating,
+                        averageRating: {value: averageRatingResult}
+                    }
+                });
+            }).then(function (result) {
                 res.status(200);
                 res.sendData(result);
             }).catch(function (error) {

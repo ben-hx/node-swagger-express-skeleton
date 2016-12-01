@@ -1,6 +1,6 @@
 var passport = require('passport');
 var errors = require('../../errors/errors');
-var BasicStrategy = require('/basic-authentication-strategy');
+var BasicStrategy = require('./basic-authentication-strategy');
 
 module.exports.getOptions = function () {
     return {

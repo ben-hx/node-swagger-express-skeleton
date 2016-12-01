@@ -38,13 +38,20 @@ module.exports = function () {
             actual.should.deep.include.members(expected);
         },
         evaluateUsersMovieRating: function (actual, expected) {
-            actual.forEach(function (value) {
-                delete value.user.password;
-                delete value.user.lastModified;
+            function convertRatingValue(value) {
+                return {
+                    rating: value.rating,
+                    user: {
+                        email: value.user.email,
+                        username: value.user.username
+                    }
+                }
+            }
+            actual = actual.map(function (value) {
+                return convertRatingValue(value);
             });
-            expected.forEach(function (value) {
-                delete value.user.password;
-                delete value.user.lastModified;
+            expected = expected.map(function (value) {
+                return convertRatingValue(value);
             });
             actual.should.deep.include.members(expected);
         }

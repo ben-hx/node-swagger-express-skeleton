@@ -92,6 +92,7 @@ module.exports = function () {
             } else {
                 response.body.data.rating.value.should.equal(expectedMovieRating.rating.value);
             }
+            response.body.data.averageRating.value.should.be.closeTo(expectedMovieRating.averageRating.value, 0.001);
         },
 
 

@@ -9,7 +9,6 @@ chai.use(require('chai-http'));
 module.exports = function (config, debug, server) {
 
     var app = null;
-    var isConnected = false;
     var agent = chai.request.agent('http://localhost:' + config.test.settings.port + config.test.settings.appBaseUrl);
 
     function setBasicAuthenticationForRequest(request, user) {
@@ -18,32 +17,19 @@ module.exports = function (config, debug, server) {
 
     return {
         setUpServer: function () {
-            var deferred = q.defer();
-            if (isConnected) {
-                deferred.resolve();
-            } else {
-                return server.initialize().then(function (serverApp) {
-                    app = serverApp;
-                    isConnected = true;
-                    deferred.resolve();
-                }).catch(function (error) {
-                    deferred.reject(error);
-                });
-            }
-            return deferred.promise;
+            return server.initialize().then(function (serverApp) {
+                app = serverApp;
+            });
         },
         tearDownServer: function () {
             var deferred = q.defer();
+            if (app) {
+                app.close();
+            }
             deferred.resolve();
             return deferred.promise;
         },
         apiAgent: function () {
-            /*
-             if (!app) {
-             throw Error('You have to call setUpServer before getting the agent');
-             }
-             return chai.request.agent(app);
-             */
             return agent;
         },
         apiDecorator: {

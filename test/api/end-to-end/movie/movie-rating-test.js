@@ -36,7 +36,6 @@ describe('Movie-Rating-Endpoint Tests', function () {
             ]);
         }).then(function () {
             return q.all([
-                userRepositoryTestUtil.registerExampleUser(exampleUsers.bob),
                 userRepositoryTestUtil.getActivatedUserWithRole(exampleUsers.adminBob, 'admin'),
                 userRepositoryTestUtil.getActivatedUserWithRole(exampleUsers.moderatorBob, 'moderator'),
                 userRepositoryTestUtil.getActivatedUserWithRole(exampleUsers.looserBob, 'looser')
@@ -49,6 +48,7 @@ describe('Movie-Rating-Endpoint Tests', function () {
         }).then(function () {
             return q.all([
                 api.putMovieWatched(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id),
+                api.putMovieWatched(exampleUsers.looserBob, exampleMovies.theToxicAvenger._id),
             ]);
         }).then(function () {
             done();
@@ -87,6 +87,7 @@ describe('Movie-Rating-Endpoint Tests', function () {
         });
     });
 
+
     describe('PUT /movie/:movie_id/rating', function () {
 
         describe('authenticated', function () {
@@ -96,6 +97,9 @@ describe('Movie-Rating-Endpoint Tests', function () {
                     var expected = {
                         movie: exampleMovies.theToxicAvenger._id,
                         rating: {
+                            value: 1
+                        },
+                        averageRating: {
                             value: 1
                         }
                     };
@@ -151,6 +155,9 @@ describe('Movie-Rating-Endpoint Tests', function () {
                         movie: exampleMovies.theToxicAvenger._id,
                         rating: {
                             value: 1
+                        },
+                        averageRating: {
+                            value: 0
                         }
                     };
                     apiEvaluation.evaluateMovieRatingResponse(res, 200, expected);
@@ -192,7 +199,7 @@ describe('Movie-Rating-Endpoint Tests', function () {
         beforeEach(function (done) {
             q.all([
                 api.putMovieRating(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, 10),
-                api.putMovieRating(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, 0)
+                api.putMovieRating(exampleUsers.looserBob, exampleMovies.theToxicAvenger._id, 3)
             ]).then(function () {
                 done();
             });
@@ -205,10 +212,10 @@ describe('Movie-Rating-Endpoint Tests', function () {
                     var expected = {
                         movie: exampleMovies.theToxicAvenger._id,
                         rating: {
-                            value: 1
+                            value: 10
                         },
                         averageRating: {
-                            value: 5
+                            value: 6.5
                         }
                     };
                     apiEvaluation.evaluateMovieRatingResponse(res, 200, expected);
@@ -222,6 +229,9 @@ describe('Movie-Rating-Endpoint Tests', function () {
                         movie: exampleMovies.returnOfTheKillerTomatos._id,
                         rating: {
                             value: null
+                        },
+                        averageRating: {
+                            value: 0
                         }
                     };
                     apiEvaluation.evaluateMovieRatingResponse(res, 200, expected);

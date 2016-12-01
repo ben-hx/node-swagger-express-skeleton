@@ -6,18 +6,7 @@ module.exports = function (mongooseConfig) {
 
     return {
         setUpDb: function () {
-            var deferred = q.defer();
-            if (!isConnected) {
-                mongooseConfig.initialize().then(function () {
-                    isConnected = true;
-                    deferred.resolve(isConnected);
-                }).catch(function (error) {
-                    deferred.reject(error);
-                });
-            } else {
-                deferred.resolve(isConnected);
-            }
-            return deferred.promise;
+            return mongooseConfig.initialize();
         },
         tearDownDb: function () {
             var deferred = q.defer();
@@ -25,4 +14,5 @@ module.exports = function (mongooseConfig) {
             return deferred.promise;
         }
     }
+
 };

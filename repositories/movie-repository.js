@@ -119,7 +119,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             };
             MovieWatched.findOne(id).then(function (watched) {
                 if (watched != null) {
-                    throw new errors.DuplicationError('Movie already set to watched!');
+                    throw new errors.ValidationError('Movie already set to watched!');
                 }
                 var movieWatched = new MovieWatched(id);
                 return movieWatched.save();
@@ -191,11 +191,11 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                     var result = watched.map(function (value) {
                         return value.user;
                     });
-                    return deferred.reject(errors.convertError(error));
+                    return deferred.resolve(result);
                 });
             }
             promise.catch(function (error) {
-                return deferred.reject(new errors.ValidationError(error));
+                return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
         },
@@ -273,10 +273,13 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
 
         getAverageRatingByMovieId: function (movieId) {
             var deferred = q.defer();
+            if (!ObjectId.isValid(String(movieId))) {
+                return deferred.reject(errors.convertError(new errors.NotFoundError('Resource does not exist!')));
+            }
             var id = ObjectId(String(movieId));
             MovieRating.aggregate([{
                 $match: {
-                    movie: id//String(movieId)
+                    movie: id
                 }
             }, {
                 $group: {

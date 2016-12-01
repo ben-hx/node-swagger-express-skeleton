@@ -209,6 +209,8 @@ describe('Movie-Repository-Watched-Tests', function () {
                 ];
                 movieEvaluation.evaluateUserIdsMovieWatched(result, expected);
                 done();
+            }).catch(function (error) {
+                console.log(error);
             });
         });
 
