@@ -17,6 +17,17 @@ module.exports = function (config, errors, User, InaktiveUser) {
             return deferred.promise;
         },
 
+        create: function (data) {
+            var deferred = q.defer();
+            var user = new User(data);
+            user.save().then(function (user) {
+                return deferred.resolve(user.toObject());
+            }).catch(function (error) {
+                return deferred.reject(new errors.ValidationError(error));
+            });
+            return deferred.promise;
+        },
+
         activateById: function (inaktiveUserId) {
             var deferred = q.defer();
             InaktiveUser.findOne({_id: inaktiveUserId}).then(function (inaktiveUser) {

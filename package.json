@@ -12,6 +12,9 @@
     "drop-development": "set NODE_ENV=development&&node ./scripts/drop-db.js",
     "drop": "scripts/drop-db.js"
   },
+  "bin": {
+    "trashbay-cli": "scripts/trashbay-cli.js"
+  },
   "keywords": [
     "swagger"
   ],
@@ -42,6 +45,7 @@
     "chai-http": "^3.0.0",
     "coveralls": "^2.11.14",
     "debug": "^2.2.0",
+    "inquirer": "^1.2.3",
     "istanbul": "^1.1.0-alpha.1",
     "nodemon": "^1.11.0",
     "request": "^2.58.0",
