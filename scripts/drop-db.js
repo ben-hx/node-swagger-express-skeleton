@@ -2,7 +2,7 @@
 var config = require('../config');
 var mongoose = require('mongoose');
 
-//process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'test';
 
 var con = mongoose.connect(config[process.env.NODE_ENV].db.mongoURI);
 mongoose.connection.on('open', function () {

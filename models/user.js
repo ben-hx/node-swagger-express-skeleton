@@ -58,12 +58,11 @@ UserSchema.plugin(mongoosePlugins.toObjectTransformation, {
  */
 UserSchema.path('username').validate(function (value, done) {
     var id = this._id;
-    var self = this;
-    self.model('User').count({username: value, _id: {$ne: id}}, function (error, count) {
+    mongoose.model('User').count({username: value, _id: {$ne: id}}, function (error, count) {
         if (error || count) {
             return done(false);
         }
-        self.model('InaktiveUser').count({username: value, _id: {$ne: id}}, function (error, count) {
+        mongoose.model('InaktiveUser').count({username: value, _id: {$ne: id}}, function (error, count) {
             done(!(error || count));
         });
     });
@@ -71,12 +70,11 @@ UserSchema.path('username').validate(function (value, done) {
 
 UserSchema.path('email').validate(function (value, done) {
     var id = this._id;
-    var self = this;
-    self.model('User').count({email: value, _id: {$ne: id}}, function (error, count) {
+    mongoose.model('User').count({email: value, _id: {$ne: id}}, function (error, count) {
         if (error || count) {
             return done(false);
         }
-        self.model('InaktiveUser').count({email: value, _id: {$ne: id}}, function (error, count) {
+        mongoose.model('InaktiveUser').count({email: value, _id: {$ne: id}}, function (error, count) {
             done(!(error || count));
         });
     });

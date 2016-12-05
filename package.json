@@ -10,10 +10,11 @@
     "test-coverage": "DEBUG=app ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
     "drop-test": "set NODE_ENV=test&&node ./scripts/drop-db.js",
     "drop-development": "set NODE_ENV=development&&node ./scripts/drop-db.js",
-    "drop": "scripts/drop-db.js"
+    "drop": "scripts/drop-db.js",
+    "trash": "node ./scripts/cli/index.js"
   },
   "bin": {
-    "trashbay-cli": "scripts/trashbay-cli.js"
+    "trashbay-cli": "./scripts/cli/index.js"
   },
   "keywords": [
     "swagger"
@@ -25,17 +26,15 @@
     "connect": "^3.2.0",
     "cors": "^2.8.1",
     "express": "^4.14.0",
+    "inquirer": "^1.2.3",
     "js-yaml": "^3.3.0",
     "json-refs": "^2.1.6",
     "json-schema-deref-sync": "^0.3.2",
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.3",
-    "mongoose-paginate": "^5.0.3",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
-    "passport-restify": "^1.0.1",
     "q": "^1.4.1",
-    "restify": "^4.3.0",
     "swagger-mongoose": "^1.1.2",
     "swagger-tools": "0.10.1",
     "validator": "^6.1.0"
@@ -45,7 +44,6 @@
     "chai-http": "^3.0.0",
     "coveralls": "^2.11.14",
     "debug": "^2.2.0",
-    "inquirer": "^1.2.3",
     "istanbul": "^1.1.0-alpha.1",
     "nodemon": "^1.11.0",
     "request": "^2.58.0",

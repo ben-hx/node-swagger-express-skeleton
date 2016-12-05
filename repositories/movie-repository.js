@@ -341,30 +341,5 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             });
             return deferred.promise;
         }
-
-        /*
-         getRatingByMovieIdAndUserId: function (movieId, userId) {
-         var deferred = q.defer();
-         var data = {
-         userId: userId,
-         movieId: movieId
-         };
-         q.all([
-         this.getAverageRatingByMovieId(data.movieId),
-         getOwnRankingByIds(data.movieId, data.userId),
-         getOthersRankingByIds(data.movieId, data.userId),
-         ]).spread(function (averageRating, ownRanking, othersRanking) {
-         var result = {
-         averageRating: averageRating,
-         ownRanking: ownRanking,
-         othersRanking: othersRanking
-         };
-         return deferred.resolve(result);
-         }).catch(function (error) {
-         return deferred.reject(error);
-         });
-         return deferred.promise;
-         }
-         */
     }
 };

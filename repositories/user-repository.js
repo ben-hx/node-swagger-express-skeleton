@@ -28,6 +28,23 @@ module.exports = function (config, errors, User, InaktiveUser) {
             return deferred.promise;
         },
 
+        updateById: function (id, data) {
+            var deferred = q.defer();
+            data = Object.assign({}, data);
+            delete data._id;
+            delete data.password;
+            var self = this;
+            User.findByIdAndUpdate({_id: id}, {$set: data}, {
+                runValidators: true,
+                new: true
+            }).then(function (user) {
+                return deferred.resolve(user.toObject());
+            }).catch(function (error) {
+                return deferred.reject(errors.convertError(error));
+            });
+            return deferred.promise;
+        },
+
         activateById: function (inaktiveUserId) {
             var deferred = q.defer();
             InaktiveUser.findOne({_id: inaktiveUserId}).then(function (inaktiveUser) {
