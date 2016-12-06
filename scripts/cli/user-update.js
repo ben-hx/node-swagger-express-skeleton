@@ -73,8 +73,14 @@ module.exports = function (UserRepository) {
 
     return {
         do: function () {
-            return getUsers().then(selectUser).then(editSelection).then(function (user) {
-                return user;
+            return getUsers().then(function (users) {
+                if (users.length > 0) {
+                    return selectUser(users).then(editSelection).then(function (user) {
+                        return user;
+                    });
+                }
+                console.log("No user created yet!");
+                return null;
             });
         }
     }
