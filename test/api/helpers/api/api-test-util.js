@@ -81,6 +81,20 @@ module.exports = function (config, debug, server) {
                 });
                 return deferred.promise;
             },
+            getMe: function (user) {
+                var deferred = q.defer();
+                var result = agent.get('/me');
+                result.set('Content-Type', 'application/json');
+                setBasicAuthenticationForRequest(result, user);
+                result.then(function (res) {
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
             getUsers: function (user, queryParams) {
                 var deferred = q.defer();
                 var result = agent.get('/users');

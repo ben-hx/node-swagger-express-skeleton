@@ -28,6 +28,20 @@ module.exports = function (User, UserRepository) {
                 });
             },
 
+            createExampleUser: function (user) {
+                return UserRepository.create(user).then(function (resolvedUser) {
+                    user._id = resolvedUser._id;
+                    return resolvedUser;
+                });
+            },
+
+            updateExampleUserById: function (id, data) {
+                return UserRepository.updateById(id, data).then(function (resolvedUser) {
+                    data._id = resolvedUser._id;
+                    return resolvedUser;
+                });
+            },
+
             registerExampleUsers: function (users) {
                 var promises = [];
                 var self = this;

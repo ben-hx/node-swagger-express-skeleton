@@ -9,6 +9,9 @@ module.exports = function (router, diContainer) {
         var register = router.route('/register');
         register.post(diContainer.getUserController().register);
 
+        var register = router.route('/me');
+        register.get(basicAuth, diContainer.getUserController().getMe);
+
         var activate = router.route('/users/:inaktive_user_id/activate');
         activate.post(basicAuth, diContainer.getUserController().activate);
 

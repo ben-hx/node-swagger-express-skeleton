@@ -43,9 +43,7 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             var deferred = q.defer();
             options = options || {};
             var query = options.query || {};
-            var sort = options.sort || '';
-            var pagination = options.pagination || {};
-            var options = {
+            options = {
                 query: {
                     title: castQueryParamByBeginning(query.title),
                     actors: castQueryParamByBeginning(query.actors),
@@ -53,9 +51,9 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
                     genres: castQueryParamByOptionalArray(query.genres),
                     lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser)
                 },
-                sort: sort || config[process.env.NODE_ENV].settings.movie.moviesSortDefault,
-                page: parseInt(pagination.page) || 0,
-                limit: parseInt(pagination.limit) || config[process.env.NODE_ENV].settings.movie.moviesPerPageDefault
+                sort: options.sort || config[process.env.NODE_ENV].settings.movie.moviesSortDefault,
+                page: parseInt(options.page) || 0,
+                limit: parseInt(options.limit) || config[process.env.NODE_ENV].settings.movie.moviesPerPageDefault
             };
             options = removeUndefinedPropertyOfObject(options);
             Movie.paginate(options).then(function (result) {
@@ -81,21 +79,40 @@ module.exports = function (config, errors, Movie, MovieRating, MovieWatched) {
             });
             return deferred.promise;
         },
-        updateById: function (id, movieData, user) {
+        updateById: function (id, data, user) {
             var deferred = q.defer();
-            movieData = Object.assign({}, movieData);
-            movieData.lastModifiedUser = user._id;
-            delete movieData._id;
-            var self = this;
-            Movie.findByIdAndUpdate({_id: id}, {$set: movieData}, {
-                runValidators: true,
-                new: true
+            delete data._id;
+            data.lastModifiedUser = user._id;
+            Movie.findOne({_id: id}).then(function (movie) {
+                if (movie == null) {
+                    throw new errors.NotFoundError('Movie does not exist!');
+                }
+                movie = Object.assign(movie, data);
+                return movie.save();
             }).then(function (movie) {
                 return deferred.resolve(movie.toObject());
             }).catch(function (error) {
                 return deferred.reject(errors.convertError(error));
             });
             return deferred.promise;
+
+
+            /*
+             var deferred = q.defer();
+             movieData = Object.assign({}, movieData);
+             movieData.lastModifiedUser = user._id;
+             delete movieData._id;
+             var self = this;
+             Movie.findByIdAndUpdate({_id: id}, {$set: movieData}, {
+             runValidators: true,
+             new: true
+             }).then(function (movie) {
+             return deferred.resolve(movie.toObject());
+             }).catch(function (error) {
+             return deferred.reject(errors.convertError(error));
+             });
+             return deferred.promise;
+             */
         },
         deleteById: function (id) {
             var deferred = q.defer();

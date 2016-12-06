@@ -3,6 +3,7 @@ var q = require('q');
 var debug = require('debug')('app');
 var express = require('express');
 var passport = require('passport');
+var cors = require('cors');
 var bodyParser = require('body-parser');
 var config = require('./config');
 var routes = require('./routes/routes');
@@ -18,6 +19,7 @@ module.exports = function () {
 
         addMiddleWares: function () {
             var deferred = q.defer();
+            app.use(cors());
             app.use(bodyParser.json());
             app.use(bodyParser.urlencoded({
                 extended: true

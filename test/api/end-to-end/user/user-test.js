@@ -196,6 +196,40 @@ describe('User-Endpoint Tests', function () {
 
     });
 
+    describe('GET /me', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                userRepositoryTestUtil.getActivatedUserWithRole(exampleUsers.bob, 'looser'),
+            ]).then(function () {
+                done();
+            });
+        });
+
+        describe('authenticated', function () {
+
+            it('should return 200 with user when getting me', function (done) {
+                api.getMe(exampleUsers.bob).then(function (res) {
+                    apiEvaluation.evaluateUserResponse(res, 200, exampleUsers.bob);
+                    done();
+                });
+            });
+
+        });
+
+        describe('not authenticated', function () {
+
+            it('should return 401 unauthorized when getting unposted user', function (done) {
+                api.getUsers(exampleUsers.alice).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 401);
+                    done();
+                });
+            });
+
+        });
+
+    });
+
     describe('GET /users', function () {
 
         beforeEach(function (done) {

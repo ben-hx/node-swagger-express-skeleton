@@ -6,6 +6,7 @@
   "scripts": {
     "prestart": "npm install",
     "start": "set DEBUG=app & nodemon index.js",
+    "start-development": "set DEBUG=app&&set NODE_ENV=development&&nodemon index.js",
     "test": "set DEBUG=app & node ./node_modules/mocha/bin/mocha test --recursive",
     "test-coverage": "DEBUG=app ./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive",
     "drop-test": "set NODE_ENV=test&&node ./scripts/drop-db.js",

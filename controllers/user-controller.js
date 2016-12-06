@@ -13,6 +13,14 @@ module.exports = function (UserRepository) {
                 next(error);
             });
         },
+        getMe: function (req, res, next) {
+            UserRepository.getMe().then(function (result) {
+                res.status(200);
+                res.sendData({user: result});
+            }).catch(function (error) {
+                next(error);
+            });
+        },
         activate: function (req, res, next) {
             UserRepository.activateById(req.params.inaktive_user_id).then(function (user) {
                 res.status(200);

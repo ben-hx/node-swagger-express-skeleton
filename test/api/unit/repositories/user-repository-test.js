@@ -125,6 +125,143 @@ describe('User-Repository-Tests', function () {
 
     });
 
+    describe('create()', function () {
+
+        it('should return a user when creating with valid user-data', function (done) {
+            userRepositoryTestUtil.createExampleUser(exampleUsers.bob).then(function (user) {
+                userEvaluation.evaluateUser(user, exampleUsers.bob);
+                done();
+            });
+        });
+
+        it('should return a user when creating with minimal-user-data', function (done) {
+            userRepositoryTestUtil.createExampleUser(exampleUsers.minimal).then(function (user) {
+                userEvaluation.evaluateMinimalUser(user, exampleUsers.minimal);
+                done();
+            });
+        });
+
+        it('should return a validation-error-callback when creating a user with no credentials', function (done) {
+            userRepositoryTestUtil.createExampleUser({}).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return a validation-error-callback when creating a user with no email', function (done) {
+            userRepositoryTestUtil.createExampleUser({password: 'bob'}).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return a validation-error-callback when creating a user with no password', function (done) {
+            userRepositoryTestUtil.createExampleUser({email: 'bob'}).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return a validation-error-callback when creating a user with invalid email', function (done) {
+            var user = {
+                username: 'invalid',
+                email: 'invalid',
+                password: 'invalid'
+            };
+            userRepositoryTestUtil.createExampleUser(user).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return a validation-error-callback when creating two users with the same username', function (done) {
+            var user1 = exampleUsers.bob;
+            var user2 = {
+                username: exampleUsers.bob.username,
+                email: 'invalid@invalid.de',
+                password: 'invalid'
+            };
+            userRepositoryTestUtil.createExampleUser(user1).then(function () {
+                return userRepositoryTestUtil.createExampleUser(user2);
+            }).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return a validation-error-callback when creating two users with the same email', function (done) {
+            var user1 = exampleUsers.bob;
+            var user2 = {
+                username: 'invalid',
+                email: exampleUsers.bob.email,
+                password: 'invalid'
+            };
+            userRepositoryTestUtil.createExampleUser(user1).then(function () {
+                return userRepositoryTestUtil.createExampleUser(user2);
+            }).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
+    describe('updateById()', function () {
+
+        it('should return a user when updating with user-data', function (done) {
+            q.all([
+                userRepositoryTestUtil.createExampleUser(exampleUsers.bob)
+            ]).then(function () {
+                exampleUsers.bob.username = "bob2";
+                return userRepositoryTestUtil.updateExampleUserById(exampleUsers.bob._id, exampleUsers.bob);
+            }).then(function (result) {
+                userEvaluation.evaluateUser(result, exampleUsers.bob);
+                done();
+            });
+        });
+
+        it('should return a user when updating nothing', function (done) {
+            q.all([
+                userRepositoryTestUtil.createExampleUser(exampleUsers.bob)
+            ]).then(function () {
+                return userRepositoryTestUtil.updateExampleUserById(exampleUsers.bob._id, exampleUsers.bob);
+            }).then(function (result) {
+                userEvaluation.evaluateUser(result, exampleUsers.bob);
+                done();
+            });
+        });
+
+
+        it('should return an error when updating a user with username that already exists', function (done) {
+            q.all([
+                userRepositoryTestUtil.createExampleUser(exampleUsers.bob),
+                userRepositoryTestUtil.createExampleUser(exampleUsers.alice)
+            ]).then(function () {
+                exampleUsers.bob.username = "alice";
+                return userRepositoryTestUtil.updateExampleUserById(exampleUsers.bob._id, exampleUsers.bob);
+            }).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return an error when updating with invalid user-data', function (done) {
+            userRepositoryTestUtil.updateExampleUserById(exampleUsers.bob._id, exampleUsers.bob).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
     describe('activateById()', function () {
 
         it('should return a user when activating him', function (done) {
