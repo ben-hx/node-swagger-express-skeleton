@@ -1,4 +1,5 @@
 var q = require('q');
+var deepPopulate = require('mongoose-deep-populate');
 
 module.exports = {
 
@@ -14,15 +15,21 @@ module.exports = {
     },
 
     lastModified: function (schema, options) {
-        schema.add({lastModified: Date});
+        var fieldName = 'lastModified';
+        if (options && options.fieldName) {
+            fieldName = options.fieldName;
+        }
+        var field = {}
+        field[fieldName] = Date;
+        schema.add(field);
 
         schema.pre('save', function (next) {
-            this.lastModified = new Date;
+            this[fieldName] = new Date;
             next();
         });
 
         if (options && options.index) {
-            schema.path('lastModified').index(options.index)
+            schema.path(fieldName).index(options.index)
         }
     },
 
@@ -35,7 +42,9 @@ module.exports = {
             var sort = options.sort || '';
             var limit = options.limit || 0;
             var page = options.page || 0;
+            var populate = options.populate || '';
             self.find(query)
+                .populate(populate)
                 .skip(page * limit)
                 .limit(limit)
                 .sort(sort)

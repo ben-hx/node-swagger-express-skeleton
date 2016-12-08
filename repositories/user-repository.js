@@ -2,7 +2,7 @@
 
 var q = require('q');
 
-module.exports = function (config, errors, User, InaktiveUser) {
+module.exports = function (errors, User, InaktiveUser) {
 
     return {
 

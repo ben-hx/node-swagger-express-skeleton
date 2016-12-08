@@ -9,8 +9,8 @@ module.exports = function (debug, config) {
             if (mongoose.connection.readyState === 1) {
                 deferred.resolve(mongoose.connection);
             } else {
-                var connection = mongoose.connect(config[process.env.NODE_ENV].db.mongoURI).then(function () {
-                    debug('Connected to Database: ' + config[process.env.NODE_ENV].db.mongoURI);
+                var connection = mongoose.connect(config.db.mongoURI).then(function () {
+                    debug('Connected to Database: ' + config.db.mongoURI);
                     deferred.resolve(connection);
                 }).catch(function (error) {
                     debug('Error connecting to the database. ' + err);

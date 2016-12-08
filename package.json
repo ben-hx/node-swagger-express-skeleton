@@ -33,6 +33,7 @@
     "json-schema-deref-sync": "^0.3.2",
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.3",
+    "mongoose-deep-populate": "^3.0.0",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
     "q": "^1.4.1",

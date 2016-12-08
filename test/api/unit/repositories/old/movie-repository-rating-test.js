@@ -6,12 +6,12 @@ var q = require('q');
 describe('Movie-Repository-Rating-Tests', function () {
 
     var mongoose = require('mongoose');
-    var User = require("../../../../models/user");
-    var Movie = require("../../../../models/movie");
-    var MovieWatched = require("../../../../models/movie-watched");
-    var MovieRating = require("../../../../models/movie-rating");
+    var User = require("../../../../../models/user");
+    var Movie = require("../../../../../models/movie");
+    var MovieWatched = require("../../../../../models/movie-watched");
+    var MovieRating = require("../../../../../models/movie-rating");
 
-    var testFactory = require("../../helpers/test-factory")();
+    var testFactory = require("../../../helpers/test-factory")();
     var config = testFactory.config;
     var exampleUsers = testFactory.exampleData.generateUsers();
     var exampleMovies = testFactory.exampleData.generateMovies();

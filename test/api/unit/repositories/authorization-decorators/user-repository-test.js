@@ -10,7 +10,7 @@ describe('User-Authorization-Repository-Tests', function () {
     var errors = require("../../../../../errors/errors");
     var errorEvaluation = testFactory.errorEvaluation();
     var authTestUtil = testFactory.authTestUtil();
-    var UserAuthorizationRepository = require("../../../../../repositories/authorization-decorators/user-repository");
+    var UserAuthorizationRepository = require("../../../.././user-repository");
     var UserRepository = require("../../../../../repositories/user-repository");
 
     function checkMethodForRole(role, methodName, args) {

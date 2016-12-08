@@ -6,11 +6,11 @@ var q = require('q');
 describe('Movie-Repository-CRUD-Tests', function () {
 
     var mongoose = require('mongoose');
-    var User = require("../../../../models/user");
-    var InaktiveUser = require("../../../../models/inaktive-user");
-    var Movie = require("../../../../models/movie");
+    var User = require("../../../../../models/user");
+    var InaktiveUser = require("../../../../../models/inaktive-user");
+    var Movie = require("../../../../../models/movie");
 
-    var testFactory = require("../../helpers/test-factory")();
+    var testFactory = require("../../../helpers/test-factory")();
     var config = testFactory.config;
     var exampleUsers = testFactory.exampleData.generateUsers();
     var exampleMovies = testFactory.exampleData.generateMovies();

@@ -69,12 +69,10 @@ describe('Movie-Watched-Model-Tests', function () {
         it('should return movie-watched when saving data', function (done) {
             var data = {
                 user: exampleUsers.bob._id,
-                movie: exampleMovies.theToxicAvenger._id
             };
             var movieWatched = new MovieWatched(data);
             movieWatched.save().then(function (result) {
                 var expected = {
-                    movie: exampleMovies.theToxicAvenger._id,
                     user: exampleUsers.bob._id,
                     watched: true
                 };
@@ -83,21 +81,9 @@ describe('Movie-Watched-Model-Tests', function () {
             });
         });
 
-        it('should return an error when saving with invalid movie', function (done) {
-            var data = {
-                user: exampleUsers.bob._id,
-                movie: new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca')
-            };
-            var movieWatched = new MovieWatched(data);
-            movieWatched.save().catch(function () {
-                done();
-            });
-        });
-
         it('should return an error when saving with invalid user', function (done) {
             var data = {
                 user: new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'),
-                movie: exampleMovies.theToxicAvenger._id
             };
             var movieWatched = new MovieWatched(data);
             movieWatched.save().catch(function () {
@@ -112,7 +98,6 @@ describe('Movie-Watched-Model-Tests', function () {
         it('should return movie-watched with lastModified-field when saving Object', function (done) {
             var data = {
                 user: exampleUsers.bob._id,
-                movie: exampleMovies.theToxicAvenger._id
             };
             var movieWatched = new MovieWatched(data);
             movieWatched.save().then(function (result) {

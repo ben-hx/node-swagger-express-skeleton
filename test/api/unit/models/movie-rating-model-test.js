@@ -8,7 +8,6 @@ describe('Movie-Rating-Model-Tests', function () {
     var mongoose = require('mongoose');
     var User = require("../../../../models/user");
     var Movie = require("../../../../models/movie");
-    var MovieWatched = require("../../../../models/movie-watched");
     var MovieRating = require("../../../../models/movie-rating");
 
     var testFactory = require("../../helpers/test-factory")();
@@ -51,7 +50,6 @@ describe('Movie-Rating-Model-Tests', function () {
 
     beforeEach(function (done) {
         q.all([
-            MovieWatched.remove(),
             MovieRating.remove(),
             movieTestUtil.watchExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob)
         ]).then(function () {
@@ -61,8 +59,7 @@ describe('Movie-Rating-Model-Tests', function () {
 
     afterEach(function (done) {
         q.all([
-            MovieWatched.remove(),
-            MovieRating.remove(),
+            MovieRating.remove()
         ]).then(function () {
             done();
         });
@@ -71,9 +68,13 @@ describe('Movie-Rating-Model-Tests', function () {
     describe('save() inclusive Plugin: toObjectTransformation', function () {
 
         it('should return movie-rating when saving data', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob, 5).then(function (result) {
+            var data = {
+                user: exampleUsers.bob._id,
+                value: 5
+            };
+            var movieRating = new MovieRating(data);
+            movieRating.save().then(function (result) {
                 var expected = {
-                    movie: exampleMovies.theToxicAvenger._id,
                     user: exampleUsers.bob._id,
                     value: 5
                 };
@@ -83,31 +84,34 @@ describe('Movie-Rating-Model-Tests', function () {
         });
 
         it('should return an error when saving with value < 0', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob, -1).catch(function () {
+            var data = {
+                user: exampleUsers.bob._id,
+                value: -1
+            };
+            var movieRating = new MovieRating(data);
+            movieRating.save().catch(function () {
                 done();
             });
         });
 
         it('should return an error when saving with value > 10', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob, 11).catch(function () {
-                done();
-            });
-        });
-
-        it('should return an error when saving with unwatched movie', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(exampleMovies.returnOfTheKillerTomatos, exampleUsers.bob, 5).catch(function () {
-                done();
-            });
-        });
-
-        it('should return an error when saving with invalid movie', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'), exampleUsers.bob, 5).catch(function () {
+            var data = {
+                user: exampleUsers.bob._id,
+                value: 11
+            };
+            var movieRating = new MovieRating(data);
+            movieRating.save().catch(function () {
                 done();
             });
         });
 
         it('should return an error when saving with invalid user', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(exampleMovies.theToxicAvenger, new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'), 5).catch(function () {
+            var data = {
+                user: new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'),
+                value: 11,
+            };
+            var movieRating = new MovieRating(data);
+            movieRating.save().catch(function () {
                 done();
             });
         });
@@ -117,7 +121,12 @@ describe('Movie-Rating-Model-Tests', function () {
     describe('Plugin: lastModified', function () {
 
         it('should return a movie-rating with lastModified-field when saving Object', function (done) {
-            movieTestUtil.rateExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob, 5).then(function (result) {
+            var data = {
+                user: exampleUsers.bob._id,
+                value: 5
+            };
+            var movieRating = new MovieRating(data);
+            movieRating.save().then(function (result) {
                 var transformedObject = result.toObject();
                 transformedObject.should.have.ownProperty('lastModified');
                 done();

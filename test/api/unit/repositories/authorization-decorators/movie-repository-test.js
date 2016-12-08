@@ -10,8 +10,8 @@ describe('Movie-Authorization-Repository-Tests', function () {
     var errors = require("../../../../../errors/errors");
     var errorEvaluation = testFactory.errorEvaluation();
     var authTestUtil = testFactory.authTestUtil();
-    var MovieAuthorizationRepository = require("../../../../../repositories/authorization-decorators/movie-repository");
-    var MovieRepository = require("../../../../../repositories/movie-repository");
+    var MovieAuthorizationRepository = require("../../../.././movie-repository");
+    var MovieRepository = require("../../../../../repositories/old/movie-repository");
 
     function checkMethodCalledWithArgumentsForRole(role, methodName, args) {
         var movieRepositoryStub = sinon.stub(new MovieRepository());

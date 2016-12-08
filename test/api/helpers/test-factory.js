@@ -1,18 +1,19 @@
 'use strict';
 
 var debug = require('debug');
-var config = require('../../../config');
+var config = require('../../../config')[process.env.NODE_ENV];
 var errors = require("../../../errors/errors");
 var mongooseConfig = require('../../../mongoose-config')(debug, config);
 
 var AuthorizationService = require("../../../auth/auth-service")(errors);
 var User = require("../../../models/user");
 var InaktiveUser = require("../../../models/inaktive-user");
-var UserRepository = require("../../../repositories/user-repository")(config, errors, User, InaktiveUser);
+var UserRepository = require("../../../repositories/user-repository")(errors, User, InaktiveUser);
 var Movie = require("../../../models/movie");
+var MovieUserAction = require("../../../models/movie-user-action");
 var MovieRating = require("../../../models/movie-rating");
 var MovieWatched = require("../../../models/movie-watched");
-var MovieRepository = require("../../../repositories/movie-repository")(config, errors, Movie, MovieRating, MovieWatched);
+var MovieRepository = require("../../../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction, MovieWatched, MovieRating);
 
 var apiTestUtilInstance = require('./api/api-test-util')(config, debug, require("../../../app")());
 

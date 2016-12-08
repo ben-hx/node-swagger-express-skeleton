@@ -9,7 +9,7 @@ chai.use(require('chai-http'));
 module.exports = function (config, debug, server) {
 
     var app = null;
-    var agent = chai.request.agent('http://localhost:' + config.test.settings.port + config.test.settings.appBaseUrl);
+    var agent = chai.request.agent('http://localhost:' + config.settings.port + config.settings.appBaseUrl);
 
     function setBasicAuthenticationForRequest(request, user) {
         request.auth(user.email, user.password);
