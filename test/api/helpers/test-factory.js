@@ -11,9 +11,8 @@ var InaktiveUser = require("../../../models/inaktive-user");
 var UserRepository = require("../../../repositories/user-repository")(errors, User, InaktiveUser);
 var Movie = require("../../../models/movie");
 var MovieUserAction = require("../../../models/movie-user-action");
-var MovieRating = require("../../../models/movie-rating");
-var MovieWatched = require("../../../models/movie-watched");
-var MovieRepository = require("../../../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction, MovieWatched, MovieRating);
+var MovieRepository = require("../../../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction);
+
 
 var apiTestUtilInstance = require('./api/api-test-util')(config, debug, require("../../../app")());
 
@@ -40,7 +39,7 @@ module.exports = function () {
             return require('./auth/auth-test-util')(AuthorizationService);
         },
         movieTestUtil: function () {
-            return require('./movie/movie-test-util')(Movie, MovieWatched, MovieRating, MovieRepository);
+            return require('./movie/movie-test-util')(Movie, MovieUserAction, MovieRepository);
         },
         movieEvaluation: function () {
             return require('./movie/movie-evaluation-util')();

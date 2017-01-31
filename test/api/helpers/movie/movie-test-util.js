@@ -1,4 +1,44 @@
-module.exports = function (Movie, MovieWatched, MovieRating, MovieRepository) {
+module.exports = function (Movie, MovieUserAction, MovieRepository) {
+
+    function MovieRepositoryDecorator(movieRepository) {
+        this.create = function (movieData) {
+            return movieRepository.create(movieData).then(function (movie) {
+                movieData._id = movie._id;
+                movieData.lastModified = movie.lastModified;
+                return movie;
+            });
+        };
+        this.getAll = function (options) {
+            return movieRepository.getAll(options);
+        };
+        this.getById = function (id) {
+            return movieRepository.getById(id);
+        };
+        this.updateById = function (id, movieData) {
+            return movieRepository.updateById(id, movieData).then(function (movie) {
+                movieData._id = movie._id;
+                movieData.lastModified = movie.lastModified;
+                movieData.lastModifiedUser = movie.lastModifiedUser;
+                return movie;
+            });
+        };
+        this.deleteById = function (id) {
+            return movieRepository.deleteById(id);
+        };
+        this.setWatchedById = function (id) {
+            return movieRepository.setWatchedById(id);
+        };
+        this.deleteWatchedById = function (id) {
+            return movieRepository.deleteWatchedById(id);
+        };
+        this.setRatingById = function (id, value) {
+            return movieRepository.setRatingById(id, value);
+        };
+        this.deleteRatingById = function (id) {
+            return movieRepository.deleteRatingById(id);
+        };
+    }
+
     return {
         saveExampleMovieFromUser: function (movieData, userData) {
             movieData.lastModifiedUser = userData._id;
@@ -24,32 +64,9 @@ module.exports = function (Movie, MovieWatched, MovieRating, MovieRepository) {
             };
             return (new MovieRating(data)).save();
         },
-        repositoryDecorator: {
+        repository: {
             forUser: function (user) {
-                return {
-                    create: function (movieData) {
-                        return MovieRepository.forUser(user).create(movieData).then(function (movie) {
-                            movieData._id = movie._id;
-                            movieData.lastModified = movie.lastModified;
-                            return movie;
-                        });
-                    },
-                    getAll: MovieRepository.forUser(user).getAll,
-                    getById: MovieRepository.forUser(user).getById,
-                    updateById: function (id, movieData) {
-                        return MovieRepository.forUser(user).updateById(id, movieData).then(function (movie) {
-                            movieData._id = movie._id;
-                            movieData.lastModified = movie.lastModified;
-                            movieData.lastModifiedUser = movie.lastModifiedUser;
-                            return movie;
-                        });
-                    },
-                    deleteById: MovieRepository.forUser(user).deleteById,
-                    setWatchedById: MovieRepository.forUser(user).setWatchedById,
-                    deleteWatchedById: MovieRepository.forUser(user).deleteWatchedById,
-                    setRatingById: MovieRepository.forUser(user).setRatingById,
-                    deleteRatingById: MovieRepository.forUser(user).deleteRatingById
-                }
+                return new MovieRepositoryDecorator(new MovieRepository(user));
             }
         }
     }

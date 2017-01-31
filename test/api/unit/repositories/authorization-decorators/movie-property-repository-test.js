@@ -10,7 +10,7 @@ describe('Movie-Property-Authorization-Repository-Tests', function () {
     var errors = require("../../../../../errors/errors");
     var errorEvaluation = testFactory.errorEvaluation();
     var authTestUtil = testFactory.authTestUtil();
-    var MoviePropertyAuthorizationRepository = require("../../../.././movie-property-repository");
+    var MoviePropertyAuthorizationRepository = require("../../../../../repositories/authorization-decorators/movie-property-repository");
     var MoviePropertyRepository = require("../../../../../repositories/movie-property-repository");
 
     function checkMethodCalledWithArgumentsForRole(role, methodName, args) {

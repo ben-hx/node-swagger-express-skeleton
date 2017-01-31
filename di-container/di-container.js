@@ -8,14 +8,13 @@ module.exports = function () {
     var InaktiveUser = require("../models/inaktive-user");
     var UserRepository = require("../repositories/user-repository")(errors, User, InaktiveUser);
     var Movie = require("../models/movie");
-    var MovieRating = require("../models/movie-rating");
-    var MovieWatched = require("../models/movie-watched");
-    var MovieRepository = require("../repositories/old/movie-repository")(config, errors, UserRepository, Movie, MovieRating, MovieWatched);
+    var MovieUserAction = require("../models/movie-user-action");
     var MoviePropertyRepository = require("../repositories/movie-property-repository")(errors, Movie);
+    var UserMovieRepository = require("../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction);
 
     var authServiceInstance = require('../auth/auth-service')(errors, UserRepository).initialize();
     var userRepositoryInstance = require("../repositories/user-repository")(UserRepository, authServiceInstance);
-    var movieRepositoryInstance = require("../repositories/user-movie-repository")(MovieRepository, authServiceInstance);
+    var userMovieRepositoryInstance = require("../repositories/movie-repository")(UserMovieRepository, authServiceInstance);
     var moviePropertyRepositoryInstance = require("../repositories/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
     var basicAuthenticationInstance = require("../auth/basic-authentication")(authServiceInstance);
 

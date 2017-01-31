@@ -10,8 +10,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
     var InaktiveUser = require("../../../../models/inaktive-user");
     var Movie = require("../../../../models/movie");
     var MovieUserAction = require("../../../../models/movie-user-action");
-    var MovieWatched = require("../../../../models/movie-watched");
-    var MovieRatings = require("../../../../models/movie-rating");
 
     var testFactory = require("../../helpers/test-factory")();
     var config = testFactory.config;
@@ -19,7 +17,7 @@ describe('Movie-Repository-CRUD-Tests', function () {
     var exampleMovies = testFactory.exampleData.generateMovies();
     var dbTestUtil = testFactory.dbTestUtil();
     var movieTestUtil = testFactory.movieTestUtil();
-    var movieRepository = testFactory.movieTestUtil().repositoryDecorator;
+    var movieRepository = testFactory.movieTestUtil().repository;
     var userTestUtil = testFactory.userTestUtil();
     var movieEvaluation = testFactory.movieEvaluation();
     var errorEvaluation = testFactory.errorEvaluation();
@@ -35,8 +33,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
             User.remove(),
             Movie.remove(),
             MovieUserAction.remove(),
-            MovieWatched.remove(),
-            MovieRatings.remove(),
             userTestUtil.saveExampleUser(exampleUsers.bob),
             userTestUtil.saveExampleUser(exampleUsers.alice),
             userTestUtil.saveExampleUser(exampleUsers.eve)
@@ -50,8 +46,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
             User.remove(),
             Movie.remove(),
             MovieUserAction.remove(),
-            MovieWatched.remove(),
-            MovieRatings.remove(),
         ]).then(function () {
             done();
         });
@@ -95,6 +89,7 @@ describe('Movie-Repository-CRUD-Tests', function () {
             });
         });
 
+
     });
 
     describe('getAll()', function () {
@@ -122,9 +117,7 @@ describe('Movie-Repository-CRUD-Tests', function () {
                     done();
                 });
             });
-
         });
-
 
         describe('no filter', function () {
 
@@ -350,6 +343,7 @@ describe('Movie-Repository-CRUD-Tests', function () {
                 done();
             });
         });
+
     });
 
     describe('updateById()', function () {
@@ -684,4 +678,5 @@ describe('Movie-Repository-CRUD-Tests', function () {
         });
 
     });
+
 });

@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "chai-fuzzy": "^1.6.1",
     "chai-http": "^3.0.0",
     "coveralls": "^2.11.14",
     "debug": "^2.2.0",

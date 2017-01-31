@@ -14,6 +14,8 @@ module.exports = function () {
                 });
             });
         },
+
+
         evaluateMovie: function (actual, expected) {
             actual.title.should.equal(expected.title);
             actual.year.should.equal(expected.year);
@@ -113,5 +115,6 @@ module.exports = function () {
             });
             actual.should.deep.include.members(expected);
         }
+        
     }
 };

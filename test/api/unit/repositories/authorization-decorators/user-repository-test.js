@@ -10,7 +10,7 @@ describe('User-Authorization-Repository-Tests', function () {
     var errors = require("../../../../../errors/errors");
     var errorEvaluation = testFactory.errorEvaluation();
     var authTestUtil = testFactory.authTestUtil();
-    var UserAuthorizationRepository = require("../../../.././user-repository");
+    var UserAuthorizationRepository = require("../../../../../repositories/authorization-decorators/user-repository");
     var UserRepository = require("../../../../../repositories/user-repository");
 
     function checkMethodForRole(role, methodName, args) {
@@ -20,7 +20,6 @@ describe('User-Authorization-Repository-Tests', function () {
         authorizationRepository[methodName].apply(this, args);
         userRepositoryStub[methodName].should.have.been.calledOnce;
     }
-
 
     describe('register()', function () {
 

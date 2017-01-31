@@ -54,7 +54,7 @@ describe('Movie-Model-Tests', function () {
 
         it('should return a movie when saving minimal movie-data', function (done) {
             movieTestUtil.saveExampleMovieFromUser(exampleMovies.theToxicAvengerMinimal, exampleUsers.bob).then(function (result) {
-                movieEvaluation.evaluateMovie(result.toObject(), exampleMovies.theToxicAvengerMinimal);
+                movieEvaluation.evaluateMinimalMovie(result.toObject(), exampleMovies.theToxicAvengerMinimal);
                 done();
             });
         });

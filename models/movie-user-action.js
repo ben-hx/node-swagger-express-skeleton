@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var mongoosePlugins = require('../misc/mongoose-plugins');
+var Movie = require("./movie");
 
 var MovieUserActionSchema = new mongoose.Schema({
     movie: {
