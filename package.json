@@ -24,12 +24,10 @@
   "private": true,
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "connect": "^3.2.0",
+    "body-parser": "^1.16.0",
     "cors": "^2.8.1",
     "express": "^4.14.0",
     "inquirer": "^1.2.3",
-    "js-yaml": "^3.3.0",
-    "json-refs": "^2.1.6",
     "json-schema-deref-sync": "^0.3.2",
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.3",
@@ -37,23 +35,17 @@
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
     "q": "^1.4.1",
-    "swagger-mongoose": "^1.1.2",
-    "swagger-tools": "0.10.1",
     "validator": "^6.1.0"
   },
   "devDependencies": {
     "chai": "^3.0.0",
-    "chai-fuzzy": "^1.6.1",
     "chai-http": "^3.0.0",
     "coveralls": "^2.11.14",
     "debug": "^2.2.0",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
-    "request": "^2.58.0",
     "sinon": "^1.17.6",
-    "sinon-chai": "^2.8.0",
-    "supertest": "^1.0.0",
-    "z-schema": "^3.12.0"
+    "sinon-chai": "^2.8.0"
   }
 }
