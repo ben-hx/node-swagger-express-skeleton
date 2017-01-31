@@ -19,7 +19,7 @@ module.exports = function () {
     return {
         exampleData: {
             generateUsers: require('./user/example-users').generate,
-            generateMovies: require('./movie/examle-movies').generate,
+            generateMovies: require('./movie/examle-movies').generate
         },
         config: config,
         dbTestUtil: function () {
