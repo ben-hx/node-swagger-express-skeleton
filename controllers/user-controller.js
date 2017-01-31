@@ -8,7 +8,7 @@ module.exports = function (UserRepository) {
         register: function (req, res, next) {
             UserRepository.register(req.body).then(function (user) {
                 res.status(201);
-                res.sendData({user: user}, 'User registered! The Admin will activateById your account as soon as possible!');
+                res.sendData({user: user}, 'User registered! The Admin will activate your account as soon as possible!');
             }).catch(function (error) {
                 next(error);
             });

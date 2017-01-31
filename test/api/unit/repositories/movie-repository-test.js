@@ -549,6 +549,12 @@ describe('Movie-Repository-CRUD-Tests', function () {
                 movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
                 movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
             ]).then(function () {
+                return movieRepository.forUser(exampleUsers.bob).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.alice).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.eve).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
                 done();
             });
         });
@@ -557,7 +563,10 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
             function evaluateMovie(result) {
                 movieEvaluation.evaluateMovie(result, exampleMovies.theToxicAvenger);
-                movieEvaluation.evaluateMovieWatched(result, {ownWatched: {value: false}, userWatched: []});
+                movieEvaluation.evaluateMovieWatched(result, {
+                    ownWatched: {value: true},
+                    userWatched: [exampleUsers.eve, exampleUsers.alice]
+                });
                 movieEvaluation.evaluateMovieRating(result, {
                     ownRating: {value: 4},
                     userRatings: [],
@@ -577,7 +586,10 @@ describe('Movie-Repository-CRUD-Tests', function () {
         it('should return movie rated with other users rating when setting the movie rating', function (done) {
 
             function evaluateMovie(result) {
-                movieEvaluation.evaluateMovieWatched(result, {ownWatched: {value: false}, userWatched: []});
+                movieEvaluation.evaluateMovieWatched(result, {
+                    ownWatched: {value: true},
+                    userWatched: [exampleUsers.eve, exampleUsers.alice]
+                });
                 movieEvaluation.evaluateMovieRating(result, {
                     ownRating: {value: 3},
                     userRatings: [{user: exampleUsers.alice, value: 4}, {user: exampleUsers.eve, value: 2}],
@@ -600,7 +612,10 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
         it('should return movie rating when setting the movie rating a secound time', function (done) {
             function evaluateMovie(result) {
-                movieEvaluation.evaluateMovieWatched(result, {ownWatched: {value: false}, userWatched: []});
+                movieEvaluation.evaluateMovieWatched(result, {
+                    ownWatched: {value: true},
+                    userWatched: [exampleUsers.eve, exampleUsers.alice]
+                });
                 movieEvaluation.evaluateMovieRating(result, {
                     ownRating: {value: 3},
                     userRatings: [{user: exampleUsers.alice, value: 4}],
@@ -639,6 +654,12 @@ describe('Movie-Repository-CRUD-Tests', function () {
                 movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
                 movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
             ]).then(function () {
+                return movieRepository.forUser(exampleUsers.bob).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.alice).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.eve).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
                 return movieRepository.forUser(exampleUsers.bob).setRatingById(exampleMovies.theToxicAvenger._id, 5);
             }).then(function () {
                 return movieRepository.forUser(exampleUsers.alice).setRatingById(exampleMovies.theToxicAvenger._id, 4);
@@ -652,7 +673,10 @@ describe('Movie-Repository-CRUD-Tests', function () {
         it('should return movie not rated when deleting the movie rating', function (done) {
 
             function evaluateMovie(result) {
-                movieEvaluation.evaluateMovieWatched(result, {ownWatched: {value: false}, userWatched: []});
+                movieEvaluation.evaluateMovieWatched(result, {
+                    ownWatched: {value: true},
+                    userWatched: [exampleUsers.eve, exampleUsers.alice]
+                });
                 movieEvaluation.evaluateMovieRating(result, {
                     ownRating: null,
                     userRatings: [{user: exampleUsers.alice, value: 4}, {user: exampleUsers.eve, value: 4}],

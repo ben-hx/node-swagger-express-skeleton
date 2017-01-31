@@ -10,12 +10,15 @@ module.exports = function () {
     var Movie = require("../models/movie");
     var MovieUserAction = require("../models/movie-user-action");
     var MoviePropertyRepository = require("../repositories/movie-property-repository")(errors, Movie);
-    var UserMovieRepository = require("../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction);
+    var MovieRepository = require("../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction);
 
     var authServiceInstance = require('../auth/auth-service')(errors, UserRepository).initialize();
-    var userRepositoryInstance = require("../repositories/user-repository")(UserRepository, authServiceInstance);
-    var userMovieRepositoryInstance = require("../repositories/movie-repository")(UserMovieRepository, authServiceInstance);
-    var moviePropertyRepositoryInstance = require("../repositories/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
+    var userRepositoryInstance = require("../repositories/authorization-decorators/user-repository")(UserRepository, authServiceInstance);
+
+    //var movieRepositoryInstance = require("../repositories/authorization-decorators/movie-repository")(MovieRepository, authServiceInstance);
+
+
+    var moviePropertyRepositoryInstance = require("../repositories/authorization-decorators/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
     var basicAuthenticationInstance = require("../auth/basic-authentication")(authServiceInstance);
 
     var mongooseConfig = require('../mongoose-config')(debug, config);
@@ -34,7 +37,10 @@ module.exports = function () {
             return userRepositoryInstance;
         },
         getMovieRepository: function () {
-            return movieRepositoryInstance;
+            var movieRepository = MovieRepository.forUser(authServiceInstance.getCurrentUser());
+            var decorator = require("../repositories/authorization-decorators/movie-repository");
+            return decorator(movieRepository, authServiceInstance);
+            //return movieRepositoryInstance;
         },
         getMovieProperteyRepository: function () {
             return moviePropertyRepositoryInstance
@@ -46,7 +52,7 @@ module.exports = function () {
             return require("../controllers/user-controller")(this.getUserRepository());
         },
         getMovieController: function () {
-            return require("../controllers/movie-controller")(this.getMovieRepository());
+            return require("../controllers/movie-controller")();
         }
     };
-}
+};

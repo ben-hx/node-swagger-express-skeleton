@@ -2,10 +2,9 @@
 
 var q = require('q');
 
-module.exports = function (errors, User, InaktiveUser) {
+module.exports = function (errors, User, InaktiveUser, test) {
 
     return {
-
         register: function (data) {
             var deferred = q.defer();
             var user = new InaktiveUser(data);

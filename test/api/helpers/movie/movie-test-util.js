@@ -66,7 +66,7 @@ module.exports = function (Movie, MovieUserAction, MovieRepository) {
         },
         repository: {
             forUser: function (user) {
-                return new MovieRepositoryDecorator(new MovieRepository(user));
+                return new MovieRepositoryDecorator(new MovieRepository.forUser(user));
             }
         }
     }

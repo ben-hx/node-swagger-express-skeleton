@@ -13,7 +13,6 @@ var Movie = require("../../../models/movie");
 var MovieUserAction = require("../../../models/movie-user-action");
 var MovieRepository = require("../../../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction);
 
-
 var apiTestUtilInstance = require('./api/api-test-util')(config, debug, require("../../../app")());
 
 module.exports = function () {

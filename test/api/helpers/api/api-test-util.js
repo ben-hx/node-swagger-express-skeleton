@@ -288,7 +288,7 @@ module.exports = function (config, debug, server) {
                     deferred.resolve(error.response);
                 });
                 return deferred.promise;
-            },
+            }
         }
     }
 };

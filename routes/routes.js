@@ -25,7 +25,6 @@ module.exports = function (router, diContainer) {
         inaktiveUsers.get(basicAuth, diContainer.getUserController().getInaktiveUsers);
     }
 
-
     function movieRoutes() {
         var movies = router.route('/movies');
         movies.post(basicAuth, diContainer.getMovieController().create);
@@ -37,14 +36,12 @@ module.exports = function (router, diContainer) {
         movie.delete(basicAuth, diContainer.getMovieController().delete);
 
         var movieWatched = router.route('/movies/:movie_id/watched');
-        movieWatched.get(basicAuth, diContainer.getMovieController().getWatched);
         movieWatched.put(basicAuth, diContainer.getMovieController().watch);
 
         var movieUnwatched = router.route('/movies/:movie_id/unwatched');
         movieUnwatched.put(basicAuth, diContainer.getMovieController().unwatch);
 
         var movieRating = router.route('/movies/:movie_id/rating');
-        movieRating.get(basicAuth, diContainer.getMovieController().getRating);
         movieRating.put(basicAuth, diContainer.getMovieController().rate);
         movieRating.delete(basicAuth, diContainer.getMovieController().deleteRating);
 
