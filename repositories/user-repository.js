@@ -2,7 +2,7 @@
 
 var q = require('q');
 
-module.exports = function (errors, User, InaktiveUser, test) {
+module.exports = function (errors, User, InaktiveUser) {
 
     return {
         register: function (data) {
@@ -121,7 +121,7 @@ module.exports = function (errors, User, InaktiveUser, test) {
                 });
                 deferred.resolve({users: docs, pagination: result.pagination});
             }).catch(function (error) {
-                deferred.reject(err);
+                deferred.reject(error);
             });
             return deferred.promise;
         },
@@ -134,7 +134,7 @@ module.exports = function (errors, User, InaktiveUser, test) {
                 });
                 deferred.resolve({users: docs, pagination: result.pagination});
             }).catch(function (error) {
-                deferred.reject(err);
+                deferred.reject(error);
             });
             return deferred.promise;
         }

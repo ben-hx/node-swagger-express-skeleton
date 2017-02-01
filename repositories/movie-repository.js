@@ -118,12 +118,11 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     options = options || {};
                     var query = options.query || {};
                     options = {
-                        //query:
                         sort: options.sort || config.settings.movie.moviesSortDefault,
                         page: parseInt(options.page) || 0,
                         limit: parseInt(options.limit) || config.settings.movie.moviesPerPageDefault,
                         populate: {
-                            path: 'movie watched.user ratings.user',
+                            path: 'movie',
                             match: {
                                 title: castQueryParamByBeginning(query.title),
                                 actors: castQueryParamByBeginning(query.actors),
@@ -134,8 +133,18 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                         }
                     };
                     options = removeUndefinedPropertyOfObject(options);
-
                     MovieUserAction.paginate(options).then(function (result) {
+                        /*
+                         Need to have a seperate population because single one is not working
+                         with a combination of subpaht's and matching!
+                         */
+                        return MovieUserAction.populate(result.docs, {
+                            path: 'watched.user ratings.user'
+                        }).then(function (docs) {
+                            result.docs = docs;
+                            return result;
+                        });
+                    }).then(function (result) {
                         var docs = result.docs.reduce(function (docs, movieUserAction) {
                             if (movieUserAction.movie) {
                                 docs.push(movieUserActionToResponse(movieUserAction));
