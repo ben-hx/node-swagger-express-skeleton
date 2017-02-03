@@ -45,13 +45,13 @@ describe('Movie-Repository-CRUD-Tests', function () {
         q.all([
             User.remove(),
             Movie.remove(),
-            MovieUserAction.remove(),
+            MovieUserAction.remove()
         ]).then(function () {
             done();
         });
     });
 
-    describe('filter by title and check population of subdocuments', function () {
+    describe('temp', function () {
 
         beforeEach(function (done) {
             q.all([
@@ -75,17 +75,8 @@ describe('Movie-Repository-CRUD-Tests', function () {
             });
         });
 
-        it('should return movie searched by title inclusive subdocuments (userWatched, userRanking)', function (done) {
-            var options = {
-                query: {
-                    title: exampleMovies.theToxicAvenger.title
-                }
-            };
-            movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
-                result.movies[0].userWatched[0].user._id.equals(exampleUsers.alice._id).should.be.true;
-                result.movies[0].userRatings[0].user._id.equals(exampleUsers.alice._id).should.be.true;
-                done();
-            });
+        it('tmp', function (done) {
+            done();
         });
 
     });
