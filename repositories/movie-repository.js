@@ -113,37 +113,29 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                 },
 
                 getAll: function (options) {
+                    options = options || {};
                     var self = this;
                     var deferred = q.defer();
-                    options = options || {};
                     var query = options.query || {};
-                    options = {
-                        sort: options.sort || config.settings.movie.moviesSortDefault,
-                        page: parseInt(options.page) || 0,
-                        limit: parseInt(options.limit) || config.settings.movie.moviesPerPageDefault,
-                        populate: {
-                            path: 'movie',
-                            match: {
-                                title: castQueryParamByBeginning(query.title),
-                                actors: castQueryParamByBeginning(query.actors),
-                                year: castQueryParamByOptionalArray(query.years),
-                                genres: castQueryParamByOptionalArray(query.genres),
-                                lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser)
-                            }
-                        }
+                    query = {
+                        title: castQueryParamByBeginning(query.title),
+                        actors: castQueryParamByBeginning(query.actors),
+                        year: castQueryParamByOptionalArray(query.years),
+                        genres: castQueryParamByOptionalArray(query.genres),
+                        lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser)
                     };
-                    options = removeUndefinedPropertyOfObject(options);
-                    MovieUserAction.paginate(options).then(function (result) {
-                        /*
-                         Need to have a seperate population because single one is not working
-                         with a combination of subpaht's and matching!
-                         */
-                        return MovieUserAction.populate(result.docs, {
-                            path: 'watched.user ratings.user'
-                        }).then(function (docs) {
-                            result.docs = docs;
-                            return result;
-                        });
+                    query = removeUndefinedPropertyOfObject(query);
+                    Movie.find(query, '_id').then(function (result) {
+                        options = {
+                            query: {movie: {$in: result}},
+                            sort: options.sort || config.settings.movie.moviesSortDefault,
+                            page: parseInt(options.page) || 0,
+                            limit: parseInt(options.limit) || config.settings.movie.moviesPerPageDefault,
+                            populate: {
+                                path: 'movie watched.user ratings.user'
+                            }
+                        };
+                        return MovieUserAction.paginate(options);
                     }).then(function (result) {
                         var docs = result.docs.reduce(function (docs, movieUserAction) {
                             if (movieUserAction.movie) {
@@ -157,7 +149,6 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     });
                     return deferred.promise;
                 },
-
                 getById: function (id) {
                     var self = this;
                     var deferred = q.defer();
