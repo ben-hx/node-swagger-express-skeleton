@@ -214,7 +214,9 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                         movie.watched.addToSet({user: user});
                         return movie.save();
                     }).then(function (result) {
-                        deferred.resolve(movieUserActionToResponse(result));
+                        return self.getById(id);
+                    }).then(function (result) {
+                        deferred.resolve(result);
                     }).catch(function (error) {
                         return deferred.reject(errors.convertError(error));
                     });
@@ -233,11 +235,11 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                             throw new errors.ValidationError('Movie is not set to watched!');
                         }
                         movie.watched.pull(watched.watched[0]._id);
-                        return movie.save().then(function () {
-                            return movie;
-                        });
+                        return movie.save();
                     }).then(function (result) {
-                        deferred.resolve(movieUserActionToResponse(result));
+                        return self.getById(id);
+                    }).then(function (result) {
+                        deferred.resolve(result);
                     }).catch(function (error) {
                         return deferred.reject(errors.convertError(error));
                     });
@@ -264,11 +266,13 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                             });
                         }
                         return movie;
+                    }).then(function (movie) {
+                        movie.ratings.addToSet({user: user, value: value});
+                        return movie.save();
                     }).then(function (result) {
-                        result.ratings.addToSet({user: user, value: value});
-                        return result.save();
+                        return self.getById(id);
                     }).then(function (result) {
-                        deferred.resolve(movieUserActionToResponse(result));
+                        deferred.resolve(result);
                     }).catch(function (error) {
                         return deferred.reject(errors.convertError(error));
                     });
@@ -287,11 +291,11 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                             throw new errors.ValidationError('Movie is not rated!');
                         }
                         movie.ratings.pull(rating.ratings[0]._id);
-                        return movie.save().then(function () {
-                            return movie;
-                        });
+                        return movie.save();
                     }).then(function (result) {
-                        deferred.resolve(movieUserActionToResponse(result));
+                        return self.getById(id);
+                    }).then(function (result) {
+                        deferred.resolve(result);
                     }).catch(function (error) {
                         return deferred.reject(errors.convertError(error));
                     });
