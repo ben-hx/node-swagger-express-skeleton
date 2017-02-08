@@ -625,4 +625,119 @@ describe('Movie-Endpoint Tests', function () {
 
     });
 
+    describe('PUT /movie/:movie_id/comments', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                api.postMovie(exampleUsers.adminBob, exampleMovies.theToxicAvenger),
+                api.postMovie(exampleUsers.adminBob, exampleMovies.returnOfTheKillerTomatos)
+            ]).then(function () {
+                done();
+            });
+        });
+
+        describe('authenticated', function () {
+
+            it('should return 200 with comment when commenting a movie', function (done) {
+                api.putMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "bobComment").then(function (res) {
+                    apiEvaluation.evaluateMovieActionResponse(res, 200, {
+                        movie: exampleMovies.theToxicAvenger,
+                        userComments: [{user: exampleUsers.adminBob, text: "bobComment"}]
+                    });
+                    done();
+                });
+            });
+
+            it('should return 404 not-found-error when commenting invalid movie', function (done) {
+                api.putMovieComment(exampleUsers.adminBob, 123, "bobComment").then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 404);
+                    done();
+                });
+            });
+
+        });
+
+        describe('not authenticated', function () {
+
+            it('should return 401 unauthorized when setting movie rating', function (done) {
+                api.putMovieComment(exampleUsers.alice, exampleMovies.theToxicAvenger._id, "aliceComment").then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 401);
+                    done();
+                });
+            });
+
+        });
+
+    });
+
+    describe('DELETE /movie/:movie_id/comments/comment_id', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                api.postMovie(exampleUsers.adminBob, exampleMovies.theToxicAvenger),
+            ]).then(function () {
+                done();
+            });
+        });
+
+        describe('authenticated', function () {
+
+            it('should return 200 with movie-comments when deleting the movie comment of another user as admin', function (done) {
+                q.all([
+                    api.putMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment"),
+                    api.putMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment")
+                ]).then(function (result) {
+                    var commentId = result[1].body.data.movie.userComments[1]._id;
+                    return api.deleteMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, commentId);
+                }).then(function (res) {
+                    apiEvaluation.evaluateMovieActionResponse(res, 200, {
+                        movie: exampleMovies.theToxicAvenger,
+                        userComments: [{user: exampleUsers.adminBob, text: "adminBobComment"}]
+                    });
+                    done();
+                });
+            });
+
+            it('should return 401 unauthorized with movie-comments when deleting the movie comment of another user as moderator', function (done) {
+                q.all([
+                    api.putMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment"),
+                    api.putMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment")
+                ]).then(function (result) {
+                    var commentId = result[0].body.data.movie.userComments[0]._id;
+                    return api.deleteMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, commentId);
+                }).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 401);
+                    done();
+                });
+            });
+
+            it('should return 404 not-found-error when deleting invalid comment', function (done) {
+                api.deleteMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, 123).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 404);
+                    done();
+                });
+            });
+
+            it('should return 404 not-found-error when deleting comment of invalid movie', function (done) {
+                api.deleteMovieComment(exampleUsers.adminBob, 123, 123).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 404);
+                    done();
+                });
+            });
+
+        });
+
+        describe('not authenticated', function () {
+
+            it('should return 401 unauthorized when setting movie watched', function (done) {
+                api.deleteMovieComment(exampleUsers.alice, exampleMovies.theToxicAvenger._id, 123).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 401);
+                    done();
+                });
+            });
+
+        });
+
+    });
+
 });

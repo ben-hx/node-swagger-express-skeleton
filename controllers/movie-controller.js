@@ -85,6 +85,23 @@ module.exports = function () {
             }).catch(function (error) {
                 next(error);
             });
+        },
+        comment: function (req, res, next) {
+            req.diContainer.getMovieRepository().addCommentById(req.params.movie_id, req.body.text).then(function (movie) {
+                res.status(200);
+                res.sendData({movie: movie});
+            }).catch(function (error) {
+                next(error);
+            });
+        },
+        deleteComment: function (req, res, next) {
+            var deleteCommentByIdFunction = (req.diContainer.getAuthService().getCurrentUser().role == 'admin') ? req.diContainer.getMovieRepository().deleteCommentFromUserById : req.diContainer.getMovieRepository().deleteCommentById;
+            deleteCommentByIdFunction(req.params.movie_id, req.params.comment_id).then(function (movie) {
+                res.status(200);
+                res.sendData({movie: movie});
+            }).catch(function (error) {
+                next(error);
+            });
         }
     }
 

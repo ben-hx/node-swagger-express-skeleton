@@ -72,11 +72,24 @@ module.exports = function () {
             });
             expectedUserIdsWithValue.should.deep.include.members(actualUserIdsWithValue);
         },
-
-
+        evaluateMovieComment: function (actual, expected) {
+            expected.user._id.equals(actual.user._id).should.be.true;
+            expected.text.should.equals(actual.text);
+        },
+        evaluateMovieComments: function (actual, expected) {
+            var actualUserIdsWithText = [];
+            actual.userComments.forEach(function (actualUserComment) {
+                actualUserIdsWithText.push({userId: actualUserComment.user._id, text: actualUserComment.text});
+            });
+            var expectedUserIdsWithText = [];
+            expected.userComments.forEach(function (expectedUserComment) {
+                expectedUserIdsWithText.push({userId: expectedUserComment.user._id, text: expectedUserComment.text});
+            });
+            expectedUserIdsWithText.should.deep.include.members(actualUserIdsWithText);
+        },
         evaluateUserIdsMovieWatched: function (actual, expected) {
             actual.should.have.length(expected.length);
-            actual.should.deep.include.members(expected)
+            actual.should.deep.include.members(expected);
         },
         evaluateMovieIdsUserWatched: function (actual, expected) {
             actual.should.have.length(expected.length);

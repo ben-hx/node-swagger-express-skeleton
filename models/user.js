@@ -92,6 +92,40 @@ UserSchema.pre('save', function (done) {
     done();
 });
 
+function hasPassword(user, done) {
+    if (!user.isModified('password')) {
+        return done();
+    }
+    bcrypt.genSalt(5, function (err, salt) {
+        if (err) {
+            return done(err)
+        }
+        bcrypt.hash(user.password, salt, null, function (err, hash) {
+            if (err) {
+                return callback(err);
+            }
+            user.password = hash;
+            done();
+        });
+    });
+}
+
+UserSchema.methods.saveWithHashedPassword = function () {
+    var user = this;
+    var deferred = q.defer();
+    hasPassword(user, function (err) {
+        if (err) {
+            deferred.reject(err);
+        }
+        user.save().then(function (result) {
+            deferred.resolve(result);
+        }).catch(function (error) {
+            deferred.reject(error);
+        });
+    });
+    return deferred.promise;
+};
+
 /*
  Added to the Prototype, because userModel.schema.methods
  is not working after schema has been constructed

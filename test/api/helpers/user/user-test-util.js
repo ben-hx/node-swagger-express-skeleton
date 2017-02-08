@@ -42,6 +42,14 @@ module.exports = function (User, UserRepository) {
                 });
             },
 
+            changeExampleUsersPasswordById: function (id, oldPassword, newPassword) {
+                return UserRepository.changePasswordById(id, oldPassword, newPassword);
+            },
+
+            verifyExampleUsersPasswordById: function (id, password) {
+                return UserRepository.verifyPasswordById(id, password);
+            },
+
             registerExampleUsers: function (users) {
                 var promises = [];
                 var self = this;
@@ -68,7 +76,11 @@ module.exports = function (User, UserRepository) {
 
             getExampleUsers: function (options) {
                 return UserRepository.getUsers(options);
-            }
+            },
+
+            getExampleUser: function (user) {
+                return UserRepository.getUserById(user._id);
+            },
         }
     }
 };

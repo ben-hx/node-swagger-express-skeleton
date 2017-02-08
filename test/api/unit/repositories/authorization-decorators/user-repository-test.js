@@ -54,6 +54,60 @@ describe('User-Authorization-Repository-Tests', function () {
 
     });
 
+    describe('create()', function () {
+
+        var user = sinon.spy();
+
+        it('should be callable for admin', function (done) {
+            checkMethodForRole('admin', 'create', user);
+            done();
+        });
+
+        it('should not be callable for other roles but admin ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodForRole(role, 'create', user);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+    });
+
+    describe('updateById()', function () {
+
+        var id = sinon.spy();
+        var user = sinon.spy();
+
+        it('should be callable for admin', function (done) {
+            checkMethodForRole('admin', 'updateById', id, user);
+            done();
+        });
+
+        it('should not be callable for other roles but admin ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodForRole(role, 'updateById', id, user);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+    });
+
+    describe('getUserById()', function () {
+
+        var id = sinon.spy();
+
+        it('should be callable for everybody', function (done) {
+            var roles = authTestUtil.allPossibleRoles();
+            roles.forEach(function (role) {
+                checkMethodForRole(role, 'getUserById', id);
+            });
+            done();
+        });
+    });
+
     describe('setRoleById()', function () {
 
         var user = sinon.spy();
@@ -72,6 +126,77 @@ describe('User-Authorization-Repository-Tests', function () {
             });
             done();
         });
+    });
+
+    describe('deleteUserById()', function () {
+
+        var id = sinon.spy();
+
+        it('should be callable for admin', function (done) {
+            checkMethodForRole('admin', 'deleteUserById', id);
+            done();
+        });
+
+        it('should not be callable for other roles but admin ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodForRole(role, 'deleteUserById', id);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+    });
+
+    describe('deleteInaktiveUserById()', function () {
+
+        var id = sinon.spy();
+
+        it('should be callable for admin', function (done) {
+            checkMethodForRole('admin', 'deleteInaktiveUserById', id);
+            done();
+        });
+
+        it('should not be callable for other roles but admin ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodForRole(role, 'deleteInaktiveUserById', id);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+    });
+
+    describe('verifyPasswordById()', function () {
+
+        var id = sinon.spy();
+        var password = sinon.spy();
+
+        it('should be callable for everybody', function (done) {
+            var roles = authTestUtil.allPossibleRoles();
+            roles.forEach(function (role) {
+                checkMethodForRole(role, 'verifyPasswordById', id, password);
+            });
+            done();
+        });
+
+    });
+
+    describe('changePasswordById()', function () {
+
+        var id = sinon.spy();
+        var oldPassword = sinon.spy();
+        var newPassword = sinon.spy();
+
+        it('should be callable for everybody', function (done) {
+            var roles = authTestUtil.allPossibleRoles();
+            roles.forEach(function (role) {
+                checkMethodForRole(role, 'changePasswordById', id, oldPassword, newPassword);
+            });
+            done();
+        });
+
     });
 
     describe('getInaktiveUsers()', function () {
@@ -98,20 +223,14 @@ describe('User-Authorization-Repository-Tests', function () {
     describe('getUsers()', function () {
         var options = sinon.spy();
 
-        it('should be callable for admin', function (done) {
-            checkMethodForRole('admin', 'getUsers', options);
-            done();
-        });
-
-        it('should not be callable for other roles but admin ', function (done) {
-            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+        it('should be callable for everybody', function (done) {
+            var roles = authTestUtil.allPossibleRoles();
             roles.forEach(function (role) {
-                errorEvaluation.evaluateExecption(function () {
-                    checkMethodForRole(role, 'getUsers', options);
-                }, errors.AuthenticationError);
+                checkMethodForRole(role, 'getUsers', options);
             });
             done();
         });
+
     });
 
 });

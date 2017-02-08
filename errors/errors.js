@@ -72,7 +72,7 @@ module.exports = {
         else if (error.name == 'ValidationError' || error.code == 11000 || error.code == 11001) {
             return new this.ValidationError(error);
         }
-        else if (error.name == 'NotFoundError' || error.name == 'DuplicationError') {
+        else if (error.name == 'NotFoundError' || error.name == 'DuplicationError' || error.name == 'AuthenticationError') {
             return error;
         }
         return new this.UnexpectedError(error);

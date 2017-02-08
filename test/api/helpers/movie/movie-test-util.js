@@ -37,6 +37,24 @@ module.exports = function (Movie, MovieUserAction, MovieRepository) {
         this.deleteRatingById = function (id) {
             return movieRepository.deleteRatingById(id);
         };
+        this.addCommentById = function (id, text) {
+            return movieRepository.addCommentById(id, text);
+        };
+        this.addComment = function (movie, text) {
+            return movieRepository.addCommentById(movie._id, text).then(function (result) {
+                movie.userComments = result.userComments;
+                return result;
+            });
+        };
+        this.deleteCommentFromUserById = function (id, commentId) {
+            return movieRepository.deleteCommentFromUserById(id, commentId);
+        };
+        this.deleteCommentById = function (id, commentId) {
+            return movieRepository.deleteCommentById(id, commentId);
+        };
+        this.getCommentById = function (id, commentId) {
+            return movieRepository.getCommentById(id, commentId);
+        };
     }
 
     return {

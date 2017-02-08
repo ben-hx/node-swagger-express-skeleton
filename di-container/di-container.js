@@ -40,7 +40,6 @@ module.exports = function () {
             var movieRepository = MovieRepository.forUser(authServiceInstance.getCurrentUser());
             var decorator = require("../repositories/authorization-decorators/movie-repository");
             return decorator(movieRepository, authServiceInstance);
-            //return movieRepositoryInstance;
         },
         getMovieProperteyRepository: function () {
             return moviePropertyRepositoryInstance
@@ -49,7 +48,7 @@ module.exports = function () {
             return basicAuthenticationInstance;
         },
         getUserController: function () {
-            return require("../controllers/user-controller")(this.getUserRepository());
+            return require("../controllers/user-controller")(this.getUserRepository(), this.getAuthService());
         },
         getMovieController: function () {
             return require("../controllers/movie-controller")();

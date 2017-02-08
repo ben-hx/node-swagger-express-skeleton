@@ -237,7 +237,6 @@ describe('User-Repository-Tests', function () {
             });
         });
 
-
         it('should return an error when updating a user with username that already exists', function (done) {
             q.all([
                 userRepositoryTestUtil.createExampleUser(exampleUsers.bob),
@@ -252,10 +251,52 @@ describe('User-Repository-Tests', function () {
             });
         });
 
+        it('should not update the password when updating with password-field', function (done) {
+            q.all([
+                userRepositoryTestUtil.createExampleUser(exampleUsers.bob)
+            ]).then(function () {
+                return userRepositoryTestUtil.updateExampleUserById(exampleUsers.bob._id, {password: 'myNewValidPassword'});
+            }).then(function (result) {
+                userEvaluation.evaluateUser(result, exampleUsers.bob);
+                done();
+            });
+        });
+
         it('should return an error when updating with invalid user-data', function (done) {
             userRepositoryTestUtil.updateExampleUserById(exampleUsers.bob._id, exampleUsers.bob).catch(function (error) {
                 var excpectedError = {};
                 errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
+    describe('changePasswordById() and verifyPasswordById()', function () {
+
+        it('should return true when updating with valid old and new password', function (done) {
+            var newPassword = "bobsNewPassword";
+            q.all([
+                userRepositoryTestUtil.createExampleUser(exampleUsers.bob)
+            ]).then(function () {
+                return userRepositoryTestUtil.changeExampleUsersPasswordById(exampleUsers.bob._id, exampleUsers.bob.password, newPassword);
+            }).then(function (result) {
+                return userRepositoryTestUtil.verifyExampleUsersPasswordById(exampleUsers.bob._id, newPassword);
+            }).then(function (result) {
+                result.isMatch.should.equal(true);
+                done();
+            });
+        });
+
+        it('should return an error when updating with invalid old password', function (done) {
+            var newPassword = "bobsNewPassword";
+            q.all([
+                userRepositoryTestUtil.createExampleUser(exampleUsers.bob)
+            ]).then(function () {
+                return userRepositoryTestUtil.changeExampleUsersPasswordById(exampleUsers.bob._id, exampleUsers.bob.password + 'asd', newPassword);
+            }).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
                 done();
             });
         });
@@ -291,6 +332,27 @@ describe('User-Repository-Tests', function () {
                 return User.find();
             }).then(function (users) {
                 users.should.be.empty;
+                done();
+            });
+        });
+
+    });
+
+    describe('getUserById()', function () {
+
+        it('should return (aktive) user by id', function (done) {
+            q.all([
+                userRepositoryTestUtil.registerExampleUser(exampleUsers.bob),
+                userRepositoryTestUtil.registerExampleUser(exampleUsers.alice)
+            ]).then(function (users) {
+                return q.all([
+                    userRepositoryTestUtil.activateExampleUser(exampleUsers.bob),
+                    userRepositoryTestUtil.activateExampleUser(exampleUsers.alice)
+                ]);
+            }).then(function (result) {
+                return userRepositoryTestUtil.getExampleUser(exampleUsers.bob);
+            }).then(function (user) {
+                userEvaluation.evaluateUser(user, exampleUsers.bob);
                 done();
             });
         });

@@ -48,7 +48,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
             }
 
             function findMovieById(id) {
-                return MovieUserAction.findOne({movie: id}).populate('movie watched.user ratings.user').then(function (result) {
+                return MovieUserAction.findOne({movie: id}).populate('movie watched.user ratings.user comments.user').then(function (result) {
                     if (result == null) {
                         throw new errors.NotFoundError('Movie does not exist!');
                     }
@@ -60,6 +60,9 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                 var self = this;
                 var ownWatched = {value: false};
                 var userWatched = movieUserAction.watched.reduce(function (userWatched, watched) {
+                    if (!watched.user) {
+                        return;
+                    }
                     if (watched.user._id.equals(user._id)) {
                         ownWatched.value = true;
                         ownWatched.date = watched.date;
@@ -72,6 +75,9 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                 var averageRating = 0;
                 var ratingsCount = 0;
                 var userRatings = movieUserAction.ratings.reduce(function (userRatings, rating) {
+                    if (!rating.user) {
+                        return;
+                    }
                     ratingsCount++;
                     averageRating += rating.value;
                     if (rating.user._id.equals(user._id)) {
@@ -83,6 +89,15 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }
                     return userRatings;
                 }, []);
+
+                var userComments = movieUserAction.comments.reduce(function (userComments, comment) {
+                    if (!comment.user) {
+                        return;
+                    }
+                    userComments.push(comment.toObject());
+                    return userComments;
+                }, []);
+
                 var movie = movieUserAction.movie.toObject();
                 averageRating = averageRating / ratingsCount || null;
                 movie = Object.assign(movie, {ownWatched: ownWatched});
@@ -90,6 +105,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                 movie = Object.assign(movie, {ownRating: ownRating});
                 movie = Object.assign(movie, {userRatings: userRatings});
                 movie = Object.assign(movie, {averageRating: averageRating});
+                movie = Object.assign(movie, {userComments: userComments});
                 return movie;
             }
 
@@ -100,18 +116,17 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     movieData.lastModifiedUser = user._id;
                     var movie = new Movie(movieData);
                     movie.save().then(function (movie) {
-                        var newValue = {movie: movie, watched: [], ratings: []};
+                        var newValue = {movie: movie, watched: [], ratings: [], comments: []};
                         return new MovieUserAction(newValue).save().then(function (result) {
                             return movieUserActionToResponse(newValue);
                         });
                     }).then(function (result) {
-                        return deferred.resolve(result);
+                        deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
-
                 getAll: function (options) {
                     options = options || {};
                     var self = this;
@@ -132,7 +147,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                             page: parseInt(options.page) || 0,
                             limit: parseInt(options.limit) || config.settings.movie.moviesPerPageDefault,
                             populate: {
-                                path: 'movie watched.user ratings.user'
+                                path: 'movie watched.user ratings.user comments.user'
                             }
                         };
                         return MovieUserAction.paginate(options);
@@ -143,20 +158,19 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                             }
                             return docs;
                         }, []);
-                        return deferred.resolve({movies: docs, pagination: result.pagination});
+                        deferred.resolve({movies: docs, pagination: result.pagination});
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
                 getById: function (id) {
                     var self = this;
                     var deferred = q.defer();
-                    var populate = {path: 'movie watched ratings'};
                     findMovieById(id).then(function (result) {
                         return deferred.resolve(movieUserActionToResponse(result));
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
@@ -176,7 +190,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }).then(function (result) {
                         return deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
@@ -194,11 +208,10 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }).then(function (result) {
                         return deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
-
                 setWatchedById: function (id) {
                     var self = this;
                     var deferred = q.defer();
@@ -218,7 +231,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }).then(function (result) {
                         deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
@@ -241,7 +254,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }).then(function (result) {
                         deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
@@ -274,7 +287,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }).then(function (result) {
                         deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 },
@@ -297,7 +310,82 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }).then(function (result) {
                         deferred.resolve(result);
                     }).catch(function (error) {
-                        return deferred.reject(errors.convertError(error));
+                        deferred.reject(errors.convertError(error));
+                    });
+                    return deferred.promise;
+                },
+                addCommentById: function (id, text) {
+                    var self = this;
+                    var deferred = q.defer();
+                    findMovieById(id).then(function (movie) {
+                        movie.comments.push({user: user, text: text});
+                        return movie.save();
+                    }).then(function (result) {
+                        return self.getById(id);
+                    }).then(function (result) {
+                        deferred.resolve(result);
+                    }).catch(function (error) {
+                        deferred.reject(errors.convertError(error));
+                    });
+                    return deferred.promise;
+                },
+                deleteCommentFromUserById: function (id, commentId) {
+                    var self = this;
+                    var deferred = q.defer();
+                    findMovieById(id).then(function (movie) {
+                        var commentLength = movie.comments.length;
+                        movie.comments.pull(commentId);
+                        if (movie.comments.length == commentLength) {
+                            throw new errors.NotFoundError('Comment not found!');
+                        }
+                        return movie.save();
+                    }).then(function (result) {
+                        return self.getById(id);
+                    }).then(function (result) {
+                        deferred.resolve(result);
+                    }).catch(function (error) {
+                        deferred.reject(errors.convertError(error));
+                    });
+                    return deferred.promise;
+                },
+                deleteCommentById: function (id, commentId) {
+                    var self = this;
+                    var deferred = q.defer();
+                    findMovieById(id).then(function (movie) {
+                        var comment = movie.comments.id(commentId);
+                        if (comment == null) {
+                            throw new errors.NotFoundError('Comment not found!');
+                        }
+                        if (comment.user == null) {
+                            throw new errors.ValidationError('User of Comment not found!');
+                        }
+                        if (!comment.user._id.equals(user._id)) {
+                            throw new errors.AuthenticationError('User not allowed to delete Comment');
+                        }
+                        movie.comments.pull(commentId);
+                        return movie.save();
+                    }).then(function (result) {
+                        return self.getById(id);
+                    }).then(function (result) {
+                        deferred.resolve(result);
+                    }).catch(function (error) {
+                        deferred.reject(errors.convertError(error));
+                    });
+                    return deferred.promise;
+                },
+                getCommentById: function (id, commentId) {
+                    var self = this;
+                    var deferred = q.defer();
+                    findMovieById(id).then(function (movie) {
+                        var comment = movie.comments.id(commentId);
+                        if (comment == null) {
+                            throw new errors.NotFoundError('Comment not found!');
+                        }
+                        return comment.toObject();
+                    }).then(function (result) {
+                        deferred.resolve(result);
+                    }).catch(function (error) {
+                        deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
                 }

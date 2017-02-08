@@ -34,6 +34,22 @@ module.exports = function (movieRepository, authorizationService) {
         deleteRatingById: function (id) {
             authorizationService.checkPermission(['admin', 'moderator']);
             return movieRepository.deleteRatingById(id);
+        },
+        addCommentById: function (id, text) {
+            authorizationService.checkPermission(['admin', 'moderator']);
+            return movieRepository.addCommentById(id, text);
+        },
+        deleteCommentById: function (id, commentId) {
+            authorizationService.checkPermission(['admin', 'moderator']);
+            return movieRepository.deleteCommentById(id, commentId);
+        },
+        deleteCommentFromUserById: function (id, commentId) {
+            authorizationService.checkPermission(['admin']);
+            return movieRepository.deleteCommentFromUserById(id, commentId);
+        },
+        getCommentById: function (id, commentId) {
+            authorizationService.checkPermission(['admin', 'moderator']);
+            return movieRepository.getCommentById(id, commentId);
         }
     }
 };

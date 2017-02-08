@@ -4,6 +4,24 @@ var q = require('q');
 
 module.exports = function (errors, User, InaktiveUser) {
 
+    function findUserById(id) {
+        return User.findOne({_id: id}).then(function (user) {
+            if (user == null) {
+                throw new errors.NotFoundError('User does not exist!');
+            }
+            return user;
+        });
+    }
+
+    function findInaktiveUserById(id) {
+        return InaktiveUser.findOne({_id: id}).then(function (user) {
+            if (user == null) {
+                throw new errors.NotFoundError('User does not exist!');
+            }
+            return user;
+        });
+    }
+
     return {
         register: function (data) {
             var deferred = q.defer();
@@ -19,7 +37,7 @@ module.exports = function (errors, User, InaktiveUser) {
         create: function (data) {
             var deferred = q.defer();
             var user = new User(data);
-            user.save().then(function (user) {
+            user.saveWithHashedPassword().then(function (user) {
                 return deferred.resolve(user.toObject());
             }).catch(function (error) {
                 return deferred.reject(new errors.ValidationError(error));
@@ -31,10 +49,7 @@ module.exports = function (errors, User, InaktiveUser) {
             var deferred = q.defer();
             delete data._id;
             delete data.password;
-            User.findOne({_id: id}).then(function (user) {
-                if (user == null) {
-                    throw new errors.NotFoundError('User does not exist!');
-                }
+            findUserById(id).then(function (user) {
                 user = Object.assign(user, data);
                 return user.save();
             }).then(function (user) {
@@ -45,12 +60,43 @@ module.exports = function (errors, User, InaktiveUser) {
             return deferred.promise;
         },
 
+        verifyPasswordById: function (id, password) {
+            var deferred = q.defer();
+            findUserById(id).then(function (user) {
+                return user.verifyPassword(password).then(function (isMatch) {
+                    return {isMatch: isMatch, user: user.toObject()};
+                });
+            }).then(function (result) {
+                return deferred.resolve(result);
+            }).catch(function (error) {
+                return deferred.reject(errors.convertError(error));
+            });
+            return deferred.promise;
+        },
+
+        changePasswordById: function (id, oldPassword, newPassword) {
+            var deferred = q.defer();
+            findUserById(id).then(function (user) {
+                return user.verifyPassword(oldPassword).then(function (isMatch) {
+                    if (!isMatch) {
+                        throw new errors.ValidationError("Password does not match!");
+                    }
+                    return user;
+                });
+            }).then(function (user) {
+                user.password = newPassword;
+                return user.saveWithHashedPassword();
+            }).then(function (user) {
+                return deferred.resolve(user.toObject());
+            }).catch(function (error) {
+                return deferred.reject(errors.convertError(error));
+            });
+            return deferred.promise;
+        },
+
         activateById: function (inaktiveUserId) {
             var deferred = q.defer();
-            InaktiveUser.findOne({_id: inaktiveUserId}).then(function (inaktiveUser) {
-                if (inaktiveUser == null) {
-                    throw new errors.NotFoundError('User does not exist!');
-                }
+            findInaktiveUserById(inaktiveUserId).then(function (inaktiveUser) {
                 return inaktiveUser.remove();
             }).then(function (inaktiveUser) {
                 var password = inaktiveUser.password;
@@ -76,10 +122,7 @@ module.exports = function (errors, User, InaktiveUser) {
 
         setRoleById: function (userId, role) {
             var deferred = q.defer();
-            User.findOne({_id: userId}).then(function (user) {
-                if (user == null) {
-                    throw new errors.NotFoundError('User does not exist!');
-                }
+            findUserById(userId).then(function (user) {
                 user.role = role;
                 return user.save();
             }).then(function (user) {
@@ -101,12 +144,32 @@ module.exports = function (errors, User, InaktiveUser) {
 
         getUserById: function (id) {
             var deferred = q.defer();
-            User.findOne({_id: id}).then(function (user) {
-                if (user == null) {
-                    throw new errors.NotFoundError('User does not exist!');
-                } else {
+            findUserById(id).then(function (user) {
+                return deferred.resolve(user.toObject());
+            }).catch(function (error) {
+                return deferred.reject(errors.convertError(error));
+            });
+            return deferred.promise;
+        },
+
+        deleteUserById: function (id) {
+            var deferred = q.defer();
+            findUserById(id).then(function (user) {
+                return User.remove({_id: id}).exec().then(function () {
                     return deferred.resolve(user.toObject());
-                }
+                });
+            }).catch(function (error) {
+                return deferred.reject(errors.convertError(error));
+            });
+            return deferred.promise;
+        },
+
+        deleteInaktiveUserById: function (id) {
+            var deferred = q.defer();
+            findInaktiveUserById(id).then(function (user) {
+                return InaktiveUser.remove({_id: id}).exec().then(function () {
+                    return deferred.resolve(user.toObject());
+                });
             }).catch(function (error) {
                 return deferred.reject(errors.convertError(error));
             });

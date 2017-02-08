@@ -101,7 +101,7 @@ describe('Movie-Rating-Model-Tests', function () {
 
     });
 
-    describe('save() - rating', function () {
+    describe('save() - ratings', function () {
 
         it('should return a movie-action when saving movie action', function (done) {
             var movieActions = new MovieUserAction({movie: exampleMovies.theToxicAvenger, watched: [], ratings: []});
@@ -137,6 +137,32 @@ describe('Movie-Rating-Model-Tests', function () {
             }).catch(function (error) {
                 done();
             });
+        });
+
+    });
+
+    describe('save() - comments', function () {
+
+        it('should return a movie-action when saving movie action', function (done) {
+            var movieActions = new MovieUserAction({movie: exampleMovies.theToxicAvenger, watched: [], ratings: []});
+            movieActions.save().then(function (result) {
+                movieActions.comments.addToSet({user: exampleUsers.bob, text: "bob"});
+                movieActions.comments.addToSet({user: exampleUsers.eve, text: "eve"});
+                movieActions.comments.addToSet({user: exampleUsers.alice, text: "alice"});
+                return movieActions.save();
+            }).then(function (result) {
+                result = result.toObject();
+                result.comments[0].user.equals(exampleUsers.bob._id).should.be.true;
+                result.comments[0].text.should.equal("bob");
+                result.comments[1].user.equals(exampleUsers.eve._id).should.be.true;
+                result.comments[1].text.should.equal("eve");
+                result.comments[2].user.equals(exampleUsers.alice._id).should.be.true;
+                result.comments[2].text.should.equal("alice");
+                result.watched.forEach(function (watchedValue) {
+                    watchedValue.should.have.ownProperty('date');
+                });
+                done();
+            })
         });
 
     });

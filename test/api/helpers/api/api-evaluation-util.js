@@ -132,6 +132,18 @@ module.exports = function () {
                     located.should.be.true;
                 });
             }
+            if (expectedAction.userComments) {
+                response.body.data.movie.userComments.forEach(function (actualComment) {
+                    var located = false;
+                    expectedAction.userComments.forEach(function (expectedComment) {
+                        if (actualComment.user._id == expectedComment.user._id) {
+                            located = true;
+                            actualComment.user.email.should.equal(expectedComment.user.email);
+                        }
+                    });
+                    located.should.be.true;
+                });
+            }
         },
 
         evaluateMoviesResponse: function (response, statusCode, expectedMovies) {

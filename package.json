@@ -12,7 +12,8 @@
     "drop-test": "set NODE_ENV=test&&node ./scripts/drop-db.js",
     "drop-development": "set NODE_ENV=development&&node ./scripts/drop-db.js",
     "drop": "scripts/drop-db.js",
-    "trash": "node ./scripts/cli/index.js"
+    "trash": "node ./scripts/cli/index.js",
+    "trash-development": "set NODE_ENV=development&&node ./scripts/cli/index.js"
   },
   "bin": {
     "trashbay-cli": "./scripts/cli/index.js"

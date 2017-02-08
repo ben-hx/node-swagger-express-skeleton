@@ -569,7 +569,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
     });
 
-
     describe('setRatingById()', function () {
 
         beforeEach(function (done) {
@@ -724,6 +723,286 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
         it('should return error when setting the movie rating with invalid movie', function (done) {
             movieRepository.forUser(exampleUsers.bob).deleteRatingById(new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca')).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
+    describe('addCommentById()', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger),
+                movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
+                movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
+            ]).then(function () {
+                return movieRepository.forUser(exampleUsers.bob).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.alice).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.eve).setWatchedById(exampleMovies.theToxicAvenger._id);
+            }).then(function () {
+                done();
+            });
+        });
+
+        it('should return movie comment when adding a comment to the movie', function (done) {
+
+            function evaluateMovie(result) {
+                movieEvaluation.evaluateMovie(result, exampleMovies.theToxicAvenger);
+                movieEvaluation.evaluateMovieComments(result, {userComments: [{user: exampleUsers.bob, text: "text"}]});
+            }
+
+            movieRepository.forUser(exampleUsers.bob).addCommentById(exampleMovies.theToxicAvenger._id, "text").then(function (result) {
+                evaluateMovie(result);
+                return movieRepository.forUser(exampleUsers.bob).getById(exampleMovies.theToxicAvenger._id);
+            }).then(function (result) {
+                evaluateMovie(result);
+                done();
+            });
+        });
+
+        it('should return movie comments when adding comments to the movie', function (done) {
+
+            function evaluateMovie(result) {
+                movieEvaluation.evaluateMovie(result, exampleMovies.theToxicAvenger);
+                movieEvaluation.evaluateMovieComments(result, {
+                    userComments: [{
+                        user: exampleUsers.bob,
+                        text: "bobText"
+                    }, {
+                        user: exampleUsers.alice,
+                        text: "aliceText"
+                    }]
+                });
+            }
+
+            movieRepository.forUser(exampleUsers.bob).addCommentById(exampleMovies.theToxicAvenger._id, "bobText").then(function (result) {
+                return movieRepository.forUser(exampleUsers.alice).addCommentById(exampleMovies.theToxicAvenger._id, "aliceText")
+            }).then(function (result) {
+                evaluateMovie(result);
+                return movieRepository.forUser(exampleUsers.bob).getById(exampleMovies.theToxicAvenger._id);
+            }).then(function (result) {
+                evaluateMovie(result);
+                done();
+            });
+        });
+
+        it('should return movie comments when adding comments to the movie with the same user', function (done) {
+
+            function evaluateMovie(result) {
+                movieEvaluation.evaluateMovie(result, exampleMovies.theToxicAvenger);
+                movieEvaluation.evaluateMovieComments(result, {
+                    userComments: [{
+                        user: exampleUsers.bob,
+                        text: "bobText1"
+                    }, {
+                        user: exampleUsers.bob,
+                        text: "bobText2"
+                    }]
+                });
+            }
+
+            movieRepository.forUser(exampleUsers.bob).addCommentById(exampleMovies.theToxicAvenger._id, "bobText1").then(function (result) {
+                return movieRepository.forUser(exampleUsers.bob).addCommentById(exampleMovies.theToxicAvenger._id, "bobText2")
+            }).then(function (result) {
+                evaluateMovie(result);
+                return movieRepository.forUser(exampleUsers.bob).getById(exampleMovies.theToxicAvenger._id);
+            }).then(function (result) {
+                evaluateMovie(result);
+                done();
+            });
+        });
+
+        it('should return an error when adding comment to invalid movie', function (done) {
+            movieRepository.forUser(exampleUsers.bob).addCommentById(new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'), "asdf").catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
+    describe('deleteCommentFromUserById()', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger),
+                movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
+                movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
+            ]).then(function () {
+                return movieRepository.forUser(exampleUsers.bob).addComment(exampleMovies.theToxicAvenger, "bobText");
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.alice).addComment(exampleMovies.theToxicAvenger, "aliceText");
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.eve).addComment(exampleMovies.theToxicAvenger, "eveText");
+            }).then(function () {
+                done();
+            });
+        });
+
+        it('should return movie comments when deleting own comment', function (done) {
+
+            function evaluateMovie(result) {
+                movieEvaluation.evaluateMovieComments(result, {
+                    userComments: [{
+                        user: exampleUsers.alice,
+                        text: "aliceText"
+                    }, {
+                        user: exampleUsers.eve,
+                        text: "eveText"
+                    }]
+                });
+            }
+
+            movieRepository.forUser(exampleUsers.bob).deleteCommentFromUserById(exampleMovies.theToxicAvenger._id, exampleMovies.theToxicAvenger.userComments[0]._id).then(function (result) {
+                evaluateMovie(result);
+                return movieRepository.forUser(exampleUsers.bob).getById(exampleMovies.theToxicAvenger._id);
+            }).then(function (result) {
+                evaluateMovie(result);
+                done();
+            });
+        });
+
+        it('should return movie comments when deleting a comment of another user', function (done) {
+
+            function evaluateMovie(result) {
+                movieEvaluation.evaluateMovieComments(result, {
+                    userComments: [{
+                        user: exampleUsers.bob,
+                        text: "bobText"
+                    }, {
+                        user: exampleUsers.eve,
+                        text: "eveText"
+                    }]
+                });
+            }
+
+            movieRepository.forUser(exampleUsers.bob).deleteCommentFromUserById(exampleMovies.theToxicAvenger._id, exampleMovies.theToxicAvenger.userComments[1]._id).then(function (result) {
+                evaluateMovie(result);
+                return movieRepository.forUser(exampleUsers.bob).getById(exampleMovies.theToxicAvenger._id);
+            }).then(function (result) {
+                evaluateMovie(result);
+                done();
+            });
+        });
+
+        it('should return error when deleting the comment with invalid commentId', function (done) {
+            movieRepository.forUser(exampleUsers.bob).deleteCommentFromUserById(exampleMovies.theToxicAvenger._id, new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca')).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return error when deleting the comment with invalid movie', function (done) {
+            movieRepository.forUser(exampleUsers.bob).deleteCommentFromUserById(new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'), exampleMovies.theToxicAvenger.userComments[1]._id).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
+    describe('deleteCommentById()', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger),
+                movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
+                movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
+            ]).then(function () {
+                return movieRepository.forUser(exampleUsers.bob).addComment(exampleMovies.theToxicAvenger, "bobText");
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.alice).addComment(exampleMovies.theToxicAvenger, "aliceText");
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.eve).addComment(exampleMovies.theToxicAvenger, "eveText");
+            }).then(function () {
+                done();
+            });
+        });
+
+        it('should return movie comments when deleting own comment', function (done) {
+
+            function evaluateMovie(result) {
+                movieEvaluation.evaluateMovieComments(result, {
+                    userComments: [{
+                        user: exampleUsers.alice,
+                        text: "aliceText"
+                    }, {
+                        user: exampleUsers.eve,
+                        text: "eveText"
+                    }]
+                });
+            }
+
+            movieRepository.forUser(exampleUsers.bob).deleteCommentById(exampleMovies.theToxicAvenger._id, exampleMovies.theToxicAvenger.userComments[0]._id).then(function (result) {
+                evaluateMovie(result);
+                return movieRepository.forUser(exampleUsers.bob).getById(exampleMovies.theToxicAvenger._id);
+            }).then(function (result) {
+                evaluateMovie(result);
+                done();
+            });
+        });
+
+        it('should return error when deleting the comment of another user', function (done) {
+            movieRepository.forUser(exampleUsers.bob).deleteCommentById(exampleMovies.theToxicAvenger._id, exampleMovies.theToxicAvenger.userComments[1]._id).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateAuthenticationError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return error when deleting the comment with invalid commentId', function (done) {
+            movieRepository.forUser(exampleUsers.bob).deleteCommentById(exampleMovies.theToxicAvenger._id, new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca')).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+        it('should return error when deleting the comment with invalid movie', function (done) {
+            movieRepository.forUser(exampleUsers.bob).deleteCommentById(new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca'), exampleMovies.theToxicAvenger.userComments[1]._id).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateNotFoundError(error, excpectedError);
+                done();
+            });
+        });
+
+    });
+
+    describe('getCommentById()', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger),
+                movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
+                movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
+            ]).then(function () {
+                return movieRepository.forUser(exampleUsers.bob).addComment(exampleMovies.theToxicAvenger, "bobText");
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.alice).addComment(exampleMovies.theToxicAvenger, "aliceText");
+            }).then(function () {
+                return movieRepository.forUser(exampleUsers.eve).addComment(exampleMovies.theToxicAvenger, "eveText");
+            }).then(function () {
+                done();
+            });
+        });
+
+        it('should return movie comment when getting a comment', function (done) {
+            movieRepository.forUser(exampleUsers.bob).getCommentById(exampleMovies.theToxicAvenger._id, exampleMovies.theToxicAvenger.userComments[0]._id).then(function (result) {
+                movieEvaluation.evaluateMovieComment(result, {user: exampleUsers.bob, text: "bobText"});
+                done();
+            });
+        });
+
+        it('should return error when commenting the movie with invalid commentId', function (done) {
+            movieRepository.forUser(exampleUsers.bob).getCommentById(exampleMovies.theToxicAvenger._id, new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca')).catch(function (error) {
                 var excpectedError = {};
                 errorEvaluation.evaluateNotFoundError(error, excpectedError);
                 done();

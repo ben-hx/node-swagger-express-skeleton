@@ -31,6 +31,19 @@ var MovieUserActionSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
+    }],
+    comments: [{
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        text: {
+            type: String
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        }
     }]
 });
 

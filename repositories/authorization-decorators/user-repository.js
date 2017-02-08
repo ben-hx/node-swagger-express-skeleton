@@ -7,11 +7,6 @@ module.exports = function (userRepository, authorizationService) {
     return {
         register: userRepository.register,
 
-        activateById: function (inaktiveUserId) {
-            authorizationService.checkPermission(['admin']);
-            return userRepository.activateById(inaktiveUserId);
-        },
-
         create: function (data) {
             authorizationService.checkPermission(['admin']);
             return userRepository.create(data);
@@ -22,22 +17,39 @@ module.exports = function (userRepository, authorizationService) {
             return userRepository.updateById(id, data);
         },
 
-        setRoleById: function (userId, role) {
-            authorizationService.checkPermission(['admin']);
-            return userRepository.setRoleById(userId, role);
+        verifyPasswordById: function (id, password) {
+            return userRepository.verifyPasswordById(id, password);
         },
 
-        getMe: function () {
-            return userRepository.getUserById(authorizationService.getCurrentUser()._id);
+        changePasswordById: function (id, oldPassword, newPassword) {
+            return userRepository.changePasswordById(id, oldPassword, newPassword);
+        },
+
+        activateById: function (inaktiveUserId) {
+            authorizationService.checkPermission(['admin']);
+            return userRepository.activateById(inaktiveUserId);
+        },
+
+        setRoleById: function (id, role) {
+            authorizationService.checkPermission(['admin']);
+            return userRepository.setRoleById(id, role);
+        },
+
+        deleteUserById: function (id) {
+            authorizationService.checkPermission(['admin']);
+            return userRepository.deleteUserById(id);
+        },
+
+        deleteInaktiveUserById: function (id) {
+            authorizationService.checkPermission(['admin']);
+            return userRepository.deleteInaktiveUserById(id);
         },
 
         getUserById: function (id) {
-            authorizationService.checkPermission(['admin']);
             return userRepository.getUserById(id);
         },
 
         getUsers: function (options) {
-            authorizationService.checkPermission(['admin']);
             return userRepository.getUsers(options);
         },
 

@@ -230,6 +230,93 @@ describe('User-Endpoint Tests', function () {
 
     });
 
+    describe('GET /verifyPassword', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                userRepositoryTestUtil.getActivatedUserWithRole(exampleUsers.bob, 'looser')
+            ]).then(function () {
+                done();
+            });
+        });
+
+        describe('authenticated', function () {
+
+            it('should return 200 with isMatch true and user when verifying the password', function (done) {
+                api.verifyPassword(exampleUsers.bob, exampleUsers.bob.password).then(function (res) {
+                    res.body.data.isMatch.should.be.true;
+                    apiEvaluation.evaluateUserResponse(res, 200, exampleUsers.bob);
+                    done();
+                });
+            });
+
+            it('should return 200 with isMatch false and user when verifying the password', function (done) {
+                api.verifyPassword(exampleUsers.bob, exampleUsers.bob.password + "asdf").then(function (res) {
+                    res.body.data.isMatch.should.be.false;
+                    apiEvaluation.evaluateUserResponse(res, 200, exampleUsers.bob);
+                    done();
+                });
+            });
+
+        });
+
+        describe('not authenticated', function () {
+
+            it('should return 401 unauthorized when getting unposted user', function (done) {
+                api.verifyPassword(exampleUsers.alice, exampleUsers.alice.password).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 401);
+                    done();
+                });
+            });
+
+        });
+
+    });
+
+    describe('PUT /changePassword', function () {
+
+        beforeEach(function (done) {
+            q.all([
+                userRepositoryTestUtil.getActivatedUserWithRole(exampleUsers.bob, 'looser')
+            ]).then(function () {
+                done();
+            });
+        });
+
+        describe('authenticated', function () {
+
+            it('should return 200 with user when changing the password', function (done) {
+                var newPassword = "bobsNewPassword";
+                api.changePassword(exampleUsers.bob, exampleUsers.bob.password, newPassword).then(function (res) {
+                    apiEvaluation.evaluateUserResponse(res, 200, exampleUsers.bob);
+                    done();
+                });
+            });
+
+            it('should return 400 validation-error when changing the password with the wrong old password', function (done) {
+                var newPassword = "bobsNewPassword";
+                api.changePassword(exampleUsers.bob, exampleUsers.bob.password + "asdf", newPassword).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 400);
+                    done();
+                });
+            });
+
+        });
+
+        describe('not authenticated', function () {
+
+            it('should return 401 unauthorized when getting unposted user', function (done) {
+                var newPassword = "bobsNewPassword";
+                api.changePassword(exampleUsers.alice, exampleUsers.alice.password, newPassword).then(function (res) {
+                    apiEvaluation.evaluateErrorResponse(res, 401);
+                    done();
+                });
+            });
+
+        });
+
+    });
+
     describe('GET /users', function () {
 
         beforeEach(function (done) {
@@ -246,8 +333,8 @@ describe('User-Endpoint Tests', function () {
 
         describe('authenticated', function () {
 
-            it('should return 200 with users when getting all users as admin', function (done) {
-                api.getUsers(exampleUsers.adminBob).then(function (res) {
+            it('should return 200 with users when getting all users', function (done) {
+                api.getUsers(exampleUsers.bob).then(function (res) {
                     var expected = [
                         exampleUsers.bob,
                         exampleUsers.adminBob,
@@ -260,29 +347,11 @@ describe('User-Endpoint Tests', function () {
             });
 
             it('should return 200 with users when getting with query', function (done) {
-                api.getUsers(exampleUsers.adminBob, {username: 'bob'}).then(function (res) {
+                api.getUsers(exampleUsers.bob, {username: 'bob'}).then(function (res) {
                     var expected = [
                         exampleUsers.bob,
                     ];
                     apiEvaluation.evaluateUsersResponse(res, 200, expected);
-                    done();
-                });
-            });
-
-        });
-
-        describe('not authorized', function () {
-
-            it('should return 401 unauthorized when getting all users as moderator', function (done) {
-                api.getUsers(exampleUsers.moderatorBob).then(function (res) {
-                    apiEvaluation.evaluateErrorResponse(res, 401);
-                    done();
-                });
-            });
-
-            it('should return 401 unauthorized when getting all users as looser', function (done) {
-                api.getUsers(exampleUsers.looserBob).then(function (res) {
-                    apiEvaluation.evaluateErrorResponse(res, 401);
                     done();
                 });
             });

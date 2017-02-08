@@ -203,4 +203,83 @@ describe('Movie-Authorization-Repository-Tests', function () {
 
     });
 
+    describe('addCommentById()', function () {
+
+        it('should be callable for admin and moderator', function (done) {
+            checkMethodCalledWithArgumentsForRole('admin', 'addCommentById', 1, "asdf");
+            checkMethodCalledWithArgumentsForRole('moderator', 'addCommentById', 1, "asdf");
+            done();
+        });
+
+        it('should not be callable for other roles but admin and moderator ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin', 'moderator']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodCalledWithArgumentsForRole(role, 'addCommentById', 1, "asdf");
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+
+    });
+
+    describe('deleteCommentById()', function () {
+
+        it('should be callable for admin and moderator', function (done) {
+            checkMethodCalledWithArgumentsForRole('admin', 'deleteCommentById', 1, 1);
+            checkMethodCalledWithArgumentsForRole('moderator', 'deleteCommentById', 1, 1);
+            done();
+        });
+
+        it('should not be callable for other roles but admin and moderator ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin', 'moderator']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodCalledWithArgumentsForRole(role, 'deleteCommentById', 1, 1);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+
+    });
+
+    describe('deleteCommentFromUserById()', function () {
+
+        it('should be callable for admin', function (done) {
+            checkMethodCalledWithArgumentsForRole('admin', 'deleteCommentFromUserById', 1, 1);
+            done();
+        });
+
+        it('should not be callable for other roles but admin and moderator ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodCalledWithArgumentsForRole(role, 'deleteCommentFromUserById', 1, 1);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+
+    });
+
+    describe('getCommentById()', function () {
+
+        it('should be callable for admin and moderator', function (done) {
+            checkMethodCalledWithArgumentsForRole('admin', 'getCommentById', 1, 1);
+            checkMethodCalledWithArgumentsForRole('moderator', 'getCommentById', 1, 1);
+            done();
+        });
+
+        it('should not be callable for other roles but admin and moderator ', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin', 'moderator']);
+            roles.forEach(function (role) {
+                errorEvaluation.evaluateExecption(function () {
+                    checkMethodCalledWithArgumentsForRole(role, 'getCommentById', 1, 1);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+
+    });
+
 });
