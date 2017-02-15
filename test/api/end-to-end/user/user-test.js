@@ -339,7 +339,7 @@ describe('User-Endpoint Tests', function () {
                         exampleUsers.bob,
                         exampleUsers.adminBob,
                         exampleUsers.moderatorBob,
-                        exampleUsers.looserBob,
+                        exampleUsers.looserBob
                     ];
                     apiEvaluation.evaluateUsersResponse(res, 200, expected);
                     done();

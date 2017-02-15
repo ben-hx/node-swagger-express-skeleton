@@ -134,6 +134,19 @@ describe('User-Model-Tests', function () {
 
     });
 
+    describe('Plugin: created', function () {
+
+        it('should return an user with created-field when saving Object', function (done) {
+            var user = new User(exampleUsers.bob);
+            user.save().then(function (result) {
+                var transformedObject = result.toObject();
+                transformedObject.should.have.ownProperty('created');
+                done();
+            });
+        });
+
+    });
+
     describe('Plugin: lastModified', function () {
 
         it('should return an user with lastModified-field when saving Object', function (done) {

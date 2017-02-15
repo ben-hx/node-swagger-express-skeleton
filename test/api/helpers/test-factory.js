@@ -1,6 +1,6 @@
 'use strict';
 
-var debug = require('debug');
+var debug = require('debug')('test');
 var config = require('../../../config')[process.env.NODE_ENV];
 var errors = require("../../../errors/errors");
 var mongooseConfig = require('../../../mongoose-config')(debug, config);

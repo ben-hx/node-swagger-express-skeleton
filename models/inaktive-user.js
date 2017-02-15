@@ -25,6 +25,7 @@ var InaktiveUserSchema = new mongoose.Schema({
     }
 });
 
+InaktiveUserSchema.plugin(mongoosePlugins.created);
 InaktiveUserSchema.plugin(mongoosePlugins.lastModified);
 InaktiveUserSchema.plugin(mongoosePlugins.paginate);
 InaktiveUserSchema.plugin(mongoosePlugins.toObjectTransformation, {

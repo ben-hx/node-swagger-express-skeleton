@@ -4,12 +4,18 @@ module.exports = function (Movie, MovieUserAction, MovieRepository) {
         this.create = function (movieData) {
             return movieRepository.create(movieData).then(function (movie) {
                 movieData._id = movie._id;
+                movieData.created = movie.created;
+                movieData.createdUser = movie.createdUser;
                 movieData.lastModified = movie.lastModified;
+                movieData.lastModifiedUser = movie.lastModifiedUser;
                 return movie;
             });
         };
         this.getAll = function (options) {
             return movieRepository.getAll(options);
+        };
+        this.getAll2 = function (options) {
+            return movieRepository.getAll2(options);
         };
         this.getById = function (id) {
             return movieRepository.getById(id);
@@ -60,9 +66,11 @@ module.exports = function (Movie, MovieUserAction, MovieRepository) {
     return {
         saveExampleMovieFromUser: function (movieData, userData) {
             movieData.lastModifiedUser = userData._id;
+            movieData.createdUser = userData._id;
             var movie = new Movie(movieData);
             return movie.save().then(function (movie) {
                 movieData._id = movie._id;
+                movieData.created = movie.created;
                 movieData.lastModified = movie.lastModified;
                 return movie;
             });

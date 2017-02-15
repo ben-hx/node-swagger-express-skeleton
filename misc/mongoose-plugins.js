@@ -33,6 +33,27 @@ module.exports = {
         }
     },
 
+    created: function (schema, options) {
+        var fieldName = 'created';
+        if (options && options.fieldName) {
+            fieldName = options.fieldName;
+        }
+        var field = {};
+        field[fieldName] = Date;
+        schema.add(field);
+
+        schema.pre('save', function (next) {
+            if (this.isNew) {
+                this[fieldName] = new Date;
+            }
+            next();
+        });
+
+        if (options && options.index) {
+            schema.path(fieldName).index(options.index)
+        }
+    },
+
     paginate: function (schema, options) {
         schema.statics.paginate = function (options) {
             var deferred = q.defer();

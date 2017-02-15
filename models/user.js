@@ -27,9 +27,10 @@ var UserSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: ['admin', 'moderator', 'looser']
-    }
+    },
 });
 
+UserSchema.plugin(mongoosePlugins.created);
 UserSchema.plugin(mongoosePlugins.lastModified);
 UserSchema.plugin(mongoosePlugins.paginate);
 UserSchema.plugin(mongoosePlugins.toObjectTransformation, {

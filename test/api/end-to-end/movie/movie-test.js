@@ -356,7 +356,6 @@ describe('Movie-Endpoint Tests', function () {
 
     });
 
-
     describe('PUT /movie/:movie_id/watched', function () {
 
         beforeEach(function (done) {
@@ -625,6 +624,7 @@ describe('Movie-Endpoint Tests', function () {
 
     });
 
+
     describe('PUT /movie/:movie_id/comments', function () {
 
         beforeEach(function (done) {
@@ -670,15 +670,18 @@ describe('Movie-Endpoint Tests', function () {
 
     });
 
+
     describe('DELETE /movie/:movie_id/comments/comment_id', function () {
 
         beforeEach(function (done) {
             q.all([
                 api.postMovie(exampleUsers.adminBob, exampleMovies.theToxicAvenger),
+                api.postMovie(exampleUsers.adminBob, exampleMovies.returnOfTheKillerTomatos)
             ]).then(function () {
                 done();
             });
         });
+
 
         describe('authenticated', function () {
 
@@ -698,6 +701,7 @@ describe('Movie-Endpoint Tests', function () {
                 });
             });
 
+
             it('should return 401 unauthorized with movie-comments when deleting the movie comment of another user as moderator', function (done) {
                 q.all([
                     api.putMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment"),
@@ -708,8 +712,11 @@ describe('Movie-Endpoint Tests', function () {
                 }).then(function (res) {
                     apiEvaluation.evaluateErrorResponse(res, 401);
                     done();
+                }).catch(function (error) {
+                    done();
                 });
             });
+
 
             it('should return 404 not-found-error when deleting invalid comment', function (done) {
                 api.deleteMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, 123).then(function (res) {
@@ -724,7 +731,6 @@ describe('Movie-Endpoint Tests', function () {
                     done();
                 });
             });
-
         });
 
         describe('not authenticated', function () {
@@ -739,5 +745,6 @@ describe('Movie-Endpoint Tests', function () {
         });
 
     });
+
 
 });

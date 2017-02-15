@@ -16,42 +16,55 @@ var MovieSchema = new mongoose.Schema({
     },
     runtime: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     plot: {
         type: String,
         required: true
     },
     country: {
-        type: String
+        type: String,
+        trim: true
     },
     poster: {
         type: String
     },
     genres: [{
         type: String,
-        required: true
+        required: true,
+        trim: true
     }],
     directors: [{
-        type: String
+        type: String,
+        trim: true
     }],
     writers: [{
-        type: String
+        type: String,
+        trim: true
     }],
     actors: [{
-        type: String
+        type: String,
+        trim: true
     }],
     languages: [{
         type: String,
-        required: true
+        required: true,
+        trim: true
     }],
     lastModifiedUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    createdUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     }
 });
 
+MovieSchema.plugin(mongoosePlugins.created);
 MovieSchema.plugin(mongoosePlugins.lastModified);
 MovieSchema.plugin(mongoosePlugins.paginate);
 MovieSchema.plugin(mongoosePlugins.toObjectTransformation);

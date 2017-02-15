@@ -2,7 +2,7 @@
 
 var q = require('q');
 
-module.exports = function (userRepository, authorizationService) {
+module.exports = function (errors, userRepository, authorizationService) {
 
     return {
         register: userRepository.register,
@@ -37,6 +37,9 @@ module.exports = function (userRepository, authorizationService) {
 
         deleteUserById: function (id) {
             authorizationService.checkPermission(['admin']);
+            if (authorizationService.getCurrentUser()._id.equals(id)) {
+                throw new errors.AuthenticationError("User is not allowed to delete himself!");
+            }
             return userRepository.deleteUserById(id);
         },
 

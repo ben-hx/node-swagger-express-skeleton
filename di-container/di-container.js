@@ -11,16 +11,10 @@ module.exports = function () {
     var MovieUserAction = require("../models/movie-user-action");
     var MoviePropertyRepository = require("../repositories/movie-property-repository")(errors, Movie);
     var MovieRepository = require("../repositories/movie-repository")(config, errors, UserRepository, Movie, MovieUserAction);
-
     var authServiceInstance = require('../auth/auth-service')(errors, UserRepository).initialize();
-    var userRepositoryInstance = require("../repositories/authorization-decorators/user-repository")(UserRepository, authServiceInstance);
-
-    //var movieRepositoryInstance = require("../repositories/authorization-decorators/movie-repository")(MovieRepository, authServiceInstance);
-
-
+    var userRepositoryInstance = require("../repositories/authorization-decorators/user-repository")(errors, UserRepository, authServiceInstance);
     var moviePropertyRepositoryInstance = require("../repositories/authorization-decorators/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
     var basicAuthenticationInstance = require("../auth/basic-authentication")(authServiceInstance);
-
     var mongooseConfig = require('../mongoose-config')(debug, config);
 
     return {

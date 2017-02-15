@@ -1,6 +1,7 @@
 'use strict';
 var chai = require('chai');
 var should = chai.should();
+var sinon = require("sinon");
 var q = require('q');
 
 describe('Movie-Repository-CRUD-Tests', function () {
@@ -89,17 +90,22 @@ describe('Movie-Repository-CRUD-Tests', function () {
             });
         });
 
-
     });
 
     describe('getAll()', function () {
 
+        var clock = sinon.useFakeTimers(0, "Date");
+        var tickTime = 3600000;
+
         beforeEach(function (done) {
-            q.all([
-                movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger),
-                movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated),
-                movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos)
-            ]).then(function () {
+            clock.tick(tickTime);
+            movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger).then(function () {
+                clock.tick(tickTime);
+                return movieRepository.forUser(exampleUsers.alice).create(exampleMovies.theToxicAvengerUpdated);
+            }).then(function () {
+                clock.tick(tickTime);
+                return movieRepository.forUser(exampleUsers.eve).create(exampleMovies.returnOfTheKillerTomatos);
+            }).then(function () {
                 done();
             });
         });
@@ -215,41 +221,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
         });
 
-        describe('filter by year', function () {
-
-            it('should return movie searched by year', function (done) {
-                var options = {
-                    query: {
-                        years: 1984
-                    }
-                };
-                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
-                    var expected = [
-                        exampleMovies.theToxicAvenger
-                    ];
-                    movieEvaluation.evaluateMovies(result.movies, expected);
-                    done();
-                });
-            });
-
-            it('should return movies searched by year array', function (done) {
-                var options = {
-                    query: {
-                        years: [1984, 1983]
-                    }
-                };
-                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
-                    var expected = [
-                        exampleMovies.theToxicAvenger,
-                        exampleMovies.theToxicAvengerUpdated
-                    ];
-                    movieEvaluation.evaluateMovies(result.movies, expected);
-                    done();
-                });
-            });
-
-        });
-
         describe('filter by genres', function () {
 
             it('should return movie searched by genre', function (done) {
@@ -286,6 +257,41 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
         });
 
+        describe('filter by createdUser', function () {
+
+            it('should return movie searched by createdUser', function (done) {
+                var options = {
+                    query: {
+                        createdUser: exampleUsers.alice._id
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvengerUpdated
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movies searched by createdUser array', function (done) {
+                var options = {
+                    query: {
+                        createdUser: [exampleUsers.alice._id, exampleUsers.bob._id]
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+        });
+
         describe('filter by lastModifiedUser', function () {
 
             it('should return movie searched by lastModifiedUser', function (done) {
@@ -307,6 +313,238 @@ describe('Movie-Repository-CRUD-Tests', function () {
                 var options = {
                     query: {
                         lastModifiedUser: [exampleUsers.alice._id, exampleUsers.bob._id]
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+        });
+
+        describe('filter by year', function () {
+
+            it('should return movie searched by yearFrom until yearTo', function (done) {
+                var options = {
+                    query: {
+                        yearFrom: exampleMovies.theToxicAvenger.year,
+                        yearTo: exampleMovies.theToxicAvenger.year
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by yearFrom', function (done) {
+                var options = {
+                    query: {
+                        yearFrom: exampleMovies.returnOfTheKillerTomatos.year
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.returnOfTheKillerTomatos
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by yearTo', function (done) {
+                var options = {
+                    query: {
+                        yearTo: exampleMovies.theToxicAvenger.year
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+        });
+
+        describe('filter by averageRating', function () {
+
+            beforeEach(function (done) {
+                movieRepository.forUser(exampleUsers.bob).setWatchedById(exampleMovies.theToxicAvenger._id).then(function () {
+                    return movieRepository.forUser(exampleUsers.alice).setWatchedById(exampleMovies.theToxicAvenger._id);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.eve).setWatchedById(exampleMovies.theToxicAvenger._id);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.bob).setRatingById(exampleMovies.theToxicAvenger._id, 5);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.alice).setRatingById(exampleMovies.theToxicAvenger._id, 4);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.eve).setRatingById(exampleMovies.theToxicAvenger._id, 4);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.bob).setWatchedById(exampleMovies.returnOfTheKillerTomatos._id);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.alice).setWatchedById(exampleMovies.returnOfTheKillerTomatos._id);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.eve).setWatchedById(exampleMovies.returnOfTheKillerTomatos._id);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.bob).setRatingById(exampleMovies.returnOfTheKillerTomatos._id, 10);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.alice).setRatingById(exampleMovies.returnOfTheKillerTomatos._id, 9);
+                }).then(function () {
+                    return movieRepository.forUser(exampleUsers.eve).setRatingById(exampleMovies.returnOfTheKillerTomatos._id, 8);
+                }).then(function () {
+                    done();
+                });
+            });
+
+            it('should return movie searched by averageRatingFrom until averageRatingTo', function (done) {
+                var options = {
+                    query: {
+                        averageRatingFrom: 4,
+                        averageRatingTo: 5
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by averageRatingFrom', function (done) {
+                var options = {
+                    query: {
+                        averageRatingFrom: 8
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.returnOfTheKillerTomatos
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by averageRatingTo', function (done) {
+                var options = {
+                    query: {
+                        averageRatingTo: 9.5
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.returnOfTheKillerTomatos
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+        });
+
+        describe('filter by created', function () {
+
+            it('should return movie searched by createdFrom until createdTo', function (done) {
+                var options = {
+                    query: {
+                        createdFrom: exampleMovies.theToxicAvenger.created,
+                        createdTo: exampleMovies.theToxicAvenger.created
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by createdFrom', function (done) {
+                var options = {
+                    query: {
+                        createdFrom: exampleMovies.returnOfTheKillerTomatos.created
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.returnOfTheKillerTomatos
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by createdTo', function (done) {
+                var options = {
+                    query: {
+                        createdTo: exampleMovies.theToxicAvengerUpdated.created
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+        });
+
+        describe('filter by lastModified', function () {
+
+            it('should return movie searched by lastModifiedFrom until lastModifiedTo', function (done) {
+                var options = {
+                    query: {
+                        lastModifiedFrom: exampleMovies.theToxicAvenger.lastModified,
+                        lastModifiedTo: exampleMovies.theToxicAvenger.lastModified
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by lastModifiedFrom', function (done) {
+                var options = {
+                    query: {
+                        lastModifiedFrom: exampleMovies.returnOfTheKillerTomatos.lastModified
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.returnOfTheKillerTomatos
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movie searched by lastModifiedTo', function (done) {
+                var options = {
+                    query: {
+                        lastModifiedTo: exampleMovies.theToxicAvengerUpdated.lastModified
                     }
                 };
                 movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
@@ -465,7 +703,11 @@ describe('Movie-Repository-CRUD-Tests', function () {
             function evaluateMovie(result) {
                 movieEvaluation.evaluateMovie(result, exampleMovies.theToxicAvenger);
                 movieEvaluation.evaluateMovieWatched(result, {ownWatched: {value: true}, userWatched: []});
-                movieEvaluation.evaluateMovieRating(result, {ownRating: null, userRatings: [], averageRating: null});
+                movieEvaluation.evaluateMovieRating(result, {
+                    ownRating: null,
+                    userRatings: [],
+                    averageRating: null
+                });
             }
 
             movieRepository.forUser(exampleUsers.bob).setWatchedById(exampleMovies.theToxicAvenger._id).then(function (result) {
@@ -485,7 +727,11 @@ describe('Movie-Repository-CRUD-Tests', function () {
                     ownWatched: {value: true},
                     userWatched: [exampleUsers.eve, exampleUsers.alice]
                 });
-                movieEvaluation.evaluateMovieRating(result, {ownRating: null, userRatings: [], averageRating: null});
+                movieEvaluation.evaluateMovieRating(result, {
+                    ownRating: null,
+                    userRatings: [],
+                    averageRating: null
+                });
             }
 
             movieRepository.forUser(exampleUsers.alice).setWatchedById(exampleMovies.theToxicAvenger._id).then(function () {
@@ -547,7 +793,11 @@ describe('Movie-Repository-CRUD-Tests', function () {
                     ownWatched: {value: false},
                     userWatched: [exampleUsers.eve, exampleUsers.alice]
                 });
-                movieEvaluation.evaluateMovieRating(result, {ownRating: null, userRatings: [], averageRating: null});
+                movieEvaluation.evaluateMovieRating(result, {
+                    ownRating: null,
+                    userRatings: [],
+                    averageRating: null
+                });
             }
 
             movieRepository.forUser(exampleUsers.bob).deleteWatchedById(exampleMovies.theToxicAvenger._id).then(function (result) {
@@ -753,7 +1003,12 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
             function evaluateMovie(result) {
                 movieEvaluation.evaluateMovie(result, exampleMovies.theToxicAvenger);
-                movieEvaluation.evaluateMovieComments(result, {userComments: [{user: exampleUsers.bob, text: "text"}]});
+                movieEvaluation.evaluateMovieComments(result, {
+                    userComments: [{
+                        user: exampleUsers.bob,
+                        text: "text"
+                    }]
+                });
             }
 
             movieRepository.forUser(exampleUsers.bob).addCommentById(exampleMovies.theToxicAvenger._id, "text").then(function (result) {
@@ -1011,4 +1266,5 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
     });
 
-});
+})
+;

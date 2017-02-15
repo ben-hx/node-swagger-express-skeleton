@@ -26,7 +26,7 @@ module.exports = function () {
             app.use(middlewares.responseSendData());
             app.use(middlewares.addResourceOptionsToRequestObject());
             app.use(middlewares.addToRequestObject("diContainer", diContainer));
-            app.use(config.settings.appBaseUrl, routes(express.Router(), diContainer));
+            app.use(config.settings.appBaseUrl, routes(diContainer));
             app.use(middlewares.errorResourceHandler());
             deferred.resolve();
             return deferred.promise;

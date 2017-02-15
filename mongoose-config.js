@@ -5,10 +5,10 @@ module.exports = function (debug, config) {
     return {
         initialize: function () {
             var deferred = q.defer();
-            mongoose.Promise = q.Promise;
             if (mongoose.connection.readyState === 1) {
                 deferred.resolve(mongoose.connection);
             } else {
+                mongoose.Promise = require('q').Promise;
                 var connection = mongoose.connect(config.db.mongoURI).then(function () {
                     debug('Connected to Database: ' + config.db.mongoURI);
                     deferred.resolve(connection);

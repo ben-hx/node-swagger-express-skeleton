@@ -75,6 +75,18 @@ describe('Movie-Model-Tests', function () {
 
     });
 
+    describe('Plugin: created', function () {
+
+        it('should return a movie with created-field when inserting Object', function (done) {
+            movieTestUtil.saveExampleMovieFromUser(exampleMovies.theToxicAvengerMinimal, exampleUsers.bob).then(function (result) {
+                var transformedObject = result.toObject();
+                transformedObject.should.have.ownProperty('created');
+                done();
+            });
+        });
+
+    });
+
     describe('Plugin: lastModified', function () {
 
         it('should return a movie with lastModified-field when saving Object', function (done) {

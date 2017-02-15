@@ -6,7 +6,7 @@ module.exports = function (errors) {
     return {
         evaluateExecption: function (func, expectedExceptionInstance) {
             try {
-                func()
+                func();
                 should.fail();
             }
             catch (err) {

@@ -1,3 +1,5 @@
+var mongoose = require("mongoose");
+
 module.exports = function (AuthorizationService) {
     var possibleRoles = ['admin', 'moderator', 'looser'];
 
@@ -5,7 +7,7 @@ module.exports = function (AuthorizationService) {
         authorizationService: AuthorizationService,
         authorizationServiceForUserWitRole: function (role) {
             var user = {
-                _id: 'someId',
+                _id: mongoose.Types.ObjectId('56cb91bdc3464f14678934ca'),
                 role: role
             };
             return AuthorizationService.forUser(user);

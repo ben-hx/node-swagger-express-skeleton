@@ -135,6 +135,19 @@ describe('InaktiveUser-Model-Tests', function () {
 
     });
 
+    describe('Plugin: created', function () {
+
+        it('should return an user with created-field when saving Object', function (done) {
+            var user = new InaktiveUser(exampleUsers.bob);
+            user.save().then(function (result) {
+                var transformedUser = result.toObject();
+                transformedUser.should.have.ownProperty('created');
+                done();
+            });
+        });
+
+    });
+
     describe('Plugin: lastModified', function () {
 
         it('should return an user with lastModified-field when saving Object', function (done) {

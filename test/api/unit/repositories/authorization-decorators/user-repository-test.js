@@ -15,7 +15,8 @@ describe('User-Authorization-Repository-Tests', function () {
 
     function checkMethodForRole(role, methodName, args) {
         var userRepositoryStub = sinon.stub(new UserRepository());
-        var authorizationRepository = new UserAuthorizationRepository(userRepositoryStub, authTestUtil.authorizationServiceForUserWitRole(role));
+        var errorsStub = sinon.stub();
+        var authorizationRepository = new UserAuthorizationRepository(errorsStub, userRepositoryStub, authTestUtil.authorizationServiceForUserWitRole(role));
         var args = Array.prototype.slice.call(arguments, 2);
         authorizationRepository[methodName].apply(this, args);
         userRepositoryStub[methodName].should.have.been.calledOnce;
@@ -144,6 +145,17 @@ describe('User-Authorization-Repository-Tests', function () {
                     checkMethodForRole(role, 'deleteUserById', id);
                 }, errors.AuthenticationError);
             });
+            done();
+        });
+
+        it('should throw an error when deleting me', function (done) {
+            var userRepositoryStub = sinon.stub(new UserRepository());
+            var authService = authTestUtil.authorizationServiceForUserWitRole("admin");
+            var authorizationRepository = new UserAuthorizationRepository(errors, userRepositoryStub, authService);
+
+            errorEvaluation.evaluateExecption(function () {
+                authorizationRepository.deleteUserById(authService.getCurrentUser()._id);
+            }, errors.AuthenticationError);
             done();
         });
     });

@@ -32,6 +32,12 @@ var MovieUserActionSchema = new mongoose.Schema({
             default: Date.now
         }
     }],
+    averageRating: {
+        type: Number,
+        min: 0,
+        max: 10,
+        default: null
+    },
     comments: [{
         user: {
             type: mongoose.Schema.Types.ObjectId,
@@ -49,6 +55,19 @@ var MovieUserActionSchema = new mongoose.Schema({
 
 MovieUserActionSchema.plugin(mongoosePlugins.paginate);
 MovieUserActionSchema.plugin(mongoosePlugins.toObjectTransformation);
+
+MovieUserActionSchema.pre('save', function (done) {
+    var self = this;
+    self.averageRating = null;
+    if (self.ratings.length > 0) {
+        var totalRatings = 0;
+        self.ratings.forEach(function (rating) {
+            totalRatings += rating.value;
+        });
+        self.averageRating = totalRatings / self.ratings.length;
+    }
+    done();
+});
 
 module.exports = mongoose.model('MovieUserAction', MovieUserActionSchema);
 

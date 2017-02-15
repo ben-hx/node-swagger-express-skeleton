@@ -3,6 +3,15 @@ var should = chai.should();
 var expect = chai.expect;
 
 module.exports = function () {
+
+    function transformUserForEvaluation(user) {
+        delete user._id;
+        delete user.role;
+        delete user.password;
+        delete user.created;
+        delete user.lastModified;
+    }
+
     return {
         evaluateUserResponse: function (response, statusCode, expectedUser) {
             response.status.should.equal(statusCode);
@@ -24,34 +33,16 @@ module.exports = function () {
         evaluateUsersResponse: function (response, statusCode, expectedUsers) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
-            response.body.data.users.forEach(function (user) {
-                delete user._id;
-                delete user.password;
-                delete user.lastModified;
-            });
-            expectedUsers.forEach(function (user) {
-                delete user._id;
-                delete user.password;
-                delete user.lastModified;
-            });
+            response.body.data.users.forEach(transformUserForEvaluation);
+            expectedUsers.forEach(transformUserForEvaluation);
             expectedUsers.should.deep.include.members(response.body.data.users);
         },
 
         evaluateInaktiveUsersResponse: function (response, statusCode, expectedUsers) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
-            response.body.data.users.forEach(function (user) {
-                delete user._id;
-                delete user.role;
-                delete user.password;
-                delete user.lastModified;
-            });
-            expectedUsers.forEach(function (user) {
-                delete user._id;
-                delete user.role;
-                delete user.password;
-                delete user.lastModified;
-            });
+            response.body.data.users.forEach(transformUserForEvaluation);
+            expectedUsers.forEach(transformUserForEvaluation);
             expectedUsers.should.deep.include.members(response.body.data.users);
         },
         evaluateMovie: function (actual, expected) {
