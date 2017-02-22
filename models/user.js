@@ -16,18 +16,18 @@ var UserSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        unique: true,
+        unique: true
     },
-    firstName: {
-        type: String,
+    firstname: {
+        type: String
     },
-    lastName: {
-        type: String,
+    lastname: {
+        type: String
     },
     role: {
         type: String,
         enum: ['admin', 'moderator', 'looser']
-    },
+    }
 });
 
 UserSchema.plugin(mongoosePlugins.created);
@@ -50,7 +50,6 @@ UserSchema.plugin(mongoosePlugins.toObjectTransformation, {
             });
             return deferred.promise;
         };
-
     }
 });
 

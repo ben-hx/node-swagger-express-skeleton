@@ -13,8 +13,12 @@ module.exports = function (errors, userRepository, authorizationService) {
         },
 
         updateById: function (id, data) {
-            authorizationService.checkPermission(['admin']);
-            return userRepository.updateById(id, data);
+            if (authorizationService.getCurrentUser()._id.equals(id)) {
+                return userRepository.updateById(id, data);
+            } else {
+                authorizationService.checkPermission(['admin']);
+                return userRepository.updateById(id, data);
+            }
         },
 
         verifyPasswordById: function (id, password) {

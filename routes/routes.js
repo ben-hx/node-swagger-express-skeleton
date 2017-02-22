@@ -7,10 +7,11 @@ module.exports = function (diContainer) {
     var basicAuth = diContainer.getBasicAuthentication().middleware;
     var movieController = diContainer.getMovieController();
     var userController = diContainer.getUserController();
-    
+
     router.post('/register', userController.register);
     router.get('/me', basicAuth, userController.getMe);
-    router.get('/verify_password', basicAuth, userController.verifyPassword);
+    router.put('/me', basicAuth, userController.update);
+    router.put('/verify_password', basicAuth, userController.verifyPassword);
     router.put('/change_password', basicAuth, userController.changePassword);
     router.post('/users/:inaktive_user_id/activate', basicAuth, userController.activate);
     router.post('/users/:user_id/role/:new_role_name', basicAuth, userController.setRole);

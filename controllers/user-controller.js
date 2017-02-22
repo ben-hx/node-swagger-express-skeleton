@@ -24,6 +24,13 @@ module.exports = function (UserRepository, authService) {
                 res.sendData({user: user}, 'User activated!');
             }).catch(next);
         },
+        update: function (req, res, next) {
+            var currentUserId = authService.getCurrentUser()._id;
+            UserRepository.updateById(currentUserId, req.body).then(function (user) {
+                res.status(200);
+                res.sendData({user: user}, 'User updated!');
+            }).catch(next);
+        },
         verifyPassword: function (req, res, next) {
             var currentUserId = authService.getCurrentUser()._id;
             UserRepository.verifyPasswordById(currentUserId, req.body.password).then(function (result) {

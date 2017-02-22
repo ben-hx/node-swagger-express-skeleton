@@ -94,6 +94,36 @@ describe('User-Authorization-Repository-Tests', function () {
             });
             done();
         });
+
+
+        var id = sinon.spy();
+        var user = sinon.spy();
+
+        it('should be callable for all roles if id equals the current User id', function (done) {
+            var roles = authTestUtil.allPossibleRoles();
+            roles.forEach(function (role) {
+                var userRepositoryStub = sinon.stub(new UserRepository());
+                var authService = authTestUtil.authorizationServiceForUserWitRole("moderator");
+                var authorizationRepository = new UserAuthorizationRepository(errors, userRepositoryStub, authService);
+                authorizationRepository.updateById(authService.getCurrentUser()._id, user);
+            });
+            done();
+        });
+        
+        it('should throw an error when updating another user if not admin', function (done) {
+            var roles = authTestUtil.allPossibleRolesExcept(['admin']);
+            roles.forEach(function (role) {
+                var userRepositoryStub = sinon.stub(new UserRepository());
+                var authService = authTestUtil.authorizationServiceForUserWitRole(role);
+                var authorizationRepository = new UserAuthorizationRepository(errors, userRepositoryStub, authService);
+
+                errorEvaluation.evaluateExecption(function () {
+                    authorizationRepository.updateById(authService.getCurrentUser()._id + 1, user);
+                }, errors.AuthenticationError);
+            });
+            done();
+        });
+
     });
 
     describe('getUserById()', function () {

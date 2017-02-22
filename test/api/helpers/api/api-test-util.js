@@ -97,7 +97,7 @@ module.exports = function (config, debug, server) {
             },
             verifyPassword: function (user, password) {
                 var deferred = q.defer();
-                var result = agent.get('/verify_password');
+                var result = agent.put('/verify_password');
                 result.set('Content-Type', 'application/json');
                 result.send({password: password});
                 setBasicAuthenticationForRequest(result, user);
