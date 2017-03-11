@@ -6,7 +6,6 @@ var mongoosePlugins = require('./../misc/mongoose-plugins');
 
 var UserSchema = new mongoose.Schema({
     email: {
-        unique: true,
         type: String,
         required: true
     },
@@ -15,8 +14,7 @@ var UserSchema = new mongoose.Schema({
         required: true
     },
     username: {
-        type: String,
-        unique: true
+        type: String
     },
     firstname: {
         type: String

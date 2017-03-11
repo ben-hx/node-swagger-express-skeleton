@@ -257,6 +257,43 @@ describe('Movie-Repository-CRUD-Tests', function () {
 
         });
 
+        describe('filter by tags', function () {
+
+            it('should return movie searched by tag', function (done) {
+                var options = {
+                    query: {
+                        tags: 'Troma'
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated,
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movies searched by tag array', function (done) {
+                var options = {
+                    query: {
+                        tags: ['Troma', 'Hell Yeah']
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated,
+                        exampleMovies.returnOfTheKillerTomatos
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+        });
+
         describe('filter by createdUser', function () {
 
             it('should return movie searched by createdUser', function (done) {
@@ -582,6 +619,19 @@ describe('Movie-Repository-CRUD-Tests', function () {
                 movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
                     result.movies[0].userWatched[0].user._id.equals(exampleUsers.alice._id).should.be.true;
                     result.movies[0].userRatings[0].user._id.equals(exampleUsers.alice._id).should.be.true;
+                    done();
+                });
+            });
+
+        });
+
+        describe('sort', function () {
+
+            it('should return movie ordered by title', function (done) {
+                var options = {
+                    sort: 'title'
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
                     done();
                 });
             });

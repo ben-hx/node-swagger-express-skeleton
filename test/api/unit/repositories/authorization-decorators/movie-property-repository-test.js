@@ -95,4 +95,18 @@ describe('Movie-Property-Authorization-Repository-Tests', function () {
 
     });
 
+    describe('getTags()', function () {
+
+        var options = sinon.spy();
+
+        it('should be callable for everybody', function (done) {
+            var roles = authTestUtil.allPossibleRoles();
+            roles.forEach(function (role) {
+                checkMethodCalledWithArgumentsForRole(role, 'getTags');
+            });
+            done();
+        });
+
+    });
+
 });

@@ -166,6 +166,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                         actors: castQueryParamByBeginning(query.actors),
                         year: castQueryParamByOptionalRange(query.yearFrom, query.yearTo),
                         genres: castQueryParamByOptionalArray(query.genres),
+                        tags: castQueryParamByOptionalArray(query.tags),
                         createdUser: castQueryParamByOptionalArray(query.createdUser),
                         lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser),
                         created: castQueryParamByOptionalDateRange(query.createdFrom, query.createdTo),

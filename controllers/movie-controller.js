@@ -102,8 +102,13 @@ module.exports = function () {
                 res.status(200);
                 res.sendData({actors: result});
             }).catch(next);
+        },
+        getTags: function (req, res, next) {
+            req.diContainer.getMovieProperteyRepository().getTags().then(function (result) {
+                res.status(200);
+                res.sendData({tags: result});
+            }).catch(next);
         }
-
     }
 
 };

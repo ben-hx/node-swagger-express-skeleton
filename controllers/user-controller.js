@@ -1,6 +1,7 @@
 'use strict';
 
 var moongose = require('mongoose');
+var debug = require('debug')('app');
 
 module.exports = function (UserRepository, authService) {
 

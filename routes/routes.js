@@ -24,6 +24,7 @@ module.exports = function (diContainer) {
     router.get('/movies', basicAuth, movieController.getAll);
     router.get('/movies/genres', basicAuth, movieController.getGenres);
     router.get('/movies/actors', basicAuth, movieController.getActors);
+    router.get('/movies/tags', basicAuth, movieController.getTags);
     router.get('/movies/:movie_id', basicAuth, movieController.get);
     router.put('/movies/:movie_id', basicAuth, movieController.update);
     router.delete('/movies/:movie_id', basicAuth, movieController.delete);
@@ -31,7 +32,7 @@ module.exports = function (diContainer) {
     router.put('/movies/:movie_id/unwatched', basicAuth, movieController.unwatch);
     router.put('/movies/:movie_id/rating', basicAuth, movieController.rate);
     router.delete('/movies/:movie_id/rating', basicAuth, movieController.deleteRating);
-    router.put('/movies/:movie_id/comments', basicAuth, movieController.comment);
+    router.post('/movies/:movie_id/comments', basicAuth, movieController.comment);
     router.delete('/movies/:movie_id/comments/:comment_id', basicAuth, movieController.deleteComment);
 
     return router;

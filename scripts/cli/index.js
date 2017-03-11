@@ -1,20 +1,18 @@
 #! /usr/bin/env node
 'use strict';
 
-process.env.NODE_ENV = 'development';
-
 var inquirer = require('inquirer');
-var debug = require('debug');
+var debug = require('debug')('app');
 var config = require('../../config')[process.env.NODE_ENV];
 var errors = require('../../errors/errors');
-var mongooseConfig = require("../../mongoose-config")(debug, config).initialize();
+var mongooseConfig = require("../../mongoose-config")(debug, config);
 var User = require("../../models/user");
 var InaktiveUser = require("../../models/inaktive-user");
 var UserRepository = require("../../repositories/user-repository")(errors, User, InaktiveUser);
 var userCreate = require("./user-create")(UserRepository);
 var userUpdate = require("./user-update")(UserRepository);
 
-function start() {
+function showPromts() {
     inquirer.prompt([
         {
             type: 'list',
@@ -43,6 +41,13 @@ function start() {
                 break;
 
         }
+    });
+}
+
+function start() {
+    mongooseConfig.initialize().then(showPromts).catch(function () {
+        debug("Sorry, the db is not working!");
+        quit();
     });
 }
 start();

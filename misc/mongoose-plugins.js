@@ -82,7 +82,7 @@ module.exports = {
                 };
                 deferred.resolve({docs: data.docs, pagination: pagination});
             }).catch(function (error) {
-                deferred.reject(err);
+                deferred.reject(error);
             });
             return deferred.promise;
         };

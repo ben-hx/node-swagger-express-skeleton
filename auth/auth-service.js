@@ -59,7 +59,7 @@ module.exports = function (errors, UserRepository) {
                         throw new errors.AuthenticationError("Current User is not defined!");
                     }
                     if (roles && roles.length > 0 && roles.indexOf(currentUser.role) < 0) {
-                        throw new errors.AuthenticationError("User does not have the Permission");
+                        throw new errors.AuthenticationError("User with role '" + currentUser.role + "' does not have the Permission");
                     }
                     return true;
                 }

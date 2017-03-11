@@ -8,12 +8,12 @@ module.exports = function (debug, config) {
             if (mongoose.connection.readyState === 1) {
                 deferred.resolve(mongoose.connection);
             } else {
-                mongoose.Promise = require('q').Promise;
-                var connection = mongoose.connect(config.db.mongoURI).then(function () {
+                //mongoose.Promise = require('q').Promise;
+                var connection = mongoose.connect(config.db.mongoURI, {auth: {authdb: "admin"}}).then(function () {
                     debug('Connected to Database: ' + config.db.mongoURI);
                     deferred.resolve(connection);
                 }).catch(function (error) {
-                    debug('Error connecting to the database. ' + err);
+                    debug('Error connecting to the database. ' + error);
                     deferred.reject();
                 });
             }

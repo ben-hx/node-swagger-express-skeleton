@@ -24,12 +24,13 @@ module.exports = {
         this.status = 401;
     },
 
-    ReadError: function (message) {
+    ReadError: function (message, parent) {
         Error.call(this);
         Error.captureStackTrace(this, arguments.callee);
         this.name = 'ReadError';
         this.message = message || 'Error while reading from Database';
         this.status = 500;
+        this.parent = parent;
     },
 
     WriteError: function (message) {

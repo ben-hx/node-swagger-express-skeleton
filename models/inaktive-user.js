@@ -5,7 +5,6 @@ var mongoosePlugins = require('./../misc/mongoose-plugins');
 
 var InaktiveUserSchema = new mongoose.Schema({
     email: {
-        unique: true,
         type: String,
         required: true
     },
@@ -14,14 +13,13 @@ var InaktiveUserSchema = new mongoose.Schema({
         required: true
     },
     username: {
-        type: String,
-        unique: true,
+        type: String
     },
     firstName: {
-        type: String,
+        type: String
     },
     lastName: {
-        type: String,
+        type: String
     }
 });
 

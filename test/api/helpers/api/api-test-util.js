@@ -319,9 +319,9 @@ module.exports = function (config, debug, server) {
                 });
                 return deferred.promise;
             },
-            putMovieComment: function (user, movieId, text) {
+            postMovieComment: function (user, movieId, text) {
                 var deferred = q.defer();
-                var result = agent.put('/movies/' + movieId + '/comments');
+                var result = agent.post('/movies/' + movieId + '/comments');
                 setBasicAuthenticationForRequest(result, user);
                 result.set('Content-Type', 'application/json');
                 result.send({text: text});

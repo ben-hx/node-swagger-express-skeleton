@@ -35,6 +35,10 @@ var MovieSchema = new mongoose.Schema({
         required: true,
         trim: true
     }],
+    tags: [{
+        type: String,
+        trim: true
+    }],
     directors: [{
         type: String,
         trim: true

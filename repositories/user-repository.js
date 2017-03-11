@@ -1,6 +1,7 @@
 'use strict';
 
 var q = require('q');
+var debug = require('debug')('app');
 
 module.exports = function (errors, User, InaktiveUser) {
 
@@ -113,7 +114,7 @@ module.exports = function (errors, User, InaktiveUser) {
                     return deferred.reject(new errors.NotFoundError('User does not exist!'));
                 }
                 if (!(error instanceof errors.NotFoundError)) {
-                    return deferred.reject(new errors.ReadError('Error while reading User from Database'));
+                    return deferred.reject(new errors.ReadError('Error while reading User from Database', error));
                 }
                 return deferred.reject(error);
             });

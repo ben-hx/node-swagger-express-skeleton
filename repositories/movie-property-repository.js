@@ -17,6 +17,9 @@ module.exports = function (error, Movie) {
         getGenres: function () {
             return findByMovieProperty('genres');
         },
+        getTags: function () {
+            return findByMovieProperty('tags');
+        },
         getDirectors: function () {
             return findByMovieProperty('directors');
         },

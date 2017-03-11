@@ -1,5 +1,5 @@
 'use strict';
-var debug = require('debug');
+var debug = require('debug')('app');
 
 module.exports = function () {
     var config = require('../config')[process.env.NODE_ENV];
