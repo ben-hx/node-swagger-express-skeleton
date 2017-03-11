@@ -88,7 +88,11 @@ describe('Movie-Repository-CRUD-Tests', function () {
         });
 
         it('tmp', function (done) {
-            done();
+            movieRepository.forUser(exampleUsers.eve).getAll2().then(function (result) {
+                done();
+            }).catch(function (error) {
+                done();
+            })
         });
 
     });

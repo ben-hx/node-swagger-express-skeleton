@@ -203,6 +203,11 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     });
                     return deferred.promise;
                 },
+
+                getAll2: function (options) {
+
+                },
+
                 getById: function (id) {
                     var self = this;
                     var deferred = q.defer();
