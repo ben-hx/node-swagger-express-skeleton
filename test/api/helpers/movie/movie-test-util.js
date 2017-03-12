@@ -1,4 +1,4 @@
-module.exports = function (Movie, MovieUserAction, MovieRepository) {
+module.exports = function (Movie, MovieRepository) {
 
     function MovieRepositoryDecorator(movieRepository) {
         this.create = function (movieData) {
@@ -71,7 +71,6 @@ module.exports = function (Movie, MovieUserAction, MovieRepository) {
             return movie.save().then(function (movie) {
                 movieData._id = movie._id;
                 movieData.created = movie.created;
-                movieData.lastModified = movie.lastModified;
                 return movie;
             });
         },

@@ -9,7 +9,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
     var User = require("../../../../models/user");
     var InaktiveUser = require("../../../../models/inaktive-user");
     var Movie = require("../../../../models/movie");
-    var MovieUserAction = require("../../../../models/movie-user-action");
 
     var testFactory = require("../../helpers/test-factory")();
     var config = testFactory.config;
@@ -32,7 +31,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
         q.all([
             User.remove(),
             Movie.remove(),
-            MovieUserAction.remove(),
             userTestUtil.saveExampleUser(exampleUsers.bob),
             userTestUtil.saveExampleUser(exampleUsers.alice),
             userTestUtil.saveExampleUser(exampleUsers.eve)
@@ -45,7 +43,6 @@ describe('Movie-Repository-CRUD-Tests', function () {
         q.all([
             User.remove(),
             Movie.remove(),
-            MovieUserAction.remove()
         ]).then(function () {
             done();
         });
@@ -88,11 +85,7 @@ describe('Movie-Repository-CRUD-Tests', function () {
         });
 
         it('tmp', function (done) {
-            movieRepository.forUser(exampleUsers.eve).getAll2().then(function (result) {
-                done();
-            }).catch(function (error) {
-                done();
-            })
+            done();
         });
 
     });

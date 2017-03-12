@@ -3,7 +3,9 @@
 var q = require('q');
 var ObjectId = require('mongoose').Types.ObjectId;
 
-module.exports = function (config, errors, UserRepository, Movie, MovieUserAction) {
+module.exports = function (config, errors, UserRepository, Movie) {
+
+    var populationFields = 'createdUser watched.user ratings.user comments.user';
 
     return {
         forUser: function (user) {
@@ -69,19 +71,19 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
             }
 
             function findWatchedById(movieId, userId) {
-                return MovieUserAction.findOne({movie: movieId})
+                return Movie.findOne({_id: movieId})
                     .where('watched.user', userId)
                     .select({'watched.$': 1});
             }
 
             function findRatingsById(movieId, userId) {
-                return MovieUserAction.findOne({movie: movieId})
+                return Movie.findOne({_id: movieId})
                     .where('ratings.user', userId)
                     .select({'ratings.$': 1});
             }
 
             function findMovieById(id) {
-                return MovieUserAction.findOne({movie: id}).populate('movie watched.user ratings.user comments.user').then(function (result) {
+                return Movie.findOne({_id: id}).populate(populationFields).then(function (result) {
                     if (result == null) {
                         throw new errors.NotFoundError('Movie does not exist!');
                     }
@@ -89,10 +91,10 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                 });
             }
 
-            function movieUserActionToResponse(movieUserAction) {
+            function movieToResponse(movie) {
                 var self = this;
                 var ownWatched = {value: false};
-                var userWatched = movieUserAction.watched.reduce(function (userWatched, watched) {
+                var userWatched = movie.watched.reduce(function (userWatched, watched) {
                     if (!watched.user) {
                         return;
                     }
@@ -105,8 +107,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     return userWatched;
                 }, []);
                 var ownRating = null;
-                var averageRating = movieUserAction.averageRating;
-                var userRatings = movieUserAction.ratings.reduce(function (userRatings, rating) {
+                var userRatings = movie.ratings.reduce(function (userRatings, rating) {
                     if (!rating.user) {
                         return;
                     }
@@ -119,7 +120,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     }
                     return userRatings;
                 }, []);
-                var userComments = movieUserAction.comments.reduce(function (userComments, comment) {
+                var userComments = movie.comments.reduce(function (userComments, comment) {
                     if (!comment.user) {
                         return;
                     }
@@ -127,12 +128,11 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     return userComments;
                 }, []);
 
-                var movie = movieUserAction.movie.toObject();
+                var movie = movie.toObject();
                 movie = Object.assign(movie, {ownWatched: ownWatched});
                 movie = Object.assign(movie, {userWatched: userWatched});
                 movie = Object.assign(movie, {ownRating: ownRating});
                 movie = Object.assign(movie, {userRatings: userRatings});
-                movie = Object.assign(movie, {averageRating: averageRating});
                 movie = Object.assign(movie, {userComments: userComments});
                 return movie;
             }
@@ -142,15 +142,14 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     var self = this;
                     var deferred = q.defer();
                     movieData.createdUser = user._id;
-                    movieData.lastModifiedUser = user._id;
+                    movieData.watched = [];
+                    movieData.ratings = [];
+                    movieData.comments = [];
                     var movie = new Movie(movieData);
-                    movie.save().then(function (movie) {
-                        var newValue = {movie: movie, watched: [], ratings: [], comments: []};
-                        return new MovieUserAction(newValue).save().then(function (result) {
-                            return movieUserActionToResponse(result);
-                        });
+                    movie.save().then(function (result) {
+                        return Movie.populate(result, 'createdUser');
                     }).then(function (result) {
-                        deferred.resolve(result);
+                        deferred.resolve(movieToResponse(result));
                     }).catch(function (error) {
                         deferred.reject(errors.convertError(error));
                     });
@@ -161,40 +160,29 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     var self = this;
                     var deferred = q.defer();
                     var query = options.query || {};
-                    query = {
-                        title: castQueryParamByBeginning(query.title),
-                        actors: castQueryParamByBeginning(query.actors),
-                        year: castQueryParamByOptionalRange(query.yearFrom, query.yearTo),
-                        genres: castQueryParamByOptionalArray(query.genres),
-                        tags: castQueryParamByOptionalArray(query.tags),
-                        createdUser: castQueryParamByOptionalArray(query.createdUser),
-                        lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser),
-                        created: castQueryParamByOptionalDateRange(query.createdFrom, query.createdTo),
-                        lastModified: castQueryParamByOptionalDateRange(query.lastModifiedFrom, query.lastModifiedTo),
+                    options = {
+                        query: {
+                            title: castQueryParamByBeginning(query.title),
+                            actors: castQueryParamByBeginning(query.actors),
+                            year: castQueryParamByOptionalRange(query.yearFrom, query.yearTo),
+                            genres: castQueryParamByOptionalArray(query.genres),
+                            tags: castQueryParamByOptionalArray(query.tags),
+                            createdUser: castQueryParamByOptionalArray(query.createdUser),
+                            lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser),
+                            created: castQueryParamByOptionalDateRange(query.createdFrom, query.createdTo),
+                            averageRating: castQueryParamByOptionalRange(query.averageRatingFrom, query.averageRatingTo)
+                        },
+                        sort: options.sort || config.settings.movie.moviesSortDefault,
+                        page: parseInt(options.page) || 0,
+                        limit: parseInt(options.limit) || config.settings.movie.moviesPerPageDefault,
+                        populate: {
+                            path: populationFields
+                        }
                     };
-                    query = removeUndefinedPropertyOfObject(query);
-                    Movie.find(query, '_id').then(function (result) {
-                        query = options.query || {};
-                        query = {
-                            movie: {$in: result},
-                            averageRating: castQueryParamByOptionalRange(query.averageRatingFrom, query.averageRatingTo),
-                        };
-                        query = removeUndefinedPropertyOfObject(query);
-                        options = {
-                            query: query,
-                            sort: options.sort || config.settings.movie.moviesSortDefault,
-                            page: parseInt(options.page) || 0,
-                            limit: parseInt(options.limit) || config.settings.movie.moviesPerPageDefault,
-                            populate: {
-                                path: 'movie watched.user ratings.user comments.user'
-                            }
-                        };
-                        return MovieUserAction.paginate(options);
-                    }).then(function (result) {
-                        var docs = result.docs.reduce(function (docs, movieUserAction) {
-                            if (movieUserAction.movie) {
-                                docs.push(movieUserActionToResponse(movieUserAction));
-                            }
+                    options.query = removeUndefinedPropertyOfObject(options.query);
+                    Movie.paginate(options).then(function (result) {
+                        var docs = result.docs.reduce(function (docs, movie) {
+                            docs.push(movieToResponse(movie));
                             return docs;
                         }, []);
                         deferred.resolve({movies: docs, pagination: result.pagination});
@@ -203,16 +191,11 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     });
                     return deferred.promise;
                 },
-
-                getAll2: function (options) {
-
-                },
-
                 getById: function (id) {
                     var self = this;
                     var deferred = q.defer();
                     findMovieById(id).then(function (result) {
-                        return deferred.resolve(movieUserActionToResponse(result));
+                        return deferred.resolve(movieToResponse(result));
                     }).catch(function (error) {
                         deferred.reject(errors.convertError(error));
                     });
@@ -222,7 +205,9 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     var self = this;
                     var deferred = q.defer();
                     delete data._id;
-                    data.lastModifiedUser = user._id;
+                    delete data.watched;
+                    delete data.ratings;
+                    delete data.comments;
                     Movie.findOne({_id: id}).then(function (movie) {
                         if (movie == null) {
                             throw new errors.NotFoundError('Movie does not exist!');
@@ -243,11 +228,7 @@ module.exports = function (config, errors, UserRepository, Movie, MovieUserActio
                     var deferred = q.defer();
                     findMovieById(id).then(function (result) {
                         return result.remove().then(function () {
-                            return movieUserActionToResponse(result);
-                        });
-                    }).then(function (result) {
-                        return Movie.findOneAndRemove({movie: id}).then(function () {
-                            return result;
+                            return movieToResponse(result);
                         });
                     }).then(function (result) {
                         return deferred.resolve(result);

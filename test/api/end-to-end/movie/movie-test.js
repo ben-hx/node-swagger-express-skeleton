@@ -8,7 +8,6 @@ describe('Movie-Endpoint Tests', function () {
     var User = require("../../../../models/user");
     var InaktiveUser = require("../../../../models/inaktive-user");
     var Movie = require("../../../../models/movie");
-    var MovieUserAction = require("../../../../models/movie-user-action");
     var testFactory = require("../../helpers/test-factory")();
     var exampleUsers = testFactory.exampleData.generateUsers();
     var exampleMovies = testFactory.exampleData.generateMovies();
@@ -53,8 +52,7 @@ describe('Movie-Endpoint Tests', function () {
 
     beforeEach(function (done) {
         q.all([
-            Movie.remove(),
-            MovieUserAction.remove()
+            Movie.remove()
         ]).then(function () {
             done();
         });
@@ -62,8 +60,7 @@ describe('Movie-Endpoint Tests', function () {
 
     afterEach(function (done) {
         q.all([
-            Movie.remove(),
-            MovieUserAction.remove()
+            Movie.remove()
         ]).then(function () {
             done();
         });
@@ -248,7 +245,7 @@ describe('Movie-Endpoint Tests', function () {
 
             it('should return 200 with movie when updating movie with valid movie-data as moderator', function (done) {
                 api.putMovie(exampleUsers.moderatorBob, id, exampleMovies.theToxicAvengerUpdated).then(function (res) {
-                    apiEvaluation.evaluateMovieResponse(res, 200, exampleMovies.theToxicAvengerUpdated, exampleUsers.moderatorBob);
+                    apiEvaluation.evaluateMovieResponse(res, 200, exampleMovies.theToxicAvengerUpdated, exampleUsers.adminBob);
                     done();
                 });
             });

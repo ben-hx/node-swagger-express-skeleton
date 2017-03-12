@@ -13,11 +13,15 @@ module.exports = function () {
     }
 
     return {
+        evaluateUser: function (actual, expected) {
+            actual.email.should.equal(expected.email);
+            actual.username.should.equal(expected.username);
+        },
+
         evaluateUserResponse: function (response, statusCode, expectedUser) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
-            response.body.data.user.email.should.equal(expectedUser.email);
-            response.body.data.user.username.should.equal(expectedUser.username);
+            this.evaluateUser(response.body.data.user, expectedUser);
         },
 
         evaluateSuccessfulRegisterResponse: function (response, statusCode, expectedUser) {
@@ -45,6 +49,7 @@ module.exports = function () {
             expectedUsers.forEach(transformUserForEvaluation);
             expectedUsers.should.deep.include.members(response.body.data.users);
         },
+
         evaluateMovie: function (actual, expected) {
             actual.title.should.equal(expected.title);
             actual.year.should.equal(expected.year);
@@ -73,10 +78,10 @@ module.exports = function () {
         evaluateMovieResponse: function (response, statusCode, expectedMovie, expectedUserCreatedBy) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
-            response.body.data.movie.lastModifiedUser.should.equal(String(expectedUserCreatedBy._id));
+            this.evaluateUser(response.body.data.movie.createdUser, expectedUserCreatedBy);
             this.evaluateMovie(response.body.data.movie, expectedMovie);
         },
-
+        
         evaluateMovieActionResponse: function (response, statusCode, expectedAction) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
