@@ -208,6 +208,7 @@ module.exports = function (config, errors, UserRepository, Movie) {
                     delete data.watched;
                     delete data.ratings;
                     delete data.comments;
+                    delete data.createdUser;
                     Movie.findOne({_id: id}).then(function (movie) {
                         if (movie == null) {
                             throw new errors.NotFoundError('Movie does not exist!');
@@ -265,12 +266,17 @@ module.exports = function (config, errors, UserRepository, Movie) {
                     var deferred = q.defer();
                     q.all([
                         findMovieById(id),
-                        findWatchedById(id, user._id)
+                        findWatchedById(id, user._id),
+                        findRatingsById(id, user._id)
                     ]).then(function (result) {
                         var movie = result[0];
                         var watched = result[1];
+                        var rating = result[2];
                         if (!watched) {
                             throw new errors.ValidationError('Movie is not set to watched!');
+                        }
+                        if (rating) {
+                            movie.ratings.pull(rating.ratings[0]._id);
                         }
                         movie.watched.pull(watched.watched[0]._id);
                         return movie.save();
@@ -321,10 +327,12 @@ module.exports = function (config, errors, UserRepository, Movie) {
                     var deferred = q.defer();
                     q.all([
                         findMovieById(id),
+                        findWatchedById(id, user._id),
                         findRatingsById(id, user._id)
                     ]).then(function (result) {
                         var movie = result[0];
-                        var rating = result[1];
+                        var watched = result[1];
+                        var rating = result[2];
                         if (!rating || rating.length == 0) {
                             throw new errors.ValidationError('Movie is not rated!');
                         }

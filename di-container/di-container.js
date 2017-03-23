@@ -6,10 +6,12 @@ module.exports = function () {
     var errors = require('../errors/errors');
     var User = require("../models/user");
     var InaktiveUser = require("../models/inaktive-user");
-    var UserRepository = require("../repositories/user-repository")(errors, User, InaktiveUser);
     var Movie = require("../models/movie");
+    var MovieList = require("../models/movie-list");
+    var UserRepository = require("../repositories/user-repository")(errors, User, InaktiveUser);
     var MoviePropertyRepository = require("../repositories/movie-property-repository")(errors, Movie);
     var MovieRepository = require("../repositories/movie-repository")(config, errors, UserRepository, Movie);
+    var MovieListRepository = require("../repositories/movie-list-repository")(config, errors, UserRepository, MovieList);
     var authServiceInstance = require('../auth/auth-service')(errors, UserRepository).initialize();
     var userRepositoryInstance = require("../repositories/authorization-decorators/user-repository")(errors, UserRepository, authServiceInstance);
     var moviePropertyRepositoryInstance = require("../repositories/authorization-decorators/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
@@ -37,6 +39,11 @@ module.exports = function () {
         getMovieProperteyRepository: function () {
             return moviePropertyRepositoryInstance
         },
+        getMovieListRepository: function () {
+            var movieListRepository = MovieListRepository.forUser(authServiceInstance.getCurrentUser());
+            var decorator = require("../repositories/authorization-decorators/movie-list-repository");
+            return decorator(movieListRepository, authServiceInstance);
+        },
         getBasicAuthentication: function () {
             return basicAuthenticationInstance;
         },
@@ -45,6 +52,9 @@ module.exports = function () {
         },
         getMovieController: function () {
             return require("../controllers/movie-controller")();
+        },
+        getMovieListController: function () {
+            return require("../controllers/movie-list-controller")();
         }
     };
 };

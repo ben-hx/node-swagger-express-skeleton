@@ -117,7 +117,7 @@ module.exports = function () {
                     }
                 }
             }
-
+            
             actual = actual.map(function (value) {
                 return convertRatingValue(value);
             });

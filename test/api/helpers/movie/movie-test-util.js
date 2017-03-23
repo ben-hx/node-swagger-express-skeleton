@@ -14,9 +14,6 @@ module.exports = function (Movie, MovieRepository) {
         this.getAll = function (options) {
             return movieRepository.getAll(options);
         };
-        this.getAll2 = function (options) {
-            return movieRepository.getAll2(options);
-        };
         this.getById = function (id) {
             return movieRepository.getById(id);
         };

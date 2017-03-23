@@ -24,7 +24,8 @@ var UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'moderator', 'looser']
+        enum: ['admin', 'moderator', 'looser'],
+        default: 'looser'
     }
 });
 

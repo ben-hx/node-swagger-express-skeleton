@@ -6,11 +6,15 @@ var errors = require("../../../errors/errors");
 var mongooseConfig = require('../../../mongoose-config')(debug, config);
 
 var AuthorizationService = require("../../../auth/auth-service")(errors);
+
 var User = require("../../../models/user");
 var InaktiveUser = require("../../../models/inaktive-user");
 var Movie = require("../../../models/movie");
+var MovieList = require("../../../models/movie-list");
+
 var UserRepository = require("../../../repositories/user-repository")(errors, User, InaktiveUser);
 var MovieRepository = require("../../../repositories/movie-repository")(config, errors, UserRepository, Movie);
+var MovieListRepository = require("../../../repositories/movie-list-repository")(config, errors, UserRepository, MovieList);
 
 var apiTestUtilInstance = require('./api/api-test-util')(config, debug, require("../../../app")());
 
@@ -41,6 +45,12 @@ module.exports = function () {
         },
         movieEvaluation: function () {
             return require('./movie/movie-evaluation-util')();
+        },
+        movieListTestUtil: function () {
+            return require('./movie-list/movie-list-test-util')(MovieList, MovieListRepository);
+        },
+        movieListEvaluation: function () {
+            return require('./movie-list/movie-list-evaluation-util')();
         },
         userTestUtil: function () {
             return require('./user/user-test-util')(User, UserRepository);

@@ -1,4 +1,3 @@
-var bcrypt = require('bcrypt-nodejs');
 var validator = require('validator');
 var mongoose = require('mongoose');
 var mongoosePlugins = require('./../misc/mongoose-plugins');

@@ -81,7 +81,7 @@ module.exports = function () {
             this.evaluateUser(response.body.data.movie.createdUser, expectedUserCreatedBy);
             this.evaluateMovie(response.body.data.movie, expectedMovie);
         },
-        
+
         evaluateMovieActionResponse: function (response, statusCode, expectedAction) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
@@ -167,16 +167,13 @@ module.exports = function () {
             response.body.data.averageRating.value.should.be.closeTo(expectedMovieRating.averageRating.value, 0.001);
         },
 
-
         evaluateSuccessfulMoviesPaginationResponse: function (response, statusCode, expectedData) {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
             response.body.data.movies.length.should.equal(expectedData.count);
             response.body.data.pagination.limit.should.equal(expectedData.limit);
-
             response.body.data.pagination.totalCount.should.equal(expectedData.totalCount);
             response.body.data.pagination.totalPages.should.equal(expectedData.totalPages);
-
         },
 
         evaluateSuccessfulMovieRatingResponse: function (response, statusCode, movieRating) {
@@ -235,6 +232,74 @@ module.exports = function () {
             response.status.should.equal(statusCode);
             response.body.success.should.equal(true);
             response.body.data[propertyName].should.deep.include.members(values);
+        },
+
+        evaluateMovieList: function (actual, expected) {
+            actual.title.should.equal(expected.title);
+            actual.description.should.equal(expected.description);
+            actual.access.should.equal(expected.access);
+            actual.tags.should.deep.equal(expected.tags);
+            actual.should.have.property('created');
+            actual.should.have.property('createdUser');
+            var actualMovieIds = [];
+            actual.movies.forEach(function (actual) {
+                actualMovieIds.push({id: actual.movie._id});
+            });
+            var expectedMovieIds = [];
+            expected.movies.forEach(function (expected) {
+                expectedMovieIds.push({id: String(expected.movie._id)});
+            });
+            expectedMovieIds.should.deep.include.members(actualMovieIds);
+
+            var actualUserIds = [];
+            actual.editableUsers.forEach(function (actual) {
+                actualUserIds.push({id: actual.user._id});
+            });
+            var expectedUserIds = [];
+            expected.editableUsers = expected.editableUsers || [];
+            expected.editableUsers.forEach(function (expected) {
+                expectedUserIds.push({id: String(expected.user._id)});
+            });
+            expectedUserIds.should.deep.include.members(actualUserIds);
+        },
+
+        evaluateMovieLists: function (actual, expected) {
+            var self = this;
+            actual.should.have.length(expected.length);
+            actual.forEach(function (actualMovieList) {
+                expected.forEach(function (expectedMovieList) {
+                    if (actualMovieList._id == expectedMovieList._id) {
+                        self.evaluateMovieList(actualMovieList, expectedMovieList);
+                    }
+                });
+            });
+        },
+
+        evaluateMovieListResponse: function (response, statusCode, expectedMovieList, expectedUserCreatedBy) {
+            response.status.should.equal(statusCode);
+            response.body.success.should.equal(true);
+            this.evaluateUser(response.body.data.movieList.createdUser, expectedUserCreatedBy);
+            this.evaluateMovieList(response.body.data.movieList, expectedMovieList);
+        },
+
+        evaluateMovieListsResponse: function (response, statusCode, expectedMovieLists) {
+            response.status.should.equal(statusCode);
+            response.body.success.should.equal(true);
+            this.evaluateMovieLists(response.body.data.movieLists, expectedMovieLists);
+        },
+
+        evaluateMovieListComments: function (response, statusCode, expectedComments) {
+            response.status.should.equal(statusCode);
+            response.body.success.should.equal(true);
+            var actualUserIdsWithText = [];
+            response.body.data.movieList.comments.forEach(function (comment) {
+                actualUserIdsWithText.push({userId: comment.user._id, text: comment.text});
+            });
+            var expectedUserIdsWithText = [];
+            expectedComments.forEach(function (comment) {
+                expectedUserIdsWithText.push({userId: String(comment.user._id), text: comment.text});
+            });
+            expectedUserIdsWithText.should.deep.include.members(actualUserIdsWithText);
         },
 
         evaluateErrorResponse: function (response, statusCode) {

@@ -220,7 +220,7 @@ module.exports = function (config, debug, server) {
                 });
                 return deferred.promise;
             },
-            deleteMovie: function (user, movieId, movieData) {
+            deleteMovie: function (user, movieId) {
                 var deferred = q.defer();
                 var result = agent.delete('/movies/' + movieId);
                 setBasicAuthenticationForRequest(result, user);
@@ -337,6 +337,114 @@ module.exports = function (config, debug, server) {
             deleteMovieComment: function (user, movieId, commentId) {
                 var deferred = q.defer();
                 var result = agent.delete('/movies/' + movieId + '/comments/' + commentId);
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.then(function (res) {
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            postMovieList: function (user, data) {
+                var deferred = q.defer();
+                var result = agent.post('/movie_lists');
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.send(data);
+                result.then(function (res) {
+                    if (res.body.success) {
+                        data._id = res.body.data.movieList._id;
+                    }
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            getMovieLists: function (user, queryParams) {
+                var deferred = q.defer();
+                var result = agent.get('/movie_lists');
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.query(queryParams);
+                result.then(function (res) {
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            getMovieList: function (user, movieListId) {
+                var deferred = q.defer();
+                var result = agent.get('/movie_lists/' + movieListId);
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.then(function (res) {
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            putMovieList: function (user, movieListId, data) {
+                var deferred = q.defer();
+                var result = agent.put('/movie_lists/' + movieListId);
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.send(data);
+                result.then(function (res) {
+                    if (res.body.success) {
+                        data._id = res.body.data.movieList._id;
+                    }
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            deleteMovieList: function (user, movieListId) {
+                var deferred = q.defer();
+                var result = agent.delete('/movie_lists/' + movieListId);
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.then(function (res) {
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            postMovieListComment: function (user, movieListId, text) {
+                var deferred = q.defer();
+                var result = agent.post('/movie_lists/' + movieListId + '/comments');
+                setBasicAuthenticationForRequest(result, user);
+                result.set('Content-Type', 'application/json');
+                result.send({text: text});
+                result.then(function (res) {
+                    deferred.resolve(res);
+                });
+                result.catch(function (error) {
+                    debug(error);
+                    deferred.resolve(error.response);
+                });
+                return deferred.promise;
+            },
+            deleteMovieListComment: function (user, movieListId, commentId) {
+                var deferred = q.defer();
+                var result = agent.delete('/movie_lists/' + movieListId + '/comments/' + commentId);
                 setBasicAuthenticationForRequest(result, user);
                 result.set('Content-Type', 'application/json');
                 result.then(function (res) {

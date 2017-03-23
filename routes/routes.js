@@ -5,8 +5,9 @@ var router = require('express').Router();
 module.exports = function (diContainer) {
 
     var basicAuth = diContainer.getBasicAuthentication().middleware;
-    var movieController = diContainer.getMovieController();
     var userController = diContainer.getUserController();
+    var movieController = diContainer.getMovieController();
+    var movieListController = diContainer.getMovieListController();
 
     router.post('/register', userController.register);
     router.get('/me', basicAuth, userController.getMe);
@@ -34,6 +35,14 @@ module.exports = function (diContainer) {
     router.delete('/movies/:movie_id/rating', basicAuth, movieController.deleteRating);
     router.post('/movies/:movie_id/comments', basicAuth, movieController.comment);
     router.delete('/movies/:movie_id/comments/:comment_id', basicAuth, movieController.deleteComment);
+
+    router.post('/movie_lists', basicAuth, movieListController.create);
+    router.get('/movie_lists', basicAuth, movieListController.getAll);
+    router.get('/movie_lists/:movie_list_id', basicAuth, movieListController.get);
+    router.put('/movie_lists/:movie_list_id', basicAuth, movieListController.update);
+    router.delete('/movie_lists/:movie_list_id', basicAuth, movieListController.delete);
+    router.post('/movie_lists/:movie_list_id/comments', basicAuth, movieListController.comment);
+    router.delete('/movie_lists/:movie_list_id/comments/:comment_id', basicAuth, movieListController.deleteComment);
 
     return router;
 };
