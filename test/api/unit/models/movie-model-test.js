@@ -165,6 +165,16 @@ describe('Movie-Model-Tests', function () {
             });
         });
 
+        it('should return an error when saving two movies with one containing the same title in titleAlias', function (done) {
+            movieTestUtil.saveExampleMovieFromUser(exampleMovies.theToxicAvenger, exampleUsers.bob).then(function () {
+                exampleMovies.theToxicAvengerSame.title = "Toxie";
+                exampleMovies.theToxicAvengerSame.titleAlias = [exampleMovies.theToxicAvenger.title];
+                return movieTestUtil.saveExampleMovieFromUser(exampleMovies.theToxicAvengerSame, exampleUsers.bob);
+            }).catch(function () {
+                done();
+            });
+        });
+
         it('should return an error when saving invalid movie-data', function (done) {
             movieTestUtil.saveExampleMovieFromUser(exampleMovies.theToxicAvengerInvalid, exampleUsers.bob).catch(function (error) {
                 done();

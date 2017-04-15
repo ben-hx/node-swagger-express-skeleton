@@ -10,6 +10,7 @@ module.exports.generate = function () {
     return {
         theToxicAvenger: {
             title: 'The Toxic Avenger',
+            titleAlias: ['Toxieee'],
             year: 1984,
             runtime: '82 min',
             genres: ['Comedy', 'Horror', 'Action'],
@@ -24,6 +25,7 @@ module.exports.generate = function () {
         },
         theToxicAvengerSame: {
             title: 'The Toxic Avenger',
+            titleAlias: ['Toxieee'],
             year: 1984,
             runtime: '82 min',
             genres: ['Comedy', 'Horror', 'Action'],
@@ -38,6 +40,7 @@ module.exports.generate = function () {
         },
         theToxicAvengerUpdated: {
             title: 'The Toxic Avenger!',
+            titleAlias: ['Toxie'],
             year: 1983,
             runtime: '84 min',
             genres: ['Comedy', 'Horror'],

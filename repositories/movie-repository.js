@@ -3,7 +3,7 @@
 var q = require('q');
 var ObjectId = require('mongoose').Types.ObjectId;
 
-module.exports = function (config, errors, UserRepository, Movie) {
+module.exports = function (config, errors, repositoryUtil, UserRepository, Movie) {
 
     var populationFields = 'createdUser watched.user ratings.user comments.user';
 
@@ -13,61 +13,6 @@ module.exports = function (config, errors, UserRepository, Movie) {
 
             function checkUserExistance(user) {
                 return UserRepository.getUserById(user._id);
-            }
-
-            function castQueryParamByOptionalArray(param) {
-                if (param) {
-                    if (param instanceof Array) {
-                        return {"$in": param};
-                    } else {
-                        return param;
-                    }
-                }
-                return undefined;
-            }
-
-            function castQueryParamByBeginning(param) {
-                if (param) {
-                    return {"$regex": param, "$options": "i"};
-                }
-                return undefined;
-            }
-
-            function castQueryParamByOptionalRange(from, to) {
-                if (!from && !to) {
-                    return undefined;
-                }
-                var result = {};
-                if (from) {
-                    result.$gte = from;
-                }
-                if (to) {
-                    result.$lte = to;
-                }
-                return result;
-            }
-
-            function castQueryParamByOptionalDateRange(from, to) {
-                if (!from && !to) {
-                    return undefined;
-                }
-                var result = {};
-                if (from) {
-                    result.$gte = new Date(from);
-                }
-                if (to) {
-                    result.$lte = new Date(to);
-                }
-                return result;
-            }
-
-            function removeUndefinedPropertyOfObject(obj) {
-                for (var propName in obj) {
-                    if (obj[propName] === null || obj[propName] === undefined) {
-                        delete obj[propName];
-                    }
-                }
-                return obj;
             }
 
             function findWatchedById(movieId, userId) {
@@ -162,15 +107,20 @@ module.exports = function (config, errors, UserRepository, Movie) {
                     var query = options.query || {};
                     options = {
                         query: {
-                            title: castQueryParamByBeginning(query.title),
-                            actors: castQueryParamByBeginning(query.actors),
-                            year: castQueryParamByOptionalRange(query.yearFrom, query.yearTo),
-                            genres: castQueryParamByOptionalArray(query.genres),
-                            tags: castQueryParamByOptionalArray(query.tags),
-                            createdUser: castQueryParamByOptionalArray(query.createdUser),
-                            lastModifiedUser: castQueryParamByOptionalArray(query.lastModifiedUser),
-                            created: castQueryParamByOptionalDateRange(query.createdFrom, query.createdTo),
-                            averageRating: castQueryParamByOptionalRange(query.averageRatingFrom, query.averageRatingTo)
+                            $or: repositoryUtil.castEmptyArrayToUndefined(
+                                repositoryUtil.removeEmptyObjectsOfArray([
+                                    {title: repositoryUtil.castQueryParamByBeginning(query.title)},
+                                    {titleAlias: repositoryUtil.castQueryParamByBeginning(query.title)}
+                                ])
+                            ),
+                            actors: repositoryUtil.castQueryParamByBeginning(query.actors),
+                            year: repositoryUtil.castQueryParamByOptionalRange(query.yearFrom, query.yearTo),
+                            genres: repositoryUtil.castQueryParamByOptionalArray(query.genres),
+                            tags: repositoryUtil.castQueryParamByOptionalArray(query.tags),
+                            createdUser: repositoryUtil.castQueryParamByOptionalArray(query.createdUser),
+                            lastModifiedUser: repositoryUtil.castQueryParamByOptionalArray(query.lastModifiedUser),
+                            created: repositoryUtil.castQueryParamByOptionalDateRange(query.createdFrom, query.createdTo),
+                            averageRating: repositoryUtil.castQueryParamByOptionalRange(query.averageRatingFrom, query.averageRatingTo)
                         },
                         sort: options.sort || config.settings.movie.moviesSortDefault,
                         page: parseInt(options.page) || 0,
@@ -179,7 +129,7 @@ module.exports = function (config, errors, UserRepository, Movie) {
                             path: populationFields
                         }
                     };
-                    options.query = removeUndefinedPropertyOfObject(options.query);
+                    options.query = repositoryUtil.removeUndefinedPropertiesOfObject(options.query);
                     Movie.paginate(options).then(function (result) {
                         var docs = result.docs.reduce(function (docs, movie) {
                             docs.push(movieToResponse(movie));
@@ -200,7 +150,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 updateById: function (id, data) {
                     var self = this;
                     var deferred = q.defer();
@@ -223,7 +174,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 deleteById: function (id) {
                     var self = this;
                     var deferred = q.defer();
@@ -237,7 +189,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 setWatchedById: function (id) {
                     var self = this;
                     var deferred = q.defer();
@@ -260,7 +213,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 deleteWatchedById: function (id) {
                     var self = this;
                     var deferred = q.defer();
@@ -288,7 +242,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 setRatingById: function (id, value) {
                     var self = this;
                     var deferred = q.defer();
@@ -321,7 +276,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 deleteRatingById: function (id) {
                     var self = this;
                     var deferred = q.defer();
@@ -346,7 +302,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 addCommentById: function (id, text) {
                     var self = this;
                     var deferred = q.defer();
@@ -361,7 +318,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 deleteCommentFromUserById: function (id, commentId) {
                     var self = this;
                     var deferred = q.defer();
@@ -379,7 +337,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 deleteCommentById: function (id, commentId) {
                     var self = this;
                     var deferred = q.defer();
@@ -404,7 +363,8 @@ module.exports = function (config, errors, UserRepository, Movie) {
                         deferred.reject(errors.convertError(error));
                     });
                     return deferred.promise;
-                },
+                }
+                ,
                 getCommentById: function (id, commentId) {
                     var self = this;
                     var deferred = q.defer();
@@ -424,4 +384,5 @@ module.exports = function (config, errors, UserRepository, Movie) {
             }
         }
     };
-};
+}
+;

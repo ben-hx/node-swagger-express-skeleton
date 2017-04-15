@@ -78,6 +78,18 @@ describe('Movie-Repository-CRUD-Tests', function () {
             });
         });
 
+        it('should return an error when creating two movies with one containing the same title in titleAlias', function (done) {
+            movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvenger).then(function (result) {
+                exampleMovies.theToxicAvengerSame.title = "Toxie";
+                exampleMovies.theToxicAvengerSame.titleAlias = [exampleMovies.theToxicAvenger.title];
+                return movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvengerSame);
+            }).catch(function (error) {
+                var excpectedError = {};
+                errorEvaluation.evaluateValidationError(error, excpectedError);
+                done()
+            });
+        });
+
         it('should return an error when creating invalid movie-data', function (done) {
             movieRepository.forUser(exampleUsers.bob).create(exampleMovies.theToxicAvengerInvalid).catch(function (error) {
                 var excpectedError = {};
@@ -179,6 +191,37 @@ describe('Movie-Repository-CRUD-Tests', function () {
                 var options = {
                     query: {
                         title: 'The Toxic'
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger,
+                        exampleMovies.theToxicAvengerUpdated
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movies searched by exactly the titleAlias', function (done) {
+                var options = {
+                    query: {
+                        title: 'Toxieee'
+                    }
+                };
+                movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {
+                    var expected = [
+                        exampleMovies.theToxicAvenger
+                    ];
+                    movieEvaluation.evaluateMovies(result.movies, expected);
+                    done();
+                });
+            });
+
+            it('should return movies searched by the beginning the titleAlias', function (done) {
+                var options = {
+                    query: {
+                        title: 'Toxie'
                     }
                 };
                 movieRepository.forUser(exampleUsers.bob).getAll(options).then(function (result) {

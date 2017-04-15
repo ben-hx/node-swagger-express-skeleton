@@ -3,7 +3,7 @@
 var q = require('q');
 var ObjectId = require('mongoose').Types.ObjectId;
 
-module.exports = function (config, errors, UserRepository, MovieList) {
+module.exports = function (config, errors, repositoryUtil, UserRepository, MovieList) {
 
     var populationFields = 'createdUser movies.movie editableUsers.user comments.user';
 
@@ -13,61 +13,6 @@ module.exports = function (config, errors, UserRepository, MovieList) {
 
             function checkUserExistance(user) {
                 return UserRepository.getUserById(user._id);
-            }
-
-            function castQueryParamByOptionalArray(param) {
-                if (param) {
-                    if (param instanceof Array) {
-                        return {"$in": param};
-                    } else {
-                        return param;
-                    }
-                }
-                return undefined;
-            }
-
-            function castQueryParamByBeginning(param) {
-                if (param) {
-                    return {"$regex": param, "$options": "i"};
-                }
-                return undefined;
-            }
-
-            function castQueryParamByOptionalRange(from, to) {
-                if (!from && !to) {
-                    return undefined;
-                }
-                var result = {};
-                if (from) {
-                    result.$gte = from;
-                }
-                if (to) {
-                    result.$lte = to;
-                }
-                return result;
-            }
-
-            function castQueryParamByOptionalDateRange(from, to) {
-                if (!from && !to) {
-                    return undefined;
-                }
-                var result = {};
-                if (from) {
-                    result.$gte = new Date(from);
-                }
-                if (to) {
-                    result.$lte = new Date(to);
-                }
-                return result;
-            }
-
-            function removeUndefinedPropertyOfObject(obj) {
-                for (var propName in obj) {
-                    if (obj[propName] === null || obj[propName] === undefined) {
-                        delete obj[propName];
-                    }
-                }
-                return obj;
             }
 
             function findMovieById(movieListId, movie) {
@@ -147,13 +92,13 @@ module.exports = function (config, errors, UserRepository, MovieList) {
                     var userQuery = options.query || {};
                     userQuery = {
                         _id: {$ne: null},
-                        title: castQueryParamByBeginning(userQuery.title),
-                        description: castQueryParamByBeginning(userQuery.description),
-                        tags: castQueryParamByOptionalArray(userQuery.tags),
-                        created: castQueryParamByOptionalDateRange(userQuery.createdFrom, userQuery.createdTo),
-                        access: castQueryParamByOptionalArray(userQuery.access)
+                        title: repositoryUtil.castQueryParamByBeginning(userQuery.title),
+                        description: repositoryUtil.castQueryParamByBeginning(userQuery.description),
+                        tags: repositoryUtil.castQueryParamByOptionalArray(userQuery.tags),
+                        created: repositoryUtil.castQueryParamByOptionalDateRange(userQuery.createdFrom, userQuery.createdTo),
+                        access: repositoryUtil.castQueryParamByOptionalArray(userQuery.access)
                     };
-                    userQuery = removeUndefinedPropertyOfObject(userQuery);
+                    userQuery = repositoryUtil.removeUndefinedPropertiesOfObject(userQuery);
                     options = {
                         query: {
                             $and: [{
@@ -208,9 +153,10 @@ module.exports = function (config, errors, UserRepository, MovieList) {
                     delete data.comments;
                     delete data.createdUser;
                     findById(id).then(function (movieList) {
-                        return userHasPermissionToEdit(movieList).then(function (result) {
-                            if (!result) {
-                                throw new errors.AuthenticationError('Not allowed to delete Movie!');
+                        var userIsCreator = user._id.equals(movieList.createdUser._id);
+                        return userHasPermissionToEdit(movieList).then(function (userHasPermission) {
+                            if (!userHasPermission) {
+                                throw new errors.AuthenticationError('Not allowed to update the movie-list!');
                             }
 
                             var userIsInEditableUserArray = function (editableUsers) {
@@ -223,7 +169,7 @@ module.exports = function (config, errors, UserRepository, MovieList) {
                                 return result;
                             };
 
-                            if (data.editableUsers && !userIsInEditableUserArray(data.editableUsers)) {
+                            if (!userIsCreator && data.editableUsers && !userIsInEditableUserArray(data.editableUsers)) {
                                 throw new errors.ValidationError('Not allowed to delete current User!');
                             }
                             return movieList;

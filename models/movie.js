@@ -1,5 +1,6 @@
 var validator = require('validator');
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
 var mongoosePlugins = require('./../misc/mongoose-plugins');
 
 var MovieSchema = new mongoose.Schema({
@@ -9,6 +10,12 @@ var MovieSchema = new mongoose.Schema({
         index: true,
         unique: true
     },
+    titleAlias: [{
+        type: String,
+        trim: true,
+        index: true,
+        unique: true
+    }],
     year: {
         type: Number,
         required: true
@@ -106,6 +113,33 @@ var MovieSchema = new mongoose.Schema({
     }]
 });
 
+
+MovieSchema.path('title').validate(function (value, done) {
+    var id = this._id;
+
+    mongoose.model('Movie').count({
+        $and: [
+            {$or: [{title: value}, {titleAlias: value}]},
+            {_id: {$ne: id}}
+        ]
+    }, function (error, count) {
+        return done(!(error || count));
+    });
+}, 'Movie with same title or alias is already existing!');
+
+MovieSchema.path('titleAlias').validate(function (value, done) {
+    var id = this._id;
+
+    mongoose.model('Movie').count({
+        $and: [
+            {$or: [{title: {"$in": value}}, {titleAlias: {"$in": value}}]},
+            {_id: {$ne: id}}
+        ]
+    }, function (error, count) {
+        return done(!(error || count));
+    });
+}, 'Movie with same title or alias is already existing!');
+
 MovieSchema.pre('save', function (done) {
     var self = this;
     self.averageRating = null;
@@ -122,6 +156,7 @@ MovieSchema.pre('save', function (done) {
 MovieSchema.plugin(mongoosePlugins.created);
 MovieSchema.plugin(mongoosePlugins.paginate);
 MovieSchema.plugin(mongoosePlugins.toObjectTransformation);
+MovieSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Movie', MovieSchema);
 

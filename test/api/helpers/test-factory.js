@@ -12,9 +12,10 @@ var InaktiveUser = require("../../../models/inaktive-user");
 var Movie = require("../../../models/movie");
 var MovieList = require("../../../models/movie-list");
 
+var repositoryUtil = require("../../../utils/repository-util")();
 var UserRepository = require("../../../repositories/user-repository")(errors, User, InaktiveUser);
-var MovieRepository = require("../../../repositories/movie-repository")(config, errors, UserRepository, Movie);
-var MovieListRepository = require("../../../repositories/movie-list-repository")(config, errors, UserRepository, MovieList);
+var MovieRepository = require("../../../repositories/movie-repository")(config, errors, repositoryUtil, UserRepository, Movie);
+var MovieListRepository = require("../../../repositories/movie-list-repository")(config, errors, repositoryUtil, UserRepository, MovieList);
 
 var apiTestUtilInstance = require('./api/api-test-util')(config, debug, require("../../../app")());
 
