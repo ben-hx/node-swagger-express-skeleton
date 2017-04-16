@@ -688,6 +688,7 @@ describe('Movie-Endpoint Tests', function () {
                     var commentId = result[1].body.data.movie.userComments[1]._id;
                     return api.deleteMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, commentId);
                 }).then(function (res) {
+                    console.log(res);
                     apiEvaluation.evaluateMovieActionResponse(res, 200, {
                         movie: exampleMovies.theToxicAvenger,
                         userComments: [{user: exampleUsers.adminBob, text: "adminBobComment"}]
@@ -739,5 +740,5 @@ describe('Movie-Endpoint Tests', function () {
         });
 
     });
-    
+
 });
