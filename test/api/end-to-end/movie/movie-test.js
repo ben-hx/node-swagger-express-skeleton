@@ -685,11 +685,11 @@ describe('Movie-Endpoint Tests', function () {
                     api.postMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment"),
                     api.postMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment")
                 ]).then(function (res) {
-                    console.log(res[1].body.data);
+                    console.log(JSON.stringify(res[1].body.data));
                     var commentId = res[1].body.data.movie.userComments[1]._id;
                     return api.deleteMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, commentId);
                 }).then(function (res) {
-                    console.log(res.body.data);
+                    console.log(JSON.stringify(res.body.data));
                     apiEvaluation.evaluateMovieActionResponse(res, 200, {
                         movie: exampleMovies.theToxicAvenger,
                         userComments: [{user: exampleUsers.adminBob, text: "adminBobComment"}]
