@@ -1,5 +1,4 @@
 var q = require('q');
-var deepPopulate = require('mongoose-deep-populate');
 
 module.exports = {
 
