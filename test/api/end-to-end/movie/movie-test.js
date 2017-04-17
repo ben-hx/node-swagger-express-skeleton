@@ -677,19 +677,15 @@ describe('Movie-Endpoint Tests', function () {
             });
         });
 
-
         describe('authenticated', function () {
 
             it('should return 200 with movie-comments when deleting the movie comment of another user as admin', function (done) {
-                q.all([
-                    api.postMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment"),
-                    api.postMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment")
-                ]).then(function (res) {
-                    console.log(JSON.stringify(res[1].body.data));
-                    var commentId = res[1].body.data.movie.userComments[1]._id;
+                api.postMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment").then(function () {
+                    return api.postMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment");
+                }).then(function (res) {
+                    var commentId = res.body.data.movie.userComments[1]._id;
                     return api.deleteMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, commentId);
                 }).then(function (res) {
-                    console.log(JSON.stringify(res.body.data));
                     apiEvaluation.evaluateMovieActionResponse(res, 200, {
                         movie: exampleMovies.theToxicAvenger,
                         userComments: [{user: exampleUsers.adminBob, text: "adminBobComment"}]
@@ -697,19 +693,15 @@ describe('Movie-Endpoint Tests', function () {
                     done();
                 });
             });
-
-
+            
             it('should return 401 unauthorized with movie-comments when deleting the movie comment of another user as moderator', function (done) {
-                q.all([
-                    api.postMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment"),
-                    api.postMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment")
-                ]).then(function (res) {
-                    var commentId = res[0].body.data.movie.userComments[0]._id;
+                api.postMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment").then(function () {
+                    return api.postMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment");
+                }).then(function (res) {
+                    var commentId = res.body.data.movie.userComments[0]._id;
                     return api.deleteMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, commentId);
                 }).then(function (res) {
                     apiEvaluation.evaluateErrorResponse(res, 401);
-                    done();
-                }).catch(function (error) {
                     done();
                 });
             });
