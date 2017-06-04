@@ -8,6 +8,7 @@ module.exports = function (diContainer) {
     var userController = diContainer.getUserController();
     var movieController = diContainer.getMovieController();
     var movieListController = diContainer.getMovieListController();
+    var postController = diContainer.getPostController();
 
     router.post('/register', userController.register);
     router.get('/me', basicAuth, userController.getMe);
@@ -43,6 +44,14 @@ module.exports = function (diContainer) {
     router.delete('/movie_lists/:movie_list_id', basicAuth, movieListController.delete);
     router.post('/movie_lists/:movie_list_id/comments', basicAuth, movieListController.comment);
     router.delete('/movie_lists/:movie_list_id/comments/:comment_id', basicAuth, movieListController.deleteComment);
+
+    router.post('/posts', basicAuth, postController.create);
+    router.get('/posts', basicAuth, postController.getAll);
+    router.get('/posts/:post_id', basicAuth, postController.get);
+    router.put('/posts/:post_id', basicAuth, postController.update);
+    router.delete('/posts/:post_id', basicAuth, postController.delete);
+    router.post('/posts/:post_id/comments', basicAuth, postController.comment);
+    router.delete('/posts/:post_id/comments/:comment_id', basicAuth, postController.deleteComment);
 
     return router;
 };

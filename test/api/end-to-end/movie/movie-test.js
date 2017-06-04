@@ -693,7 +693,7 @@ describe('Movie-Endpoint Tests', function () {
                     done();
                 });
             });
-            
+
             it('should return 401 unauthorized with movie-comments when deleting the movie comment of another user as moderator', function (done) {
                 api.postMovieComment(exampleUsers.adminBob, exampleMovies.theToxicAvenger._id, "adminBobComment").then(function () {
                     return api.postMovieComment(exampleUsers.moderatorBob, exampleMovies.theToxicAvenger._id, "moderatorBobComment");

@@ -8,11 +8,14 @@ module.exports = function () {
     var InaktiveUser = require("../models/inaktive-user");
     var Movie = require("../models/movie");
     var MovieList = require("../models/movie-list");
+    var Post = require("../models/post");
+
     var repositoryUtilInstance = require("../utils/repository-util")();
     var UserRepository = require("../repositories/user-repository")(errors, User, InaktiveUser);
     var MoviePropertyRepository = require("../repositories/movie-property-repository")(errors, Movie);
     var MovieRepository = require("../repositories/movie-repository")(config, errors, repositoryUtilInstance, UserRepository, Movie);
     var MovieListRepository = require("../repositories/movie-list-repository")(config, errors, repositoryUtilInstance, UserRepository, MovieList);
+    var PostRepository = require("../repositories/post-repository")(config, errors, repositoryUtilInstance, UserRepository, Post);
     var authServiceInstance = require('../auth/auth-service')(errors, UserRepository).initialize();
     var userRepositoryInstance = require("../repositories/authorization-decorators/user-repository")(errors, UserRepository, authServiceInstance);
     var moviePropertyRepositoryInstance = require("../repositories/authorization-decorators/movie-property-repository")(MoviePropertyRepository, authServiceInstance);
@@ -45,6 +48,11 @@ module.exports = function () {
             var decorator = require("../repositories/authorization-decorators/movie-list-repository");
             return decorator(movieListRepository, authServiceInstance);
         },
+        getPostRepository: function () {
+            var postRepository = PostRepository.forUser(authServiceInstance.getCurrentUser());
+            var decorator = require("../repositories/authorization-decorators/post-repository");
+            return decorator(postRepository, authServiceInstance);
+        },
         getBasicAuthentication: function () {
             return basicAuthenticationInstance;
         },
@@ -56,6 +64,9 @@ module.exports = function () {
         },
         getMovieListController: function () {
             return require("../controllers/movie-list-controller")();
+        },
+        getPostController: function () {
+            return require("../controllers/post-controller")();
         }
     };
 };

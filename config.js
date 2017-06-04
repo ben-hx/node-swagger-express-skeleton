@@ -21,6 +21,9 @@ config.production = {
                 secret: 'mysupersecret',
                 expiresIn: '6h',
             }
+        },
+        notification: {
+            storagePeriod: '3m'
         }
     }
 };
@@ -45,6 +48,9 @@ config.development = {
                 secret: 'mysupersecret',
                 expiresIn: '6h',
             }
+        },
+        notification: {
+            storagePeriod: '3m'
         }
     }
 };
@@ -69,6 +75,9 @@ config.test = {
                 secret: 'mysupersecret',
                 expiresIn: '6h',
             }
+        },
+        notification: {
+            storagePeriod: '3m'
         }
     }
 };
